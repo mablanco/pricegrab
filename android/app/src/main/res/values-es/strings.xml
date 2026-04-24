@@ -1,5 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">PriceGrab</string>
-    <string name="placeholder_screen_message">PriceGrab está en construcción.</string>
+
+    <string name="compare_heading">Compara dos ofertas</string>
+    <string name="offer_a_title">Oferta A</string>
+    <string name="offer_b_title">Oferta B</string>
+    <string name="price_label">Precio</string>
+    <string name="quantity_label">Cantidad</string>
+
+    <string name="cd_price_field">Precio de %1$s</string>
+    <string name="cd_quantity_field">Cantidad de %1$s</string>
+
+    <string name="error_not_a_number">Introduce un número válido</string>
+    <string name="error_negative_price">El precio no puede ser negativo</string>
+    <string name="error_non_positive_quantity">La cantidad debe ser mayor que cero</string>
+
+    <string name="result_placeholder">Introduce las dos ofertas para ver cuál es más barata</string>
+    <string name="result_a_wins">La oferta A es más barata por unidad</string>
+    <string name="result_b_wins">La oferta B es más barata por unidad</string>
+    <string name="result_tie">Las dos ofertas cuestan lo mismo por unidad</string>
 </resources>
