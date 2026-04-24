@@ -29,7 +29,11 @@ Hace años desarrollé una versión preliminar de esta aplicación. Este proyect
 
 ### Estado del proyecto
 
-En fase inicial de especificación con [Spec Kit](https://github.com/github/spec-kit). Los principios del producto están formalizados en [`.specify/memory/constitution.md`](./.specify/memory/constitution.md) (versión 1.0.0).
+En fase inicial de especificación con [Spec Kit](https://github.com/github/spec-kit). Los principios del producto están formalizados en [`.specify/memory/constitution.md`](./.specify/memory/constitution.md) (versión 1.0.1).
+
+### Distribución
+
+Los releases se publican como APK firmados en [GitHub Releases](../../releases). **No se publicará en Google Play.** La inclusión en [F-Droid](https://f-droid.org/) está bajo evaluación; el proyecto se mantiene compatible con sus requisitos (toolchain 100% open source, builds reproducibles, sin dependencias propietarias).
 
 ### Cómo contribuir
 
@@ -61,7 +65,11 @@ Years ago I built a preliminary version of this application. This project is the
 
 ### Project status
 
-Early specification phase using [Spec Kit](https://github.com/github/spec-kit). Product principles are formalized in [`.specify/memory/constitution.md`](./.specify/memory/constitution.md) (version 1.0.0).
+Early specification phase using [Spec Kit](https://github.com/github/spec-kit). Product principles are formalized in [`.specify/memory/constitution.md`](./.specify/memory/constitution.md) (version 1.0.1).
+
+### Distribution
+
+Releases are published as signed APKs on [GitHub Releases](../../releases). **Google Play is not a target.** Inclusion in [F-Droid](https://f-droid.org/) is under evaluation; the project stays compatible with its requirements (fully open-source toolchain, reproducible builds, no proprietary dependencies).
 
 ### Contributing
 
