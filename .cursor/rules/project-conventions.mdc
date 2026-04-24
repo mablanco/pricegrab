@@ -1,0 +1,49 @@
+---
+description: PriceGrab project conventions (override selected global rules)
+alwaysApply: true
+---
+
+# PriceGrab — Project Conventions
+
+These conventions apply to this repository only. They override matching global rules
+(e.g., the "commits in Spanish" rule from the user's global preferences). Any rule
+not addressed here continues to follow the user's global preferences.
+
+## Commit messages
+
+- Write commit messages in **English**.
+- Use **Conventional Commits** prefixes: `feat:`, `fix:`, `docs:`, `chore:`,
+  `refactor:`, `test:`, `style:`, `perf:`, `ci:`, `build:`.
+- Subject line: imperative mood, ≤ 72 characters, no trailing period.
+- Body (optional): wrap at ~72 columns, explain the *why*, not the *what*.
+
+## Branching & PR flow
+
+- **Never push directly to `main`.** Always work on a feature branch and open a PR.
+- Branch naming: `<type>/<short-slug>` — e.g. `feat/compare-screen`,
+  `fix/decimal-parsing-es`, `chore/bootstrap-project`.
+- Delete the remote branch after the PR is merged.
+- Keep `main` protected (required reviews + passing CI) once CI exists.
+
+## Publishing & remotes
+
+- **Always ask Marco before running `git push`**, including the very first push when
+  creating or recreating the remote repository.
+- Never commit legacy prototype sources (`*.aia`) or any sensitive authentication
+  material (tokens, keystores, `.env`, cloud credentials, AI assistant state). Rely on
+  `.gitignore` to enforce this; verify with `git status` before every commit.
+
+## Spec-Driven Development
+
+- All non-trivial changes flow through Spec Kit:
+  `/speckit.specify` → `/speckit.clarify` (if needed) → `/speckit.plan` →
+  `/speckit.tasks` → `/speckit.implement`.
+- Every PR must reference its spec and confirm compliance with the principles in
+  `.specify/memory/constitution.md`.
+
+## Documentation language
+
+- User-facing documentation (`README.md`, UI strings) MUST be available in both
+  Spanish and English.
+- Internal engineering documentation (ADRs, specs, plans, task lists, commit
+  messages, code comments) is written in English.
