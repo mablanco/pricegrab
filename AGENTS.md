@@ -35,7 +35,17 @@ Each stage may trigger pre/post hooks defined in `.specify/extensions.yml`
 
 - **Never push to `main`.** Always create a feature branch
   (`<type>/<short-slug>`) and open a PR.
-- **Ask before running `git push`**, including the first push to a new remote.
+- **`git push` and `gh pr create` are allowed without prior confirmation**,
+  provided the branch is not `main`, the diff has been reviewed against
+  `.gitignore`, the constitution and `.cursor/rules/project-conventions.mdc`,
+  and the push targets a feature branch. Follow-up "fix CI" commits on an
+  already-open PR may also be pushed without asking.
+- **Only Marco merges pull requests.** Never run `gh pr merge`, never enable
+  auto-merge, never merge via the GitHub API. The agent's end state is "PR is
+  green and ready for review".
+- **Never force-push to `main`.** Force-pushing a feature branch is allowed only
+  when strictly necessary (e.g. rebasing onto a moved `main`) and must be
+  announced in a PR comment first.
 - **Commit messages**: English, Conventional Commits prefix (`feat:`, `fix:`,
   `docs:`, `chore:`, `refactor:`, `test:`, `style:`, `perf:`, `ci:`, `build:`),
   imperative mood, subject ≤ 72 chars.

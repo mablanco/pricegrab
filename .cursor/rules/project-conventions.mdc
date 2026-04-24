@@ -27,8 +27,21 @@ not addressed here continues to follow the user's global preferences.
 
 ## Publishing & remotes
 
-- **Always ask Marco before running `git push`**, including the very first push when
-  creating or recreating the remote repository.
+- `git push` and `gh pr create` are allowed without prior confirmation, as long as:
+  - The push targets a **feature branch**, never `main` directly.
+  - The branch content has been reviewed by the agent against `.gitignore`, the
+    constitution and this file (no secrets, no legacy prototype sources, no
+    `*.aia` files, no AI assistant state).
+  - When CI fails on an open PR, follow-up "fix CI" commits may be pushed to the
+    **same** feature branch without asking, until the PR is green or the agent
+    hits a blocker it cannot resolve.
+- **Only Marco merges pull requests.** Never run `gh pr merge`, never enable
+  auto-merge, never squash/rebase/merge via the API. Leaving the PR "ready for
+  review" is the end state for the agent.
+- **Never push to `main` directly**, not even for a one-liner. Always open a PR.
+- **Never force-push to `main`** under any circumstance. Force-pushing a feature
+  branch is allowed only when strictly necessary (e.g. rebase to resolve
+  conflicts) and must be preceded by a note to Marco in the PR.
 - Never commit legacy prototype sources (`*.aia`) or any sensitive authentication
   material (tokens, keystores, `.env`, cloud credentials, AI assistant state). Rely on
   `.gitignore` to enforce this; verify with `git status` before every commit.
