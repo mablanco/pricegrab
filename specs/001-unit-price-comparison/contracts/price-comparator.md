@@ -76,7 +76,7 @@ emerge during TDD. Each case specifies inputs as
 | 3 | `2.00 / 100, 4.00 / 200`            | `Tie`                                               | Equal unit prices, different absolute scales             |
 | 4 | `0 / 5, 1 / 5`                      | `AWins(Δ=0.2, pct=100)`                             | One offer is free                                        |
 | 5 | `0 / 5, 0 / 10`                     | `Tie`                                               | Both offers free                                         |
-| 6 | `1.00 / 0.5, 1.00 / 0.25`           | `BWins(Δ=2.0, pct=50)`                              | Fractional quantities                                    |
+| 6 | `1.00 / 0.5, 1.00 / 0.25`           | `AWins(Δ=2.0, pct=50)`                              | Fractional quantities (A has 2/unit, B has 4/unit)       |
 | 7 | `1.00 / 3, 1.00 / 3`                | `Tie`                                               | Same input values                                        |
 | 8 | Very small: `0.01 / 1_000_000, 0.01 / 999_999` | `AWins(...)`                                        | Verifies no underflow; winner decided at full precision  |
 | 9 | Very large: `999_999_999 / 1, 1_000_000_000 / 1` | `AWins(Δ=1, pct≈0.0000001)`                         | Verifies no overflow                                     |
