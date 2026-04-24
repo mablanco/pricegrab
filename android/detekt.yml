@@ -11,6 +11,15 @@ build:
 complexity:
   LongMethod:
     threshold: 60 # ViewModels can legitimately grow a bit.
+  LongParameterList:
+    # Composable functions routinely carry several state values + callbacks;
+    # splitting them into "parameter objects" hurts readability more than it
+    # helps. Keep the check on, but let Compose (and slightly larger helpers
+    # like `LocaleNumberFormatter.format`) past the default threshold of 6.
+    functionThreshold: 8
+    constructorThreshold: 8
+    ignoreAnnotated:
+      - 'Composable'
 
 style:
   MagicNumber:
