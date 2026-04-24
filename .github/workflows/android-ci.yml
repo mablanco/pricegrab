@@ -79,13 +79,14 @@ jobs:
     name: Instrumented tests (API 34 ATD)
     runs-on: ubuntu-latest
     timeout-minutes: 45
-    # Instrumented tests cost ~10 min of emulator warmup even when empty.
-    # Keep this job opt-in by label until the test suite actually has tests
-    # that would catch regressions. Flip to always-on in feature 003 (US1).
+    # Runs on every PR and every push to main now that US1 has real
+    # Compose UI tests worth gating on. The `skip-instrumented` label is
+    # an escape hatch for PRs that touch nothing the emulator could catch
+    # (docs, CI tweaks) and want faster feedback.
     if: |
       github.event_name == 'push' ||
       (github.event_name == 'pull_request' &&
-       contains(github.event.pull_request.labels.*.name, 'run-instrumented'))
+       !contains(github.event.pull_request.labels.*.name, 'skip-instrumented'))
 
     steps:
       - name: Checkout
