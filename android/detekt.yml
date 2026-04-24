@@ -1,0 +1,47 @@
+# PriceGrab detekt configuration.
+#
+# We start from detekt's default rule set (buildUponDefaultConfig = true in
+# app/build.gradle.kts) and override only what the project explicitly
+# disagrees with. Keep this file small; add rules here only with a written
+# rationale in the commit message.
+
+build:
+  maxIssues: 0
+
+complexity:
+  LongMethod:
+    threshold: 60 # ViewModels can legitimately grow a bit.
+
+style:
+  MagicNumber:
+    # Color / theme constants are declared as top-level `val`s initialized
+    # with hex literals (0xFFxxxxxx). They are the textbook "named constant"
+    # the rule normally recommends; flagging each literal on top of that is
+    # noise.
+    ignorePropertyDeclaration: true
+    ignoreCompanionObjectPropertyDeclaration: true
+    ignoreAnnotated:
+      - 'Preview'
+    ignoreNumbers:
+      - '-1'
+      - '0'
+      - '1'
+      - '2'
+      - '100'
+  MaxLineLength:
+    maxLineLength: 120
+  ReturnCount:
+    max: 4
+  FunctionOnlyReturningConstant:
+    active: false # Unavoidable with Compose @Preview host functions.
+  UnusedPrivateMember:
+    # @Preview composables are private on purpose (tooling-only entry points);
+    # detekt cannot see that they are used by Android Studio's preview pane.
+    ignoreAnnotated:
+      - 'Preview'
+
+naming:
+  FunctionNaming:
+    functionPattern: '[a-zA-Z][a-zA-Z0-9]*'
+    # Composables are PascalCase by convention; detekt's default camelCase
+    # rule flags them. This pattern accepts both.

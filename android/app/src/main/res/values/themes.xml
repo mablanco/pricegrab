@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+      Bridging XML theme for the manifest. The actual UI is styled with
+      MaterialTheme from Jetpack Compose; this XML theme only controls
+      the window chrome the system reads before Compose takes over.
+    -->
+    <style name="Theme.PriceGrab" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowBackground">@android:color/white</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+    </style>
+</resources>
