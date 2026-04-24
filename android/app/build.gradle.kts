@@ -125,6 +125,7 @@ dependencies {
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
+    implementation(libs.androidx.compose.material.icons.core)
 
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
@@ -149,25 +150,23 @@ jacoco {
 }
 
 // Aggregated JaCoCo report over the unit-test task.
-// The 90 % coverage gate on core/calc/** is enforced once that package exists
-// (see specs/001-unit-price-comparison/tasks.md, Phase 2).
+val jacocoReportFileFilter = listOf(
+    "**/R.class",
+    "**/R\$*.class",
+    "**/BuildConfig.*",
+    "**/Manifest*.*",
+    "android/**/*.*",
+    "**/*\$Lambda\$*.*",
+    "**/*\$inlined\$*.*",
+    "**/ui/theme/**",
+)
+
 tasks.register<JacocoReport>("jacocoTestReport") {
     dependsOn("testDebugUnitTest")
 
-    val fileFilter = listOf(
-        "**/R.class",
-        "**/R\$*.class",
-        "**/BuildConfig.*",
-        "**/Manifest*.*",
-        "android/**/*.*",
-        "**/*\$Lambda\$*.*",
-        "**/*\$inlined\$*.*",
-        "**/ui/theme/**",
-    )
-
     classDirectories.setFrom(
         fileTree("${layout.buildDirectory.get()}/tmp/kotlin-classes/debug") {
-            exclude(fileFilter)
+            exclude(jacocoReportFileFilter)
         },
     )
     sourceDirectories.setFrom(files("src/main/kotlin"))
@@ -181,4 +180,44 @@ tasks.register<JacocoReport>("jacocoTestReport") {
         xml.required.set(true)
         html.required.set(true)
     }
+}
+
+// Enforce Constitution V: the core calculation package keeps >= 90 % line
+// coverage under unit tests. Scoped narrowly so UI code (tested via
+// instrumented tests) does not dilute the gate.
+tasks.register<JacocoCoverageVerification>("jacocoCoreCoverageVerification") {
+    dependsOn("jacocoTestReport")
+
+    classDirectories.setFrom(
+        fileTree("${layout.buildDirectory.get()}/tmp/kotlin-classes/debug") {
+            include("com/mablanco/pricegrab/core/calc/**")
+            exclude(jacocoReportFileFilter)
+        },
+    )
+    sourceDirectories.setFrom(files("src/main/kotlin"))
+    executionData.setFrom(
+        fileTree(layout.buildDirectory.get()) {
+            include("jacoco/testDebugUnitTest.exec")
+        },
+    )
+
+    violationRules {
+        rule {
+            element = "BUNDLE"
+            limit {
+                counter = "LINE"
+                value = "COVEREDRATIO"
+                minimum = "0.90".toBigDecimal()
+            }
+            limit {
+                counter = "BRANCH"
+                value = "COVEREDRATIO"
+                minimum = "0.85".toBigDecimal()
+            }
+        }
+    }
+}
+
+tasks.named("check").configure {
+    dependsOn("jacocoCoreCoverageVerification")
 }
