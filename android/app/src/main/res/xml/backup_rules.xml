@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  PriceGrab has no persisted data in v1, so there is nothing to back up.
+  Keep an empty ruleset so targetSdk 31+ defaults are explicit.
+-->
+<full-backup-content>
+</full-backup-content>

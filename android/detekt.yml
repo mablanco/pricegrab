@@ -1,0 +1,34 @@
+# PriceGrab detekt configuration.
+#
+# We start from detekt's default rule set (buildUponDefaultConfig = true)
+# and override only what the project explicitly disagrees with. Keep this
+# file small; add rules here only with a written rationale in the commit
+# message.
+
+build:
+  maxIssues: 0
+
+complexity:
+  LongMethod:
+    threshold: 60 # ViewModels can legitimately grow a bit.
+
+style:
+  MagicNumber:
+    ignoreNumbers:
+      - '-1'
+      - '0'
+      - '1'
+      - '2'
+      - '100'
+  MaxLineLength:
+    maxLineLength: 120
+  ReturnCount:
+    max: 4
+  FunctionOnlyReturningConstant:
+    active: false # Unavoidable with Compose @Preview host functions.
+
+naming:
+  FunctionNaming:
+    functionPattern: '[a-zA-Z][a-zA-Z0-9]*'
+    # Composables are PascalCase by convention; detekt's default camelCase
+    # rule flags them. This pattern accepts both.
