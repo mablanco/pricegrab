@@ -24,4 +24,8 @@
     <string name="result_a_wins">Offer A is cheaper per unit</string>
     <string name="result_b_wins">Offer B is cheaper per unit</string>
     <string name="result_tie">Both offers cost the same per unit</string>
+
+    <!-- Savings line. %1$s = absolute per-unit delta, %2$s = percent saved.
+         %% renders a literal `%` sign in the result. -->
+    <string name="savings_template">Saves %1$s per unit (%2$s%% less)</string>
 </resources>

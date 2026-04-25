@@ -131,17 +131,17 @@ TalkBack announces the savings phrase.
 
 ### Tests for User Story 2 (write first, watch them fail)
 
-- [ ] T044 [P] [US2] Extend `CompareScreenIdentifyWinnerTest.kt` (or add `CompareScreenSavingsTest.kt`) to assert the absolute and percent savings text is visible and announced for a known-winner scenario (2.50/500 vs 4.00/1000 → 0.001 per unit, 20%).
-- [ ] T045 [P] [US2] Add an instrumented test asserting that when one offer is free and the other is not, the screen shows a `100%` savings and a `Δ = (other unit price)` text.
-- [ ] T046 [P] [US2] Add a unit test on `CompareUiState` mapping (or on a small `ResultPresenter`) asserting the locale-specific rendering of the percentage and the per-unit delta.
+- [x] T044 [P] [US2] Added `CompareScreenSavingsTest.bWinsShowsAbsoluteAndPercentSavings` covering 2.50/500 vs 4.00/1000 → "0.001 per unit, 20%". The polite live region is verified by `CompareScreenAccessibilityTest.resultPaneAnnouncesHeadlineAndSavings`.
+- [x] T045 [P] [US2] Added `CompareScreenSavingsTest.freeOfferShowsHundredPercentSavings` (0/100 vs 5/100 → 0.05 per unit, 100% less) plus `tieHidesSavingsRow` to lock in the tie behavior.
+- [x] T046 [P] [US2] Added `ResultPresenterTest` with happy paths, tie/null elision, half-up percent rounding, very small percent edge case and an `es-ES` locale assertion (comma decimal separator).
 
 ### Implementation for User Story 2
 
-- [ ] T047 [US2] Extract a small pure-Kotlin `android/app/src/main/kotlin/com/mablanco/pricegrab/ui/compare/ResultPresenter.kt` that turns a `ComparisonOutcome` + `Locale` into displayable strings (winner headline, absolute savings, percent savings). Unit-tested under `android/app/src/test/kotlin/...ResultPresenterTest.kt`.
-- [ ] T048 [US2] Update `CompareScreen.kt` to render the savings row below the winner headline for `AWins` / `BWins`; hide the row for `Tie`; keep the existing non-color cue.
-- [ ] T049 [US2] Update the polite live-region `contentDescription` to include "saves X per unit, Y% less" in both locales.
-- [ ] T050 [US2] Add new strings in `values/strings.xml` and `values-es/strings.xml`: savings line template, per-unit-delta format, percent-format, tie message reused from US1.
-- [ ] T051 [US2] Run `./gradlew :app:connectedDebugAndroidTest` and confirm all T031–T046 pass.
+- [x] T047 [US2] Added `android/app/src/main/kotlin/com/mablanco/pricegrab/ui/compare/ResultPresenter.kt` (pure-Kotlin) returning `SavingsPresentation(perUnitDelta, percentDelta)` ready for a `<string>` template; unit-tested under `android/app/src/test/kotlin/com/mablanco/pricegrab/ui/compare/ResultPresenterTest.kt`. The headline mapping stays inside `CompareScreen.kt` so the presenter remains Android-resource-free.
+- [x] T048 [US2] `ResultCard` in `CompareScreen.kt` now stacks the headline and a body-medium savings line in a `Column`; the savings line is omitted on tie / no outcome.
+- [x] T049 [US2] The result card's polite live-region content description now reads `"<headline>. <savings line>"` in both locales (the savings template is provided by the localized string resource).
+- [x] T050 [US2] Added `savings_template` to `values/strings.xml` (en) and `values-es/strings.xml` with the canonical "Saves X per unit (Y% less)" / "Ahorras X por unidad (Y% menos)" wording.
+- [ ] T051 [US2] Pending: run `./gradlew :app:connectedDebugAndroidTest` on device. Locally we don't have an emulator; the `instrumented-tests` job in the PR's CI run is the proxy for this task and must be green before merge.
 
 **Checkpoint**: US1 + US2 both work end-to-end; spec's `SC-001 … SC-007`
 measurable criteria should now be demonstrable on device.
