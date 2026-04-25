@@ -77,7 +77,7 @@ For every public release:
    - `versionCode` — strictly increasing integer (1, 2, 3, …).
    - `versionName` — semver string visible to users (`0.1.0`).
 2. **Add a changelog** for the new `versionCode` under
-   [`android/fastlane/metadata/android/en-US/changelogs/<versionCode>.txt`](../android/fastlane/metadata/android/en-US/changelogs)
+   [`fastlane/metadata/android/en-US/changelogs/<versionCode>.txt`](../fastlane/metadata/android/en-US/changelogs)
    and the matching `es-ES/changelogs/<versionCode>.txt`. Keep each
    under **500 characters**; F-Droid truncates beyond that.
 3. **Open a release PR** with the version + changelog edits. Wait for
@@ -122,10 +122,12 @@ is:
 
 ## 5. F-Droid
 
-F-Droid submission is intentionally deferred until v0.1.0 has shipped on
-GitHub Releases and at least one screenshot set is in
-[`android/fastlane/metadata/android/{en-US,es-ES}/images/phoneScreenshots/`](../android/fastlane/metadata/android/en-US/images/phoneScreenshots).
-The build recipe will live in the F-Droid `fdroiddata` repo at
-`metadata/com.mablanco.pricegrab.yml`; the metadata files in this repo
-are already in the layout F-Droid expects, so the recipe will not need
-to duplicate them.
+The submission playbook lives in its own document:
+[`docs/fdroid.md`](./fdroid.md). It contains the certificate
+fingerprint, the ready-to-copy `metadata/com.mablanco.pricegrab.yml`
+recipe, and the GitLab merge-request workflow. From the release
+side, the only ongoing obligation is to keep
+[`fastlane/metadata/android/{en-US,es-ES}/changelogs/<versionCode>.txt`](../fastlane/metadata/android/en-US/changelogs)
+up to date and to **never** rotate the upstream signing key without
+coordinating an `AllowedAPKSigningKeys` update with F-Droid first
+(the buildserver will reject any APK signed by an unlisted key).
