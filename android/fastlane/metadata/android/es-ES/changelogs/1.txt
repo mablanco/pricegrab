@@ -1,0 +1,7 @@
+Primera versión pública.
+
+• Compara dos ofertas (precio, cantidad) y descubre cuál es más barata por unidad.
+• Calcula el ahorro absoluto por unidad y el porcentaje de descuento.
+• Interfaz Material Design 3 con live region accesible y soporte de rotación.
+• Español e inglés con separadores decimales según el idioma.
+• Totalmente sin conexión, sin trackers.

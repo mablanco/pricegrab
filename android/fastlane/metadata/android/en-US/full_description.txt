@@ -1,0 +1,23 @@
+PriceGrab answers one supermarket question: <i>which of these two products is cheaper per unit?</i>
+
+Type the price and quantity of offer A and offer B and the app instantly tells you which is the better deal, by how much you save per unit, and how big the relative discount is.
+
+<b>Designed for the aisle, not for the lab</b>
+• Material Design 3 with full dynamic-color theming on Android 12+ and a hand-tuned WCAG-AA palette on older devices.
+• Locale-aware decimal input: comma in Spanish, dot in English. No more "is the period a thousands separator?" surprises.
+• Inputs and result survive screen rotation and language changes.
+
+<b>Accessibility-first</b>
+• Every field has a localized content description that TalkBack reads.
+• The result card is a polite live region: as soon as both offers parse, the screen reader announces who wins and how much you save.
+• Non-color cue (a check icon) accompanies the winning offer so the design works in grayscale or for color-vision-deficient users.
+
+<b>Privacy by design</b>
+• 100% offline. The app declares no INTERNET permission.
+• No analytics, no tracking, no ads, no accounts.
+• No data ever leaves the device.
+
+<b>Open source</b>
+• MIT licensed.
+• Reproducible Android build, no proprietary dependencies — F-Droid friendly.
+• Source code: https://github.com/mablanco/pricegrab

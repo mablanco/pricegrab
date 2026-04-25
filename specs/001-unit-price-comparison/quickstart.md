@@ -4,10 +4,6 @@ How to get the Android app running locally, how to run the test suite, and
 how to produce a signed release APK. This file will remain useful beyond
 feature 001 as the project quickstart.
 
-> **Note**: the `android/` directory does not exist yet. It will be created
-> as part of `/speckit.tasks` → `/speckit.implement`. This document describes
-> the intended developer workflow once the scaffolding is in place.
-
 ## 1. Prerequisites
 
 - **JDK 17** (Temurin recommended). Verify: `java -version`.
@@ -91,54 +87,62 @@ cd android
 
 ## 6. Produce a signed release APK (locally)
 
-> **Do not commit your keystore.** Both `.jks`/`.keystore` and
-> `keystore.properties` are in `.gitignore`.
+> **Do not commit your keystore.** `*.jks` and `*.keystore` are in
+> `.gitignore`. Keep the file outside the repo (a private password
+> manager / vault is the right place).
 
-Create `android/keystore.properties` locally:
-
-```properties
-storeFile=../keystore/pricegrab.jks
-storePassword=...
-keyAlias=pricegrab
-keyPassword=...
-```
-
-Then:
+The Gradle release `signingConfig` reads four environment variables —
+exactly the same names the CI job uses — so a local signed build is just:
 
 ```bash
+export PRICEGRAB_KEYSTORE=/absolute/path/to/pricegrab-release.jks
+export PRICEGRAB_KEYSTORE_PASSWORD=...
+export PRICEGRAB_KEY_ALIAS=pricegrab
+export PRICEGRAB_KEY_PASSWORD=...
+
 cd android
-./gradlew assembleRelease
+./gradlew :app:assembleRelease
 ```
 
-The APK is written to `android/app/build/outputs/apk/release/app-release.apk`.
+If `PRICEGRAB_KEYSTORE` is unset, `:app:assembleRelease` still builds an
+unsigned APK; this is intentional so contributors can verify the release
+build pipeline without owning the production key.
+
+The APK is written to `android/app/build/outputs/apk/release/`.
 
 ## 7. Release to GitHub Releases (via CI)
 
 Production releases are cut automatically by
-`.github/workflows/android-ci.yml` on tag push:
+`.github/workflows/android-ci.yml` on tag push. The full step-by-step
+playbook (keystore generation, GitHub secret setup, version bump,
+tagging, recovery) lives in [`docs/release.md`](../../docs/release.md).
+The short version, once secrets are configured, is:
 
 ```bash
 # On main, after a release-worthy merge:
-git tag -s v1.0.0 -m "Release 1.0.0"
-git push origin v1.0.0
+git tag -s v0.1.0 -m "Release 0.1.0"
+git push origin v0.1.0
 ```
 
-The workflow signs the APK with the keystore stored in GitHub Actions
-secrets (`SIGNING_KEYSTORE_BASE64`, `SIGNING_KEYSTORE_PASSWORD`,
-`SIGNING_KEY_ALIAS`, `SIGNING_KEY_PASSWORD`) and attaches it to the
-auto-created GitHub Release.
+The `Signed release APK` job decodes `SIGNING_KEYSTORE_BASE64` from
+GitHub Actions secrets, exports it as `PRICEGRAB_KEYSTORE`, signs the
+APK with the matching `SIGNING_KEYSTORE_PASSWORD`, `SIGNING_KEY_ALIAS`,
+and `SIGNING_KEY_PASSWORD`, and attaches the result to the auto-created
+GitHub Release.
 
 ## 8. F-Droid
 
-Submission to F-Droid is intentionally deferred to after v1.0.0 ships on
-GitHub Releases. When that time comes, the required artifacts are:
+The repo already ships the layout F-Droid expects under
+[`android/fastlane/metadata/android/{en-US,es-ES}/`](../../android/fastlane/metadata/android/):
+title, short description, full description, and per-`versionCode`
+changelogs. Phone screenshots still need to be captured on a real or
+emulated device — see
+[`android/fastlane/metadata/android/en-US/images/phoneScreenshots/README.md`](../../android/fastlane/metadata/android/en-US/images/phoneScreenshots/README.md).
 
-- `fastlane/metadata/android/{en-US,es-ES}/` with title, short description,
-  full description, and per-release changelogs.
-- An `fdroiddata` build recipe at
-  `metadata/com.mablanco.pricegrab.yml` in the F-Droid data repo.
-
-Both will land as their own feature spec.
+Actual submission to F-Droid is deferred until after v0.1.0 ships on
+GitHub Releases. When that time comes, the missing artifact is the
+`fdroiddata` build recipe at `metadata/com.mablanco.pricegrab.yml` in
+the F-Droid data repo; that work will land as its own feature spec.
 
 ## 9. Troubleshooting
 

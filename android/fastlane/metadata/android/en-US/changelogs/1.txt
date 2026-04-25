@@ -1,0 +1,7 @@
+First public release.
+
+• Compare two (price, quantity) offers and see which one is cheaper per unit.
+• See the absolute per-unit savings and the relative percent.
+• Material Design 3 UI with TalkBack-friendly live region and rotation support.
+• Spanish and English with locale-aware decimal separators.
+• Fully offline, no tracking.

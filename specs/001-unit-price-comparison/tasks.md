@@ -111,7 +111,7 @@ device language to Spanish and confirm the UI and decimal separator follow.
 - [ ] T040 [US1] Extend `android/app/src/main/res/values/strings.xml` and `android/app/src/main/res/values-es/strings.xml` with every user-visible string for US1 (field labels, hints, errors, winner messages, tie message, accessibility descriptions).
 - [ ] T041 [US1] Wire `CompareScreen` into `PriceGrabApp.kt` behind the theme; remove the placeholder message.
 - [ ] T042 [US1] Run `./gradlew :app:connectedDebugAndroidTest` locally on an API 34 emulator and ensure all US1 instrumented tests are green. Remove the Phase 1 instrumented-tests gate by deleting the `run-instrumented` label check in `.github/workflows/android-ci.yml`.
-- [ ] T043 [US1] Update `README.md` screenshot block (text-only for now, actual screenshot added in a future polish PR) noting that the MVP is available in the repo.
+- [x] T043 [US1] `README.md` rewritten in PR D (`chore/005-release-polish`): status badge moved to *pre-release*, "Project status" sections updated, a "How to build" section added pointing at `quickstart.md`, and the distribution section now links to the fastlane metadata. Real screenshots remain a follow-up (T054).
 
 **Checkpoint**: MVP is demo-able. US1 passes independently of US2. CI green, instrumented tests green, coverage gate intact.
 
@@ -153,14 +153,14 @@ measurable criteria should now be demonstrable on device.
 **Purpose**: improvements that affect multiple stories or cross the Android
 boundary (F-Droid, release, docs).
 
-- [ ] T052 [P] Add `fastlane/metadata/android/en-US/title.txt`, `short_description.txt`, `full_description.txt` plus a first `changelogs/1.txt`.
-- [ ] T053 [P] Add `fastlane/metadata/android/es-ES/` mirror of T052.
-- [ ] T054 [P] Add at least one real screenshot under `fastlane/metadata/android/{en-US,es-ES}/images/phoneScreenshots/` (captured via instrumented test or manually).
-- [ ] T055 Measure cold start on a Pixel 4a-class device; if it exceeds the 2 s budget from `plan.md`, file a follow-up issue and tune `MainActivity`.
-- [ ] T056 Measure release APK size; confirm ≤ 5 MB. If not, enable resource shrinking verification and investigate.
-- [ ] T057 Create a keystore for the release, upload the base64-encoded file as the `SIGNING_KEYSTORE_BASE64` GitHub secret, plus `SIGNING_KEYSTORE_PASSWORD`, `SIGNING_KEY_ALIAS`, `SIGNING_KEY_PASSWORD`; push a `v0.1.0` tag and verify the `release` CI job produces a signed APK on the GitHub Release.
-- [ ] T058 Walk `specs/001-unit-price-comparison/quickstart.md` end-to-end on a clean clone; fix any drift.
-- [ ] T059 Run `./gradlew :app:lint :app:detekt` one last time with zero new findings; baseline any legitimate legacy warnings in `app/lint-baseline.xml` if needed.
+- [x] T052 [P] Added `android/fastlane/metadata/android/en-US/{title,short_description,full_description}.txt` plus `changelogs/1.txt` (initial release notes).
+- [x] T053 [P] Added the `android/fastlane/metadata/android/es-ES/` mirror with translated title, short and full descriptions, and the matching `changelogs/1.txt`. Both locales respect F-Droid's 50/80/4000/500-character limits.
+- [ ] T054 [P] **Deferred — needs a device.** Captured screenshots (≥ 2 per locale) still missing under `android/fastlane/metadata/android/{en-US,es-ES}/images/phoneScreenshots/`. Each directory has a README explaining the capture command (`adb shell screencap`). Track as a GitHub issue once the first emulator is available locally.
+- [ ] T055 **Deferred — needs a device.** Cold-start measurement on a Pixel 4a-class device. The budget (2 s) lives in `plan.md`; the measurement should be repeated post-keystore so the release APK (R8-shrunk) is what's profiled.
+- [ ] T056 **Deferred — needs a device-built release APK.** APK-size budget (≤ 5 MB) for the *release* APK with R8 + resource shrinking. The CI `build` job currently only assembles the *debug* APK; `assembleRelease` only runs on tag push, so the first measurement happens at T057.
+- [ ] T057 **Deferred — Marco-only.** Generate the upload keystore, upload `SIGNING_KEYSTORE_BASE64` / `SIGNING_KEYSTORE_PASSWORD` / `SIGNING_KEY_ALIAS` / `SIGNING_KEY_PASSWORD` as GitHub secrets, push the `v0.1.0` tag, verify the `release` CI job attaches the signed APK to the GitHub Release. Step-by-step playbook in [`docs/release.md`](../../docs/release.md). The agent cannot perform this step (it touches private signing material).
+- [x] T058 Walked `quickstart.md` end-to-end against the actual `android/` tree; removed the "directory does not exist yet" disclaimer, replaced the obsolete `keystore.properties` flow with the `PRICEGRAB_*` env-var flow that matches `app/build.gradle.kts`, and updated the F-Droid section to point at the metadata that now lives in the repo.
+- [ ] T059 **Deferred — Marco-only / pre-release gate.** A final `./gradlew :app:lint :app:detekt` with zero new findings. Both run on every CI build, so this task is currently held green by CI; the explicit "one last time" pass should happen on a clean clone once T057 is unblocked, with any legitimate legacy warning baselined in `app/lint-baseline.xml`.
 
 ---
 
@@ -211,10 +211,16 @@ tests CI job to always-on.
 
 Covers **Phase 4**. UI-only extension showing absolute + percent savings.
 
-### (optional) PR D — `chore/005-release-polish`
+### PR D — `chore/005-release-polish`
 
-Covers **Phase 5**. Fastlane metadata for F-Droid, first signed release via
-CI tag push, performance and APK-size verification.
+Covers the writable slice of **Phase 5**: F-Droid fastlane metadata in
+both locales (`title`, `short_description`, `full_description`,
+`changelogs/1.txt`), the README rewrite from T043, the `quickstart.md`
+drift cleanup from T058, and the keystore + tag-push playbook in
+`docs/release.md`. The remaining tasks (T054 screenshots, T055 cold
+start, T056 APK size, T057 keystore + secrets + first signed release,
+T059 final lint/detekt sweep) are device- or Marco-bound and ship as
+follow-up issues, not as part of this PR.
 
 ### Notes
 

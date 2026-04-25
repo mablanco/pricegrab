@@ -1,0 +1,1 @@
+Compara dos precios del súper y descubre cuál sale más barato por unidad.
