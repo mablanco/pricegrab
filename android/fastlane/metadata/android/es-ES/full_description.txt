@@ -1,0 +1,23 @@
+PriceGrab resuelve una pregunta muy concreta del supermercado: <i>¿cuál de estos dos productos sale más barato por unidad?</i>
+
+Escribe el precio y la cantidad de la oferta A y de la oferta B y la app te dice al instante cuál es la mejor compra, cuánto te ahorras por unidad y qué porcentaje de descuento supone.
+
+<b>Pensada para el pasillo, no para el laboratorio</b>
+• Material Design 3 con color dinámico completo en Android 12+ y una paleta WCAG-AA hecha a mano para dispositivos anteriores.
+• Entrada de decimales según el idioma: coma en español, punto en inglés. Sin sorpresas con el separador de miles.
+• Lo escrito y el resultado sobreviven a rotaciones y cambios de idioma.
+
+<b>Accesible desde el primer minuto</b>
+• Cada campo tiene una descripción accesible localizada que TalkBack lee.
+• La tarjeta de resultado es una <i>live region</i> educada: en cuanto las dos ofertas son válidas, el lector de pantalla anuncia quién gana y cuánto te ahorras.
+• Un icono de marca de verificación acompaña a la oferta ganadora para que el diseño funcione también en escala de grises o si tienes problemas para distinguir colores.
+
+<b>Privacidad por diseño</b>
+• 100% sin conexión. La app no declara permiso de INTERNET.
+• Sin analítica, sin trackers, sin publicidad, sin cuentas.
+• Tus datos no salen del dispositivo.
+
+<b>Código abierto</b>
+• Licencia MIT.
+• Build de Android reproducible y sin dependencias propietarias — compatible con F-Droid.
+• Código fuente: https://github.com/mablanco/pricegrab

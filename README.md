@@ -5,7 +5,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 [![Platform: Android](https://img.shields.io/badge/platform-Android-3DDC84.svg)](https://developer.android.com/)
-[![Status](https://img.shields.io/badge/status-in%20development-orange.svg)](#estado-del-proyecto--project-status)
+[![Status](https://img.shields.io/badge/status-pre--release-blue.svg)](#estado-del-proyecto)
 
 ---
 
@@ -29,15 +29,31 @@ Hace años desarrollé una versión preliminar de esta aplicación. Este proyect
 
 ### Estado del proyecto
 
-En fase inicial de especificación con [Spec Kit](https://github.com/github/spec-kit). Los principios del producto están formalizados en [`.specify/memory/constitution.md`](./.specify/memory/constitution.md) (versión 1.0.1).
+Pre-release (camino a `v0.1.0`). La primera feature ya está implementada en `android/`: comparación de dos ofertas, cálculo del ahorro absoluto y porcentual, soporte completo de TalkBack, rotación e idioma. Lo que queda antes del primer release es generar un keystore, capturar screenshots y publicar el APK firmado en GitHub Releases (ver [`docs/release.md`](./docs/release.md)).
+
+- Especificación, plan y tareas: [`specs/001-unit-price-comparison/`](./specs/001-unit-price-comparison/).
+- Principios del producto: [`.specify/memory/constitution.md`](./.specify/memory/constitution.md) (versión 1.0.1).
+
+### Cómo construirla
+
+Requisitos: JDK 17 y, para correr la app, Android Studio Ladybug (2024.2.1) o el SDK por línea de comandos para API 35.
+
+```bash
+git clone git@github.com:mablanco/pricegrab.git
+cd pricegrab/android
+./gradlew :app:assembleDebug      # compila la versión de debug
+./gradlew :app:test :app:detekt   # tests unitarios + análisis estático
+```
+
+Guía completa en [`specs/001-unit-price-comparison/quickstart.md`](./specs/001-unit-price-comparison/quickstart.md).
 
 ### Distribución
 
-Los releases se publican como APK firmados en [GitHub Releases](../../releases). **No se publicará en Google Play.** La inclusión en [F-Droid](https://f-droid.org/) está bajo evaluación; el proyecto se mantiene compatible con sus requisitos (toolchain 100% open source, builds reproducibles, sin dependencias propietarias).
+Los releases se publican como APK firmados en [GitHub Releases](../../releases). **No se publicará en Google Play.** El proyecto se mantiene compatible con [F-Droid](https://f-droid.org/) (toolchain 100% open source, sin dependencias propietarias) y los textos de tienda viven en [`android/fastlane/metadata/android/`](./android/fastlane/metadata/android/) en los dos idiomas.
 
 ### Cómo contribuir
 
-El proyecto sigue un flujo **Spec-Driven Development**: toda feature nueva pasa por `/speckit.specify` → `/speckit.plan` → `/speckit.tasks` → `/speckit.implement`. Más detalles cuando haya una primera especificación publicada en `specs/`.
+El proyecto sigue un flujo **Spec-Driven Development**: toda feature nueva pasa por `/speckit.specify` → `/speckit.plan` → `/speckit.tasks` → `/speckit.implement`. Las reglas operativas para humanos y agentes IA están en [`AGENTS.md`](./AGENTS.md) y [`.cursor/rules/project-conventions.mdc`](./.cursor/rules/project-conventions.mdc).
 
 ### Licencia
 
@@ -65,15 +81,31 @@ Years ago I built a preliminary version of this application. This project is the
 
 ### Project status
 
-Early specification phase using [Spec Kit](https://github.com/github/spec-kit). Product principles are formalized in [`.specify/memory/constitution.md`](./.specify/memory/constitution.md) (version 1.0.1).
+Pre-release (heading for `v0.1.0`). The first feature is already implemented under `android/`: two-offer comparison, absolute and percent savings, full TalkBack support, rotation and language preservation. What's left before the first release is generating a keystore, capturing screenshots, and publishing the signed APK to GitHub Releases (see [`docs/release.md`](./docs/release.md)).
+
+- Spec, plan and tasks: [`specs/001-unit-price-comparison/`](./specs/001-unit-price-comparison/).
+- Product principles: [`.specify/memory/constitution.md`](./.specify/memory/constitution.md) (version 1.0.1).
+
+### How to build
+
+Prerequisites: JDK 17 and, to run the app, Android Studio Ladybug (2024.2.1) or the command-line SDK for API 35.
+
+```bash
+git clone git@github.com:mablanco/pricegrab.git
+cd pricegrab/android
+./gradlew :app:assembleDebug      # build the debug APK
+./gradlew :app:test :app:detekt   # unit tests + static analysis
+```
+
+Full guide in [`specs/001-unit-price-comparison/quickstart.md`](./specs/001-unit-price-comparison/quickstart.md).
 
 ### Distribution
 
-Releases are published as signed APKs on [GitHub Releases](../../releases). **Google Play is not a target.** Inclusion in [F-Droid](https://f-droid.org/) is under evaluation; the project stays compatible with its requirements (fully open-source toolchain, reproducible builds, no proprietary dependencies).
+Releases are published as signed APKs on [GitHub Releases](../../releases). **Google Play is not a target.** The project stays compatible with [F-Droid](https://f-droid.org/) (fully open-source toolchain, no proprietary dependencies) and the store metadata lives in [`android/fastlane/metadata/android/`](./android/fastlane/metadata/android/) in both languages.
 
 ### Contributing
 
-The project follows a **Spec-Driven Development** workflow: every new feature goes through `/speckit.specify` → `/speckit.plan` → `/speckit.tasks` → `/speckit.implement`. More details once a first spec is published under `specs/`.
+The project follows a **Spec-Driven Development** workflow: every new feature goes through `/speckit.specify` → `/speckit.plan` → `/speckit.tasks` → `/speckit.implement`. Operating rules for humans and AI agents live in [`AGENTS.md`](./AGENTS.md) and [`.cursor/rules/project-conventions.mdc`](./.cursor/rules/project-conventions.mdc).
 
 ### License
 

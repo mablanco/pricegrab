@@ -1,0 +1,1 @@
+Compare two supermarket prices and find the cheaper one per unit.
