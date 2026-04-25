@@ -28,8 +28,17 @@ keytool -genkeypair -v \
   -dname "CN=PriceGrab, O=Marco Antonio Blanco, C=ES"
 ```
 
-Choose long, distinct passwords for the **store** and the **key**. Save
-both in a password manager.
+Pick a long passphrase and save it in a password manager.
+
+> **PKCS12 only uses one password.** A keystore conceptually has two
+> passwords — the **store password**, which protects the file itself,
+> and the **key password**, which protects each individual entry inside.
+> The legacy JKS format allowed them to differ; PKCS12, the modern
+> default, encrypts the container and the keys with the same secret.
+> When `keytool` prompts twice, give the same value both times. We still
+> upload it as two separate GitHub secrets in §2 so that the Gradle
+> signing config keeps a clean separation if we ever migrate to a format
+> that supports two distinct passwords.
 
 > Keep the resulting `pricegrab-release.jks` outside the repo. The
 > repo's `.gitignore` already blocks `*.jks` and `*.keystore`, but the
@@ -46,12 +55,12 @@ base64 -w0 pricegrab-release.jks > pricegrab-release.jks.b64
 In **Settings → Secrets and variables → Actions → New repository
 secret**, create:
 
-| Secret name                    | Value                                                   |
-|--------------------------------|---------------------------------------------------------|
-| `SIGNING_KEYSTORE_BASE64`      | The contents of `pricegrab-release.jks.b64`.            |
-| `SIGNING_KEYSTORE_PASSWORD`    | The store password chosen in step 1.                    |
-| `SIGNING_KEY_ALIAS`            | `pricegrab` (or whatever alias was used in step 1).     |
-| `SIGNING_KEY_PASSWORD`         | The key password chosen in step 1.                      |
+| Secret name                    | Value                                                            |
+|--------------------------------|------------------------------------------------------------------|
+| `SIGNING_KEYSTORE_BASE64`      | The contents of `pricegrab-release.jks.b64`.                     |
+| `SIGNING_KEYSTORE_PASSWORD`    | The passphrase chosen in step 1.                                 |
+| `SIGNING_KEY_ALIAS`            | `pricegrab` (or whatever alias was used in step 1).              |
+| `SIGNING_KEY_PASSWORD`         | The same passphrase as `SIGNING_KEYSTORE_PASSWORD` (PKCS12).     |
 
 The CI job in `android-ci.yml` decodes `SIGNING_KEYSTORE_BASE64` to a
 temporary `release.jks` and exports `PRICEGRAB_KEYSTORE`,
