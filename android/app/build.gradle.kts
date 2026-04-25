@@ -14,8 +14,8 @@ android {
         applicationId = "com.mablanco.pricegrab"
         minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.targetSdk.get().toInt()
-        versionCode = 2
-        versionName = "0.1.1"
+        versionCode = 3
+        versionName = "0.1.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -52,6 +52,14 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
             )
+            // Required for F-Droid Reproducible Builds (Mode B in docs/fdroid.md).
+            // AGP >= 8.3 embeds the local git revision and project path in
+            // META-INF/version-control-info.textproto by default; that file would
+            // differ between our CI runner and F-Droid's build server even when
+            // the source tree is identical, breaking byte-for-byte verification.
+            // We disable the embed so the upstream-signed APK shipped on GitHub
+            // Releases is reproducible by F-Droid against our tagged source.
+            vcsInfo.include = false
             // F-Droid's build server strips the entire `signingConfigs { create("release") { … } }`
             // block before invoking gradle, because F-Droid signs releases with its own key. We
             // therefore must use `findByName` (returns null if absent) instead of `getByName`

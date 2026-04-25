@@ -1,0 +1,3 @@
+Preparación para reproducible builds en F-Droid:
+
+• Se desactiva el embedding del SHA del commit en el APK (`vcsInfo.include = false`) para que el servidor de build de F-Droid pueda reproducir byte a byte el APK firmado por el desarrollador y publicar el binario original sin firmarlo con su propia llave. Sin cambios visibles para el usuario.

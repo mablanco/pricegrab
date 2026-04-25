@@ -1,0 +1,3 @@
+F-Droid reproducible-builds preparation:
+
+• Disable embedding of the git revision in the APK (`vcsInfo.include = false`) so F-Droid's build server can match its rebuild byte-for-byte against the upstream-signed APK and publish the developer-signed binary directly. No user-visible behaviour changes.
