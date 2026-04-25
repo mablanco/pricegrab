@@ -22,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
@@ -32,11 +33,13 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.os.ConfigurationCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mablanco.pricegrab.R
 import com.mablanco.pricegrab.core.model.ComparisonOutcome
 import com.mablanco.pricegrab.ui.theme.PriceGrabTheme
+import java.util.Locale
 
 /**
  * US1 screen: enter two `(price, quantity)` offers and see which one is
@@ -186,14 +189,26 @@ private fun LabeledNumberField(
 
 @Composable
 private fun ResultCard(outcome: ComparisonOutcome?) {
-    val message = stringResource(outcome.headlineRes())
+    val configuration = LocalConfiguration.current
+    val locale = ConfigurationCompat.getLocales(configuration).get(0) ?: Locale.getDefault()
+
+    val headline = stringResource(outcome.headlineRes())
+    val savings = ResultPresenter.present(outcome, locale)
+    val savingsLine: String? = savings?.let {
+        stringResource(R.string.savings_template, it.perUnitDelta, it.percentDelta)
+    }
+    // Live-region announcement reads the headline first, then the savings
+    // detail. We keep them in a single content description so TalkBack speaks
+    // the full thought on every state change.
+    val a11ySummary = if (savingsLine != null) "$headline. $savingsLine" else headline
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .testTag(TEST_TAG_RESULT)
             .semantics {
                 liveRegion = LiveRegionMode.Polite
-                contentDescription = message
+                contentDescription = a11ySummary
             },
     ) {
         Row(
@@ -208,11 +223,20 @@ private fun ResultCard(outcome: ComparisonOutcome?) {
                     tint = MaterialTheme.colorScheme.primary,
                 )
             }
-            Text(
-                text = message,
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.testTag(TEST_TAG_RESULT_TEXT),
-            )
+            Column(verticalArrangement = Arrangement.spacedBy(RESULT_LINE_SPACING)) {
+                Text(
+                    text = headline,
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.testTag(TEST_TAG_RESULT_TEXT),
+                )
+                if (savingsLine != null) {
+                    Text(
+                        text = savingsLine,
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.testTag(TEST_TAG_RESULT_SAVINGS),
+                    )
+                }
+            }
         }
     }
 }
@@ -238,12 +262,14 @@ const val TEST_TAG_OFFER_A: String = "offerA"
 const val TEST_TAG_OFFER_B: String = "offerB"
 const val TEST_TAG_RESULT: String = "result"
 const val TEST_TAG_RESULT_TEXT: String = "result_text"
+const val TEST_TAG_RESULT_SAVINGS: String = "result_savings"
 
 // ---- Layout constants -------------------------------------------------------
 
 private val SCREEN_PADDING = 16.dp
 private val SECTION_SPACING = 16.dp
 private val FIELD_SPACING = 12.dp
+private val RESULT_LINE_SPACING = 4.dp
 
 // ---- Previews ---------------------------------------------------------------
 
@@ -261,7 +287,7 @@ private fun CompareScreenEmptyPreview() {
     }
 }
 
-@Preview(showBackground = true, name = "A wins")
+@Preview(showBackground = true, name = "A wins with savings")
 @Composable
 private fun CompareScreenAWinsPreview() {
     PriceGrabTheme {
@@ -272,8 +298,8 @@ private fun CompareScreenAWinsPreview() {
                 priceBRaw = "4.00",
                 quantityBRaw = "800",
                 outcome = ComparisonOutcome.AWins(
-                    perUnitDelta = java.math.BigDecimal("0.0"),
-                    percentDelta = java.math.BigDecimal("0"),
+                    perUnitDelta = java.math.BigDecimal("0.001"),
+                    percentDelta = java.math.BigDecimal("20"),
                 ),
             ),
             onPriceAChange = {},

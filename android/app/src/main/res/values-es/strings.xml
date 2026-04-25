@@ -19,4 +19,6 @@
     <string name="result_a_wins">La oferta A es más barata por unidad</string>
     <string name="result_b_wins">La oferta B es más barata por unidad</string>
     <string name="result_tie">Las dos ofertas cuestan lo mismo por unidad</string>
+
+    <string name="savings_template">Ahorras %1$s por unidad (%2$s%% menos)</string>
 </resources>

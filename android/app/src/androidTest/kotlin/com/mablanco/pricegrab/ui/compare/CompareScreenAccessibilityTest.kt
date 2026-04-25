@@ -34,13 +34,13 @@ class CompareScreenAccessibilityTest {
         val offerBName = ctx.getString(R.string.offer_b_title)
 
         composeRule.onNodeWithTag("offerA_price")
-            .assert(hasContentDescription(ctx.getString(R.string.cd_price_field, offerAName)))
+            .assert(hasContentDescriptionContaining(ctx.getString(R.string.cd_price_field, offerAName)))
         composeRule.onNodeWithTag("offerA_quantity")
-            .assert(hasContentDescription(ctx.getString(R.string.cd_quantity_field, offerAName)))
+            .assert(hasContentDescriptionContaining(ctx.getString(R.string.cd_quantity_field, offerAName)))
         composeRule.onNodeWithTag("offerB_price")
-            .assert(hasContentDescription(ctx.getString(R.string.cd_price_field, offerBName)))
+            .assert(hasContentDescriptionContaining(ctx.getString(R.string.cd_price_field, offerBName)))
         composeRule.onNodeWithTag("offerB_quantity")
-            .assert(hasContentDescription(ctx.getString(R.string.cd_quantity_field, offerBName)))
+            .assert(hasContentDescriptionContaining(ctx.getString(R.string.cd_quantity_field, offerBName)))
     }
 
     @Test
@@ -52,23 +52,17 @@ class CompareScreenAccessibilityTest {
     }
 
     @Test
-    fun resultPaneAnnouncesOutcomeViaContentDescription() {
+    fun resultPaneAnnouncesHeadlineAndSavings() {
         composeRule.onNodeWithTag("offerA_price").performTextInput("2.50")
         composeRule.onNodeWithTag("offerA_quantity").performTextInput("500")
         composeRule.onNodeWithTag("offerB_price").performTextInput("4.00")
         composeRule.onNodeWithTag("offerB_quantity").performTextInput("1000")
 
-        val expected = composeRule.activity.getString(R.string.result_b_wins)
-        composeRule.onNodeWithTag("result").assert(hasContentDescription(expected))
-    }
+        val ctx = composeRule.activity
+        val headline = ctx.getString(R.string.result_b_wins)
+        val savings = ctx.getString(R.string.savings_template, "0.001", "20")
 
-    private fun hasContentDescription(expected: String): SemanticsMatcher =
-        SemanticsMatcher("has content description '$expected'") { node ->
-            val config = node.config
-            if (!config.contains(SemanticsProperties.ContentDescription)) {
-                false
-            } else {
-                config[SemanticsProperties.ContentDescription].contains(expected)
-            }
-        }
+        composeRule.onNodeWithTag("result").assert(hasContentDescriptionContaining(headline))
+        composeRule.onNodeWithTag("result").assert(hasContentDescriptionContaining(savings))
+    }
 }
