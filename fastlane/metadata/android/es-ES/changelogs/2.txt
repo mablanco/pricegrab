@@ -1,0 +1,3 @@
+Compatibilidad con F-Droid en tiempo de build:
+
+• El bloque de firma del release se hace opcional para que el servidor de F-Droid (que elimina la firma propia y firma con su llave) pueda compilar PriceGrab desde código. Sin cambios en el comportamiento de la app.

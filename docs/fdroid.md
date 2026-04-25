@@ -80,17 +80,25 @@ Repo: https://github.com/mablanco/pricegrab.git
 Builds:
   - versionName: 0.1.0
     versionCode: 1
+    disable: signingConfigs.getByName("release") was unconditional and crashed F-Droid's build (which strips signingConfigs); fixed from v0.1.1 onwards.
     commit: v0.1.0
+    subdir: android/app
+    gradle:
+      - yes
+
+  - versionName: 0.1.1
+    versionCode: 2
+    commit: v0.1.1
     subdir: android/app
     gradle:
       - yes
 
 AllowedAPKSigningKeys: 70a9709ce5a4829668d9d50411b959bb90ad2e19d02e2069ad0ff3528181a9fb
 
-AutoUpdateMode: Version v%v
+AutoUpdateMode: Version
 UpdateCheckMode: Tags
-CurrentVersion: 0.1.0
-CurrentVersionCode: 1
+CurrentVersion: 0.1.1
+CurrentVersionCode: 2
 ```
 
 **Why these fields.**
@@ -98,23 +106,62 @@ CurrentVersionCode: 1
 - `subdir: android/app` — points to the directory that contains the
   application module's `build.gradle.kts`. F-Droid walks up to the
   Gradle root (`android/`, where `settings.gradle.kts` and `gradlew`
-  live) automatically.
+  live) automatically. Confirmed working against fdroidserver in MR
+  [!37136](https://gitlab.com/fdroid/fdroiddata/-/merge_requests/37136).
 - `gradle: [yes]` — uses the default release variant; we have no
   product flavours.
+- `disable:` on the v0.1.0 entry preserves the historical fact that
+  v0.1.0 was published upstream while making sure F-Droid's
+  buildserver doesn't keep re-attempting a known-broken build. New
+  installs from F-Droid start at v0.1.1.
 - `AllowedAPKSigningKeys` pinning is what lets users with the upstream
   GitHub APK keep updating from F-Droid without an uninstall.
-- `AutoUpdateMode: Version v%v` together with `UpdateCheckMode: Tags`
+- `AutoUpdateMode: Version` together with `UpdateCheckMode: Tags`
   means: every time a new `vX.Y.Z` tag lands in the upstream repo,
   fdroidserver picks it up automatically and adds a fresh `Builds`
-  entry — no manual MR per release.
+  entry — no manual MR per release. The schema only accepts `None`,
+  `Version`, or `Version +<suffix>`; older docs that mention the
+  `v%v` placeholder are obsolete.
 - The store metadata (title, descriptions, screenshots, changelogs)
   is **not** restated here. F-Droid auto-discovers it from
   `fastlane/metadata/android/{en-US,es-ES}/` at the repo root, which
   is exactly where this repo keeps it.
 
+## 4. F-Droid build-server gotchas the upstream code must respect
+
+The F-Droid buildserver applies *automatic, undocumented* patches to
+the source tree before invoking Gradle. Two of them have already
+bitten this project; future contributors must keep the upstream code
+resilient to both:
+
+1. **`signingConfigs { create("release") { … } }` is stripped.** Any
+   reference downstream (typically inside `buildTypes.release`) must
+   handle the case where the named signing config does not exist:
+
+   ```kotlin
+   val releaseSigningConfig = signingConfigs.findByName("release")
+   if (releaseSigningConfig?.storeFile != null) {
+       signingConfig = releaseSigningConfig
+   }
+   ```
+
+   Using `signingConfigs.getByName("release")` will throw on F-Droid
+   because the lookup happens after the strip.
+
+2. **`gradle/wrapper/gradle-wrapper.jar` is removed** and replaced by
+   F-Droid's own `gradlew-fdroid` wrapper, which downloads a fresh
+   gradle distribution per the `distributionUrl` in
+   `gradle-wrapper.properties`. Anything that hashes or executes the
+   committed `gradle-wrapper.jar` (custom CI checks, build-script
+   plugins) must be skippable when the file is absent.
+
+If either invariant ever has to be relaxed, document the reason and
+the workaround here so we never re-debug it from scratch.
+
 ### If `issuebot` complains about `subdir: android/app`
 
-Two fall-back layouts to try, in order:
+For now `android/app` works. If a future restructure breaks it, the
+fall-back layouts to try are, in order:
 
 1. `subdir: android` — run gradle from the gradle root and let it
    assemble all subprojects (we only have `:app`, so this is fine).
@@ -125,11 +172,13 @@ Two fall-back layouts to try, in order:
 Document whichever option ends up landing in `fdroiddata` so the next
 maintainer doesn't have to re-derive it.
 
-## 4. Submission workflow
+## 5. Submission workflow
 
 1. **Create a GitLab account** (free, required: F-Droid only accepts
    MRs through `gitlab.com/fdroid/fdroiddata`, not GitHub PRs or
-   email).
+   email). New accounts must complete identity verification before
+   any pipeline runs, otherwise the first push will look like it
+   succeeded but `issuebot` will never trigger.
 2. **Fork** [`fdroid/fdroiddata`](https://gitlab.com/fdroid/fdroiddata)
    into your personal GitLab namespace.
 3. **Create a branch** in the fork named after the package:
@@ -141,8 +190,9 @@ maintainer doesn't have to re-derive it.
 6. **Push** and **open a Merge Request** from the fork against
    `fdroid/fdroiddata`'s `master` branch.
 7. Wait for [`issuebot`](https://gitlab.com/fdroid/issuebot) to run
-   automated checks (lint, build attempt, signature checks). Iterate
-   on the YAML until it passes.
+   automated checks (`fdroid lint`, `fdroid rewritemeta`, `schema
+   validation`, `fdroid build`, `check apk`, …). Iterate on the YAML
+   and the upstream code until it passes.
 8. A human F-Droid maintainer reviews and merges. **First-time
    submissions can take days to weeks**; that is expected and not a
    sign anything is wrong.
@@ -153,7 +203,7 @@ CI, and the local Docker images are large and slow to set up. If a
 specific MR keeps failing CI for a non-obvious reason, that is when
 running the local toolchain pays off.
 
-## 5. Ongoing release-time obligations
+## 6. Ongoing release-time obligations
 
 After every new tag (`vX.Y.Z`) lands on `main`:
 
@@ -166,11 +216,11 @@ After every new tag (`vX.Y.Z`) lands on `main`:
 3. Verify `apksigner verify --print-certs` against the published APK
    and confirm the SHA-256 matches §2. If it does **not**, stop and
    open a coordination MR before the next F-Droid build cycle.
-4. Do nothing else. With `AutoUpdateMode: Version v%v` and
+4. Do nothing else. With `AutoUpdateMode: Version` and
    `UpdateCheckMode: Tags`, F-Droid's bot picks the release up
    automatically within ~24 hours.
 
-## 6. References
+## 7. References
 
 - [F-Droid Inclusion Policy](https://f-droid.org/docs/Inclusion_Policy/)
 - [Build Metadata Reference](https://f-droid.org/docs/Build_Metadata_Reference/)

@@ -1,0 +1,3 @@
+Build-time compatibility fix for F-Droid:
+
+• Make the release signing config optional at build time so F-Droid's build server, which strips signing blocks and signs with its own key, can build PriceGrab from source. No user-visible behaviour changes.

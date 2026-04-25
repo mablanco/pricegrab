@@ -14,8 +14,8 @@ android {
         applicationId = "com.mablanco.pricegrab"
         minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.targetSdk.get().toInt()
-        versionCode = 1
-        versionName = "0.1.0"
+        versionCode = 2
+        versionName = "0.1.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -52,11 +52,13 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
             )
-            // Attach the signing config only when the keystore environment
-            // variables are actually present. This keeps debug-only builds
-            // (local :app:assembleDebug) unaffected by the lack of a keystore.
-            val releaseSigningConfig = signingConfigs.getByName("release")
-            if (releaseSigningConfig.storeFile != null) {
+            // F-Droid's build server strips the entire `signingConfigs { create("release") { … } }`
+            // block before invoking gradle, because F-Droid signs releases with its own key. We
+            // therefore must use `findByName` (returns null if absent) instead of `getByName`
+            // (throws). The null-check on storeFile additionally protects local debug builds
+            // where the four PRICEGRAB_* env vars are not exported.
+            val releaseSigningConfig = signingConfigs.findByName("release")
+            if (releaseSigningConfig?.storeFile != null) {
                 signingConfig = releaseSigningConfig
             }
         }
