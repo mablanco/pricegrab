@@ -5,7 +5,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 [![Platform: Android](https://img.shields.io/badge/platform-Android-3DDC84.svg)](https://developer.android.com/)
-[![Status](https://img.shields.io/badge/status-pre--release-blue.svg)](#estado-del-proyecto)
+[![Latest release](https://img.shields.io/github/v/release/mablanco/pricegrab?color=3DDC84&label=release)](https://github.com/mablanco/pricegrab/releases/latest)
 
 ---
 
@@ -29,10 +29,12 @@ Hace años desarrollé una versión preliminar de esta aplicación. Este proyect
 
 ### Estado del proyecto
 
-Pre-release (camino a `v0.1.0`). La primera feature ya está implementada en `android/`: comparación de dos ofertas, cálculo del ahorro absoluto y porcentual, soporte completo de TalkBack, rotación e idioma. Lo que queda antes del primer release es generar un keystore, capturar screenshots y publicar el APK firmado en GitHub Releases (ver [`docs/release.md`](./docs/release.md)).
+**`v0.1.0` publicada** en [GitHub Releases](https://github.com/mablanco/pricegrab/releases/tag/v0.1.0). El APK firmado pesa ~0.91 MB. La primera feature está completa: comparación de dos ofertas, cálculo del ahorro absoluto y porcentual, soporte completo de TalkBack, rotación e idioma.
 
+- Cómo se firma y se libera el APK: [`docs/release.md`](./docs/release.md).
 - Especificación, plan y tareas: [`specs/001-unit-price-comparison/`](./specs/001-unit-price-comparison/).
 - Principios del producto: [`.specify/memory/constitution.md`](./.specify/memory/constitution.md) (versión 1.0.1).
+- Pendiente para la submission a F-Droid: capturar screenshots reales (`android/fastlane/metadata/android/{en-US,es-ES}/images/phoneScreenshots/`) y mantener la cadena de firma estable en futuros tags.
 
 ### Cómo construirla
 
@@ -81,10 +83,12 @@ Years ago I built a preliminary version of this application. This project is the
 
 ### Project status
 
-Pre-release (heading for `v0.1.0`). The first feature is already implemented under `android/`: two-offer comparison, absolute and percent savings, full TalkBack support, rotation and language preservation. What's left before the first release is generating a keystore, capturing screenshots, and publishing the signed APK to GitHub Releases (see [`docs/release.md`](./docs/release.md)).
+**`v0.1.0` is out** on [GitHub Releases](https://github.com/mablanco/pricegrab/releases/tag/v0.1.0). The signed APK weighs ~0.91 MB. The first feature is complete: two-offer comparison, absolute and percent savings, full TalkBack support, rotation and language preservation.
 
+- How the APK is signed and released: [`docs/release.md`](./docs/release.md).
 - Spec, plan and tasks: [`specs/001-unit-price-comparison/`](./specs/001-unit-price-comparison/).
 - Product principles: [`.specify/memory/constitution.md`](./.specify/memory/constitution.md) (version 1.0.1).
+- Pending for F-Droid submission: capture real screenshots (`android/fastlane/metadata/android/{en-US,es-ES}/images/phoneScreenshots/`) and keep the signing chain stable across future tags.
 
 ### How to build
 
