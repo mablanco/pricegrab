@@ -26,7 +26,7 @@ adb shell am start -n com.mablanco.pricegrab/.MainActivity
 
 # 4. Captura
 adb exec-out screencap -p \
-    > android/fastlane/metadata/android/es-ES/images/phoneScreenshots/01_empty.png
+    > fastlane/metadata/android/es-ES/images/phoneScreenshots/01_empty.png
 ```
 
 Repite con los valores que aparecen en cada captura: vacío,

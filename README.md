@@ -34,7 +34,7 @@ Hace años desarrollé una versión preliminar de esta aplicación. Este proyect
 - Cómo se firma y se libera el APK: [`docs/release.md`](./docs/release.md).
 - Especificación, plan y tareas: [`specs/001-unit-price-comparison/`](./specs/001-unit-price-comparison/).
 - Principios del producto: [`.specify/memory/constitution.md`](./.specify/memory/constitution.md) (versión 1.0.1).
-- Pendiente para la submission a F-Droid: capturar screenshots reales (`android/fastlane/metadata/android/{en-US,es-ES}/images/phoneScreenshots/`) y mantener la cadena de firma estable en futuros tags.
+- Pendiente para la submission a F-Droid: abrir el MR en [`fdroiddata`](https://gitlab.com/fdroid/fdroiddata) con la receta de [`docs/fdroid.md`](./docs/fdroid.md) y mantener la cadena de firma estable en futuros tags.
 
 ### Cómo construirla
 
@@ -51,7 +51,7 @@ Guía completa en [`specs/001-unit-price-comparison/quickstart.md`](./specs/001-
 
 ### Distribución
 
-Los releases se publican como APK firmados en [GitHub Releases](../../releases). **No se publicará en Google Play.** El proyecto se mantiene compatible con [F-Droid](https://f-droid.org/) (toolchain 100% open source, sin dependencias propietarias) y los textos de tienda viven en [`android/fastlane/metadata/android/`](./android/fastlane/metadata/android/) en los dos idiomas.
+Los releases se publican como APK firmados en [GitHub Releases](../../releases). **No se publicará en Google Play.** El proyecto se mantiene compatible con [F-Droid](https://f-droid.org/) (toolchain 100% open source, sin dependencias propietarias) y los textos de tienda viven en [`fastlane/metadata/android/`](./fastlane/metadata/android/) en los dos idiomas. La receta para `fdroiddata` está en [`docs/fdroid.md`](./docs/fdroid.md).
 
 ### Cómo contribuir
 
@@ -88,7 +88,7 @@ Years ago I built a preliminary version of this application. This project is the
 - How the APK is signed and released: [`docs/release.md`](./docs/release.md).
 - Spec, plan and tasks: [`specs/001-unit-price-comparison/`](./specs/001-unit-price-comparison/).
 - Product principles: [`.specify/memory/constitution.md`](./.specify/memory/constitution.md) (version 1.0.1).
-- Pending for F-Droid submission: capture real screenshots (`android/fastlane/metadata/android/{en-US,es-ES}/images/phoneScreenshots/`) and keep the signing chain stable across future tags.
+- Pending for F-Droid submission: open the merge request against [`fdroiddata`](https://gitlab.com/fdroid/fdroiddata) using the recipe in [`docs/fdroid.md`](./docs/fdroid.md) and keep the signing chain stable across future tags.
 
 ### How to build
 
@@ -105,7 +105,7 @@ Full guide in [`specs/001-unit-price-comparison/quickstart.md`](./specs/001-unit
 
 ### Distribution
 
-Releases are published as signed APKs on [GitHub Releases](../../releases). **Google Play is not a target.** The project stays compatible with [F-Droid](https://f-droid.org/) (fully open-source toolchain, no proprietary dependencies) and the store metadata lives in [`android/fastlane/metadata/android/`](./android/fastlane/metadata/android/) in both languages.
+Releases are published as signed APKs on [GitHub Releases](../../releases). **Google Play is not a target.** The project stays compatible with [F-Droid](https://f-droid.org/) (fully open-source toolchain, no proprietary dependencies) and the store metadata lives in [`fastlane/metadata/android/`](./fastlane/metadata/android/) in both languages. The `fdroiddata` recipe lives in [`docs/fdroid.md`](./docs/fdroid.md).
 
 ### Contributing
 

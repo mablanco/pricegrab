@@ -26,7 +26,7 @@ adb shell am start -n com.mablanco.pricegrab/.MainActivity
 
 # 4. Capture
 adb exec-out screencap -p \
-    > android/fastlane/metadata/android/en-US/images/phoneScreenshots/01_empty.png
+    > fastlane/metadata/android/en-US/images/phoneScreenshots/01_empty.png
 ```
 
 The English captures use US-style decimals: empty, `1.99 / 500` vs

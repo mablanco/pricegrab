@@ -133,16 +133,14 @@ GitHub Release.
 ## 8. F-Droid
 
 The repo already ships the layout F-Droid expects under
-[`android/fastlane/metadata/android/{en-US,es-ES}/`](../../android/fastlane/metadata/android/):
-title, short description, full description, and per-`versionCode`
-changelogs. Phone screenshots still need to be captured on a real or
-emulated device — see
-[`android/fastlane/metadata/android/en-US/images/phoneScreenshots/README.md`](../../android/fastlane/metadata/android/en-US/images/phoneScreenshots/README.md).
-
-Actual submission to F-Droid is deferred until after v0.1.0 ships on
-GitHub Releases. When that time comes, the missing artifact is the
-`fdroiddata` build recipe at `metadata/com.mablanco.pricegrab.yml` in
-the F-Droid data repo; that work will land as its own feature spec.
+[`fastlane/metadata/android/{en-US,es-ES}/`](../../fastlane/metadata/android/):
+title, short description, full description, per-`versionCode`
+changelogs and three captured phone screenshots per locale. The
+`fdroiddata` build recipe (the one that needs to be copied to
+`metadata/com.mablanco.pricegrab.yml` in the F-Droid data repo) lives
+in [`docs/fdroid.md`](../../docs/fdroid.md), together with the
+upstream signing-key fingerprint required by `AllowedAPKSigningKeys`
+and the step-by-step submission process.
 
 ## 9. Troubleshooting
 
