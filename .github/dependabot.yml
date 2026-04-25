@@ -1,0 +1,21 @@
+version: 2
+updates:
+  # Keep the GitHub Actions in .github/workflows/ on supported Node runtimes.
+  # Without this, an action that drops Node 20 / Node 24 support silently
+  # turns CI red the day GitHub flips the default runtime.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+    commit-message:
+      prefix: ci
+      include: scope
+    groups:
+      actions-minor-and-patch:
+        update-types:
+          - minor
+          - patch
