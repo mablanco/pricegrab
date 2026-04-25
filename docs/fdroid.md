@@ -80,7 +80,7 @@ Repo: https://github.com/mablanco/pricegrab.git
 Builds:
   - versionName: 0.1.0
     versionCode: 1
-    disable: signingConfigs.getByName("release") was unconditional and crashed F-Droid's build (which strips signingConfigs); fixed from v0.1.1 onwards.
+    disable: gradle getByName fails after signingConfigs strip; fixed in v0.1.1.
     commit: v0.1.0
     subdir: android/app
     gradle:
@@ -113,7 +113,10 @@ CurrentVersionCode: 2
 - `disable:` on the v0.1.0 entry preserves the historical fact that
   v0.1.0 was published upstream while making sure F-Droid's
   buildserver doesn't keep re-attempting a known-broken build. New
-  installs from F-Droid start at v0.1.1.
+  installs from F-Droid start at v0.1.1. Keep the message short
+  (≤ ~80 characters): `fdroid rewritemeta` enforces line wrapping on
+  long values and a wrapped multi-line scalar is fragile to edit in
+  GitLab's web editor.
 - `AllowedAPKSigningKeys` pinning is what lets users with the upstream
   GitHub APK keep updating from F-Droid without an uninstall.
 - `AutoUpdateMode: Version` together with `UpdateCheckMode: Tags`
@@ -202,6 +205,30 @@ We deliberately skip running the local Docker validation step
 CI, and the local Docker images are large and slow to set up. If a
 specific MR keeps failing CI for a non-obvious reason, that is when
 running the local toolchain pays off.
+
+### Current submission state
+
+| Item | Value |
+|------|-------|
+| Merge Request | [`fdroid/fdroiddata!37136`](https://gitlab.com/fdroid/fdroiddata/-/merge_requests/37136) |
+| Submitting branch | `add-com.mablanco.pricegrab` on [`mabnavarrete/fdroiddata`](https://gitlab.com/mabnavarrete/fdroiddata) |
+| Latest pipeline | [`#2479489359`](https://gitlab.com/mabnavarrete/fdroiddata/-/pipelines/2479489359) — all 8 visible jobs green |
+| Builds compiled by F-Droid | `0.1.0` (disabled, see §4 gotcha 1), `0.1.1` (success) |
+| Status | Awaiting human review by F-Droid maintainers |
+
+What it took to get the pipeline green, in order:
+
+1. `schema validation` rejected `AutoUpdateMode: Version v%v` —
+   modern fdroidserver only accepts `None`, `Version`, or
+   `Version +<suffix>`. Fixed by switching to `AutoUpdateMode: Version`.
+2. `fdroid build` rejected the unconditional `signingConfigs.getByName("release")`
+   call in `app/build.gradle.kts`. Fixed in [PR #12](https://github.com/mablanco/pricegrab/pull/12)
+   for the v0.1.1 tag (see §4, gotcha 1). The unbuildable v0.1.0
+   entry is kept with `disable:` so the historical record remains.
+3. `fdroid rewritemeta` rejected an over-long `disable:` value (it
+   auto-wraps long plain scalars and the committed line did not
+   match the canonical wrap). Fixed by shortening the note to the
+   78-character form shown in §3.
 
 ## 6. Ongoing release-time obligations
 

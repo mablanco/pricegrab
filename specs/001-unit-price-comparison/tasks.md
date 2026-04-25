@@ -161,6 +161,7 @@ boundary (F-Droid, release, docs).
 - [x] T057 **Done — `v0.1.0` released.** Marco generated the PKCS12 upload keystore, uploaded `SIGNING_KEYSTORE_BASE64`, `SIGNING_KEYSTORE_PASSWORD`, `SIGNING_KEY_ALIAS`, `SIGNING_KEY_PASSWORD` as GitHub Actions secrets, and pushed the `v0.1.0` tag. The `Signed release APK` job ran green on workflow run [24927324754](https://github.com/mablanco/pricegrab/actions/runs/24927324754) and attached the signed APK to the [v0.1.0 GitHub Release](https://github.com/mablanco/pricegrab/releases/tag/v0.1.0). Playbook in [`docs/release.md`](../../docs/release.md) was followed verbatim with the PKCS12 password clarification applied in this same closing PR.
 - [x] T058 Walked `quickstart.md` end-to-end against the actual `android/` tree; removed the "directory does not exist yet" disclaimer, replaced the obsolete `keystore.properties` flow with the `PRICEGRAB_*` env-var flow that matches `app/build.gradle.kts`, and updated the F-Droid section to point at the metadata that now lives in the repo.
 - [x] T059 **Done — held green by CI on every push.** `./gradlew :app:lint :app:detekt` ran clean on the `v0.1.0` tag (workflow run [24927324754](https://github.com/mablanco/pricegrab/actions/runs/24927324754)) and on every PR before it. No `app/lint-baseline.xml` is needed because there are zero legacy findings to suppress; if a future Android Gradle Plugin or detekt bump introduces new warnings we can add the baseline at that point.
+- [x] T060 **Submitted — awaiting F-Droid maintainer review.** Opened [`fdroid/fdroiddata!37136`](https://gitlab.com/fdroid/fdroiddata/-/merge_requests/37136) from a personal GitLab fork (`mabnavarrete/fdroiddata`, branch `add-com.mablanco.pricegrab`) with `metadata/com.mablanco.pricegrab.yml`. Pipeline [`#2479489359`](https://gitlab.com/mabnavarrete/fdroiddata/-/pipelines/2479489359) finished with all 8 visible jobs green: `fdroid build` (compiled v0.1.1 from source), `check apk` (matched the `AllowedAPKSigningKeys` SHA-256), `check source code`, `fdroid lint`, `fdroid rewritemeta`, `git redirect`, `schema validation`, `tools check scripts`. Three upstream-side fixes were needed and are documented in [`docs/fdroid.md`](../../docs/fdroid.md) §5 "Current submission state". Now waiting on a human F-Droid maintainer to merge; this typically takes days to weeks for first-time submissions.
 
 ---
 
@@ -239,6 +240,16 @@ measured cold start with `am start -W` (median 241 ms, ~8× under the
 2 s budget — see T055). T059 was confirmed green: `lint` and `detekt`
 have stayed clean on every CI run since the v0.1.0 tag, no baseline
 needed.
+
+### PR G — `chore/011-fdroid-submission-status`
+
+Bookkeeping after the F-Droid pipeline turned green. Closes
+**T060** (F-Droid MR submitted, all `issuebot` checks pass, awaiting
+human review), syncs the `disable:` note in [`docs/fdroid.md`](../../docs/fdroid.md)
+§3 with the shorter form that finally satisfied `fdroid rewritemeta`,
+documents the three CI failures and fixes in a new "Current
+submission state" subsection, and adds guard-rail wording on why the
+`disable:` note must stay short.
 
 ### Notes
 
