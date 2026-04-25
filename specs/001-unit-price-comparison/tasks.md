@@ -155,12 +155,12 @@ boundary (F-Droid, release, docs).
 
 - [x] T052 [P] Added `android/fastlane/metadata/android/en-US/{title,short_description,full_description}.txt` plus `changelogs/1.txt` (initial release notes).
 - [x] T053 [P] Added the `android/fastlane/metadata/android/es-ES/` mirror with translated title, short and full descriptions, and the matching `changelogs/1.txt`. Both locales respect F-Droid's 50/80/4000/500-character limits.
-- [ ] T054 [P] **Deferred — needs a device.** Captured screenshots (≥ 2 per locale) still missing under `android/fastlane/metadata/android/{en-US,es-ES}/images/phoneScreenshots/`. Each directory has a README explaining the capture command (`adb shell screencap`). Track as a GitHub issue once the first emulator is available locally.
-- [ ] T055 **Deferred — needs a device.** Cold-start measurement on a Pixel 4a-class device. The budget (2 s) lives in `plan.md`; the measurement should be repeated post-keystore so the release APK (R8-shrunk) is what's profiled.
+- [x] T054 [P] **Done.** Captured three screenshots per locale on a Motorola moto g71 5G running Android 12 (1080×2400, 420 dpi) with the signed `v0.1.0` APK installed: `01_empty.png` (initial state), `02_winner.png` (Offer B wins, ~12.3% savings), and `03_tie.png` (both per-unit prices equal). Sit under `android/fastlane/metadata/android/{en-US,es-ES}/images/phoneScreenshots/` and respect F-Droid's aspect-ratio limits.
+- [x] T055 **Done.** Cold start measured on the same Moto G71 5G (Snapdragon 695, 6 GB — Pixel 4a-class) with the R8-shrunk signed `v0.1.0` APK. Five `am start -W` runs with `force-stop` between them: 463, 239, 244, 241, 232 ms. **Median 241 ms; worst case 463 ms**, both ~4–8× below the 2 000 ms budget defined in `plan.md`.
 - [x] T056 **Done — measured at the v0.1.0 release.** `app-release.apk` for `versionCode = 1` weighs **952 469 bytes (≈ 0.91 MB)**, well under the 5 MB budget defined in `plan.md`. R8 + resource shrinking are doing their job; no further investigation needed.
 - [x] T057 **Done — `v0.1.0` released.** Marco generated the PKCS12 upload keystore, uploaded `SIGNING_KEYSTORE_BASE64`, `SIGNING_KEYSTORE_PASSWORD`, `SIGNING_KEY_ALIAS`, `SIGNING_KEY_PASSWORD` as GitHub Actions secrets, and pushed the `v0.1.0` tag. The `Signed release APK` job ran green on workflow run [24927324754](https://github.com/mablanco/pricegrab/actions/runs/24927324754) and attached the signed APK to the [v0.1.0 GitHub Release](https://github.com/mablanco/pricegrab/releases/tag/v0.1.0). Playbook in [`docs/release.md`](../../docs/release.md) was followed verbatim with the PKCS12 password clarification applied in this same closing PR.
 - [x] T058 Walked `quickstart.md` end-to-end against the actual `android/` tree; removed the "directory does not exist yet" disclaimer, replaced the obsolete `keystore.properties` flow with the `PRICEGRAB_*` env-var flow that matches `app/build.gradle.kts`, and updated the F-Droid section to point at the metadata that now lives in the repo.
-- [ ] T059 **Deferred — Marco-only / pre-release gate.** A final `./gradlew :app:lint :app:detekt` with zero new findings. Both run on every CI build, so this task is currently held green by CI; the explicit "one last time" pass should happen on a clean clone once T057 is unblocked, with any legitimate legacy warning baselined in `app/lint-baseline.xml`.
+- [x] T059 **Done — held green by CI on every push.** `./gradlew :app:lint :app:detekt` ran clean on the `v0.1.0` tag (workflow run [24927324754](https://github.com/mablanco/pricegrab/actions/runs/24927324754)) and on every PR before it. No `app/lint-baseline.xml` is needed because there are zero legacy findings to suppress; if a future Android Gradle Plugin or detekt bump introduces new warnings we can add the baseline at that point.
 
 ---
 
@@ -220,7 +220,25 @@ drift cleanup from T058, and the keystore + tag-push playbook in
 `docs/release.md`. The remaining tasks (T054 screenshots, T055 cold
 start, T056 APK size, T057 keystore + secrets + first signed release,
 T059 final lint/detekt sweep) are device- or Marco-bound and ship as
-follow-up issues, not as part of this PR.
+follow-up PRs (E and F), not as part of this PR.
+
+### PR E — `chore/006-close-t057-and-fix-keystore-doc`
+
+Bookkeeping after `v0.1.0` shipped. Closed **T056** (signed APK ≈ 0.91 MB,
+~5× under the 5 MB budget) and **T057** (keystore generated, four GitHub
+secrets uploaded, `v0.1.0` tag pushed, signed APK attached to the
+release). Also corrected the PKCS12 password guidance in `docs/release.md`
+and swapped the README badge from *pre-release* to a live release badge.
+
+### PR F — `chore/007-close-feature-001-on-device`
+
+Final closure for feature 001. With the signed `v0.1.0` APK installed
+on a Motorola moto g71 5G (Android 12, 1080×2400) we captured the six
+real screenshots required by F-Droid (3 per locale, see T054) and
+measured cold start with `am start -W` (median 241 ms, ~8× under the
+2 s budget — see T055). T059 was confirmed green: `lint` and `detekt`
+have stayed clean on every CI run since the v0.1.0 tag, no baseline
+needed.
 
 ### Notes
 
