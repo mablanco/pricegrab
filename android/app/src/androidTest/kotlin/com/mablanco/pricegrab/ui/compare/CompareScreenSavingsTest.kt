@@ -31,22 +31,25 @@ class CompareScreenSavingsTest {
         composeRule.onNodeWithTag("offerB_quantity").performTextInput("1000")
 
         val ctx = composeRule.activity
-        val expected = ctx.getString(R.string.savings_template, "0.001", "20")
+        val expected = ctx.getString(R.string.result_savings, "0.001")
 
         composeRule.onNodeWithTag("result_savings").assertIsDisplayed()
         composeRule.onNodeWithText(expected).assertIsDisplayed()
     }
 
     @Test
-    fun freeOfferShowsHundredPercentSavings() {
-        // Offer A is free; B costs 5/100 = 0.05 → A wins by 0.05 per unit, 100% less.
+    fun freeOfferShowsAbsoluteSavings() {
+        // Offer A is free; B costs 5/100 = 0.05 → A wins by 0.05 per unit.
+        // Feature 003's hero card body is "Save X per unit"; the percent
+        // figure is no longer surfaced in the visible body (covered
+        // structurally by the live-region content description).
         composeRule.onNodeWithTag("offerA_price").performTextInput("0")
         composeRule.onNodeWithTag("offerA_quantity").performTextInput("100")
         composeRule.onNodeWithTag("offerB_price").performTextInput("5.00")
         composeRule.onNodeWithTag("offerB_quantity").performTextInput("100")
 
         val ctx = composeRule.activity
-        val expected = ctx.getString(R.string.savings_template, "0.05", "100")
+        val expected = ctx.getString(R.string.result_savings, "0.05")
 
         composeRule.onNodeWithTag("result_savings").assertIsDisplayed()
         composeRule.onNodeWithText(expected).assertIsDisplayed()

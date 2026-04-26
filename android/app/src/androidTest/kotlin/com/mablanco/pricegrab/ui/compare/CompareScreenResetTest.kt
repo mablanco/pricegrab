@@ -44,7 +44,7 @@ class CompareScreenResetTest {
         composeRule.onNodeWithTag("offerB_quantity").performTextInput("1000")
 
         val ctx = composeRule.activity
-        val winner = ctx.getString(R.string.result_b_wins)
+        val winner = ctx.getString(R.string.result_winner_b)
         val placeholder = ctx.getString(R.string.result_placeholder)
         composeRule.onNodeWithText(winner).assertIsDisplayed()
 

@@ -19,15 +19,21 @@
     <string name="error_negative_price">Price must be zero or higher</string>
     <string name="error_non_positive_quantity">Quantity must be greater than zero</string>
 
-    <!-- Result pane -->
+    <!-- Result region — outcome-absent placeholder (rendered as a soft Text,
+         no Card frame). The hero card below replaces this Text whenever a
+         valid comparison exists. -->
     <string name="result_placeholder">Enter both offers to see which is cheaper</string>
-    <string name="result_a_wins">Offer A is cheaper per unit</string>
-    <string name="result_b_wins">Offer B is cheaper per unit</string>
-    <string name="result_tie">Both offers cost the same per unit</string>
 
-    <!-- Savings line. %1$s = absolute per-unit delta, %2$s = percent saved.
-         %% renders a literal `%` sign in the result. -->
-    <string name="savings_template">Saves %1$s per unit (%2$s%% less)</string>
+    <!-- Hero result card (feature 003 / US2). Headlines: short, declarative,
+         fit on one line at 200% font scale. -->
+    <string name="result_winner_a">Offer A is cheaper</string>
+    <string name="result_winner_b">Offer B is cheaper</string>
+    <string name="result_tied">Same price per unit</string>
+    <!-- Body line below the headline. %1$s = absolute per-unit delta. The
+         tighter wording (vs. the v0.1.4 "Saves X per unit (Y% less)") is
+         deliberate: at headlineSmall + bodyLarge the hero card already
+         carries the visual emphasis, so the text trims redundancies. -->
+    <string name="result_savings">Save %1$s per unit</string>
 
     <!-- Reset / undo (US002) -->
     <!-- Visible label is the icon itself; this string is the spoken label

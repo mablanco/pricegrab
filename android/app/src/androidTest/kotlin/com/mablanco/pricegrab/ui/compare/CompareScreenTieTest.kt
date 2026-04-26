@@ -26,7 +26,7 @@ class CompareScreenTieTest {
         composeRule.onNodeWithTag("offerB_price").performTextInput("4.00")
         composeRule.onNodeWithTag("offerB_quantity").performTextInput("200")
 
-        val expected = composeRule.activity.getString(R.string.result_tie)
+        val expected = composeRule.activity.getString(R.string.result_tied)
         composeRule.onNodeWithText(expected).assertIsDisplayed()
     }
 }

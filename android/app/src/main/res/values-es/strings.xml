@@ -16,11 +16,14 @@
     <string name="error_non_positive_quantity">La cantidad debe ser mayor que cero</string>
 
     <string name="result_placeholder">Introduce las dos ofertas para ver cuál es más barata</string>
-    <string name="result_a_wins">La oferta A es más barata por unidad</string>
-    <string name="result_b_wins">La oferta B es más barata por unidad</string>
-    <string name="result_tie">Las dos ofertas cuestan lo mismo por unidad</string>
 
-    <string name="savings_template">Ahorras %1$s por unidad (%2$s%% menos)</string>
+    <!-- Tarjeta hero de resultado (feature 003 / US2). Mismo paralelismo
+         declarativo que el inglés: el titular cabe en una línea a 200% de
+         escala de fuente. -->
+    <string name="result_winner_a">La oferta A es más barata</string>
+    <string name="result_winner_b">La oferta B es más barata</string>
+    <string name="result_tied">Mismo precio por unidad</string>
+    <string name="result_savings">Ahorras %1$s por unidad</string>
 
     <!-- Reiniciar / deshacer (US002) -->
     <string name="reset_action">Reiniciar</string>

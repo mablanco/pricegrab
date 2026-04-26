@@ -65,7 +65,7 @@ class CompareScreenUndoTest {
         composeRule.waitForIdle()
 
         // Winner headline is back; same comparison as before the reset.
-        composeRule.onNodeWithText(ctx.getString(R.string.result_b_wins)).assertIsDisplayed()
+        composeRule.onNodeWithText(ctx.getString(R.string.result_winner_b)).assertIsDisplayed()
     }
 
     @Test
