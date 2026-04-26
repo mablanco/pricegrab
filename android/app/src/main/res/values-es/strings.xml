@@ -21,4 +21,11 @@
     <string name="result_tie">Las dos ofertas cuestan lo mismo por unidad</string>
 
     <string name="savings_template">Ahorras %1$s por unidad (%2$s%% menos)</string>
+
+    <!-- Reiniciar / deshacer (US002) -->
+    <string name="reset_action">Reiniciar</string>
+    <string name="reset_action_description">Borrar todos los campos y empezar una nueva comparación</string>
+    <string name="comparison_cleared">Comparación borrada</string>
+    <string name="undo_action">Deshacer</string>
+    <string name="reset_announcement">Comparación reiniciada</string>
 </resources>

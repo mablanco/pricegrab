@@ -28,4 +28,16 @@
     <!-- Savings line. %1$s = absolute per-unit delta, %2$s = percent saved.
          %% renders a literal `%` sign in the result. -->
     <string name="savings_template">Saves %1$s per unit (%2$s%% less)</string>
+
+    <!-- Reset / undo (US002) -->
+    <!-- Visible label is the icon itself; this string is the spoken label
+         surfaced via contentDescription. -->
+    <string name="reset_action">Reset</string>
+    <string name="reset_action_description">Clear all fields and start a new comparison</string>
+    <!-- Snackbar shown after a non-empty reset; carries the Undo action. -->
+    <string name="comparison_cleared">Comparison cleared</string>
+    <string name="undo_action">Undo</string>
+    <!-- Reserved for the future no-Snackbar branch (e.g., reset triggered by
+         a hardware shortcut). Currently unused; see research.md §5. -->
+    <string name="reset_announcement">Comparison reset</string>
 </resources>

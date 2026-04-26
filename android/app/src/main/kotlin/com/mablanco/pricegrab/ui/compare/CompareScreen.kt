@@ -12,14 +12,22 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
@@ -42,13 +50,13 @@ import com.mablanco.pricegrab.ui.theme.PriceGrabTheme
 import java.util.Locale
 
 /**
- * US1 screen: enter two `(price, quantity)` offers and see which one is
- * cheaper per unit.
+ * Stateful entry point: reads a [CompareViewModel] from the current
+ * [androidx.lifecycle.ViewModelStore] and delegates to the stateless
+ * [CompareScreen] overload.
  *
- * This stateful entry point reads a [CompareViewModel] from the current
- * [androidx.lifecycle.ViewModelStore] and delegates presentation to the
- * stateless [CompareScreen] overload below, keeping UI logic testable without
- * a full activity lifecycle.
+ * The Compare screen owns its own [Scaffold] (with a top app bar and a
+ * snackbar host) so the activity-level `PriceGrabApp` stays a thin
+ * theme + screen wrapper.
  */
 @Composable
 fun CompareScreen(
@@ -62,10 +70,15 @@ fun CompareScreen(
         onQuantityAChange = viewModel::onQuantityAChange,
         onPriceBChange = viewModel::onPriceBChange,
         onQuantityBChange = viewModel::onQuantityBChange,
+        // Real wiring lands in feature 002 task T010 (resetComparison).
+        // Phase-1 placeholder: keep the click compiling so the disabled-state
+        // assertions in T009 can run before any reset behaviour exists.
+        onResetClick = {},
         modifier = modifier,
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CompareScreen(
     state: CompareUiState,
@@ -73,43 +86,76 @@ fun CompareScreen(
     onQuantityAChange: (String) -> Unit,
     onPriceBChange: (String) -> Unit,
     onQuantityBChange: (String) -> Unit,
+    onResetClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(SCREEN_PADDING),
-        verticalArrangement = Arrangement.spacedBy(SECTION_SPACING),
-    ) {
-        Text(
-            text = stringResource(R.string.compare_heading),
-            style = MaterialTheme.typography.headlineSmall,
-        )
+    val snackbarHostState = remember { SnackbarHostState() }
+    val resetDescription = stringResource(R.string.reset_action_description)
 
-        OfferCard(
-            title = stringResource(R.string.offer_a_title),
-            priceRaw = state.priceARaw,
-            priceError = state.priceAError,
-            quantityRaw = state.quantityARaw,
-            quantityError = state.quantityAError,
-            onPriceChange = onPriceAChange,
-            onQuantityChange = onQuantityAChange,
-            testTagPrefix = TEST_TAG_OFFER_A,
-        )
+    Scaffold(
+        modifier = modifier,
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = { Text(stringResource(R.string.app_name)) },
+                actions = {
+                    IconButton(
+                        onClick = onResetClick,
+                        enabled = state.isResetEnabled,
+                        modifier = Modifier
+                            .testTag(TEST_TAG_RESET)
+                            .semantics { contentDescription = resetDescription },
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Refresh,
+                            // contentDescription is set on the IconButton's
+                            // semantics block above so TalkBack reads
+                            // "Clear all fields and start a new comparison"
+                            // even though Refresh is the visual glyph.
+                            contentDescription = null,
+                        )
+                    }
+                },
+            )
+        },
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .verticalScroll(rememberScrollState())
+                .padding(SCREEN_PADDING),
+            verticalArrangement = Arrangement.spacedBy(SECTION_SPACING),
+        ) {
+            Text(
+                text = stringResource(R.string.compare_heading),
+                style = MaterialTheme.typography.headlineSmall,
+            )
 
-        OfferCard(
-            title = stringResource(R.string.offer_b_title),
-            priceRaw = state.priceBRaw,
-            priceError = state.priceBError,
-            quantityRaw = state.quantityBRaw,
-            quantityError = state.quantityBError,
-            onPriceChange = onPriceBChange,
-            onQuantityChange = onQuantityBChange,
-            testTagPrefix = TEST_TAG_OFFER_B,
-        )
+            OfferCard(
+                title = stringResource(R.string.offer_a_title),
+                priceRaw = state.priceARaw,
+                priceError = state.priceAError,
+                quantityRaw = state.quantityARaw,
+                quantityError = state.quantityAError,
+                onPriceChange = onPriceAChange,
+                onQuantityChange = onQuantityAChange,
+                testTagPrefix = TEST_TAG_OFFER_A,
+            )
 
-        ResultCard(outcome = state.outcome)
+            OfferCard(
+                title = stringResource(R.string.offer_b_title),
+                priceRaw = state.priceBRaw,
+                priceError = state.priceBError,
+                quantityRaw = state.quantityBRaw,
+                quantityError = state.quantityBError,
+                onPriceChange = onPriceBChange,
+                onQuantityChange = onQuantityBChange,
+                testTagPrefix = TEST_TAG_OFFER_B,
+            )
+
+            ResultCard(outcome = state.outcome)
+        }
     }
 }
 
@@ -263,6 +309,7 @@ const val TEST_TAG_OFFER_B: String = "offerB"
 const val TEST_TAG_RESULT: String = "result"
 const val TEST_TAG_RESULT_TEXT: String = "result_text"
 const val TEST_TAG_RESULT_SAVINGS: String = "result_savings"
+const val TEST_TAG_RESET: String = "reset_action"
 
 // ---- Layout constants -------------------------------------------------------
 
@@ -283,6 +330,7 @@ private fun CompareScreenEmptyPreview() {
             onQuantityAChange = {},
             onPriceBChange = {},
             onQuantityBChange = {},
+            onResetClick = {},
         )
     }
 }
@@ -306,6 +354,7 @@ private fun CompareScreenAWinsPreview() {
             onQuantityAChange = {},
             onPriceBChange = {},
             onQuantityBChange = {},
+            onResetClick = {},
         )
     }
 }
