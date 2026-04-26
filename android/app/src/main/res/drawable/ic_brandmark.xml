@@ -17,13 +17,20 @@
   Decorative: marked invisibleToUser at the call site
   (CompareScreen.kt) — TalkBack reads "PriceGrab" from the title
   text only, never twice.
+
+  Tinting: intentionally NOT set via android:tint here. The drawable
+  is consumed exclusively from Compose via Icon(painterResource(…),
+  tint = MaterialTheme.colorScheme.primary), which is the canonical
+  way to colour vector glyphs against a Material 3 ColorScheme and
+  also keeps AAPT happy (a ?attr/colorPrimary reference at the XML
+  level resolves against the *application*'s attr namespace, which
+  this app does not declare — see PR P CI failure 2026-04-26).
 -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="24dp"
     android:height="24dp"
     android:viewportWidth="24"
-    android:viewportHeight="24"
-    android:tint="?attr/colorPrimary">
+    android:viewportHeight="24">
     <path
         android:fillColor="@android:color/white"
         android:pathData="M21.41,11.58l-9,-9C12.04,2.21 11.53,2 11,2H4c-1.1,0 -2,0.9 -2,2v7c0,0.53 0.21,1.04 0.59,1.41l9,9c0.78,0.78 2.05,0.78 2.83,0l7,-7c0.78,-0.78 0.78,-2.04 -0.01,-2.83zM5.5,7C4.67,7 4,6.33 4,5.5S4.67,4 5.5,4 7,4.67 7,5.5 6.33,7 5.5,7z" />
