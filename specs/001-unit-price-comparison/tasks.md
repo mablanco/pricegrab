@@ -300,6 +300,28 @@ and switch to the full-SHA `commit:` value are applied separately by
 Marco in the GitLab web editor; this PR keeps the upstream playbook in
 sync with that state.
 
+### PR J — `feat/014-prep-v0.1.3`
+
+Pure release-cut. Bumps `versionCode` 3 → 4 and `versionName`
+"0.1.2" → "0.1.3" in [`app/build.gradle.kts`](../../android/app/build.gradle.kts);
+adds [`fastlane/metadata/android/{en-US,es-ES}/changelogs/4.txt`](../../fastlane/metadata/android/en-US/changelogs/4.txt)
+in both locales recording that the only user-visible delta from
+v0.1.2 is the final launcher icon (whose source landed on `main` in
+PR H but never shipped a tag of its own). After merge, Marco pushes
+the `v0.1.3` tag from `main`; the existing release workflow signs
+the APK and attaches it to GitHub Releases. F-Droid then picks up
+v0.1.3 (not v0.1.2) as the first publishable version on its store.
+
+### PR K — `chore/015-fdroid-doc-sync-v0.1.3`
+
+Follow-up doc sync. Once `v0.1.3` exists, [`docs/fdroid.md`](../../docs/fdroid.md)
+needs to point at the new tag's full SHA
+(`cc853d7eaaa5f978db57cb4e74b16f280c661980`) and bump
+`CurrentVersion` / `CurrentVersionCode` to `0.1.3` / `4`. Same kind
+of pure-doc change as PR I: the actual GitLab YAML edit is still
+done by hand in the web editor, this PR keeps the upstream playbook
+truthful.
+
 ### Notes
 
 - Each PR must keep the main branch green (lint, detekt, unit tests, JaCoCo
