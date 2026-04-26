@@ -342,6 +342,19 @@ the version bump 0.1.3 → 0.1.4, and en/es changelogs for
 `versionCode 5`. Branched off `main` *after* PR L merged, so the
 planning artefacts were on `main` before any code landed.
 
+### PR N — `chore/017-fdroid-doc-sync-v0.1.4` *(feature 002 — release cut)*
+
+Phase 4 release-cut tasks (T025–T027). Tag `v0.1.4` is pushed from
+`main` outside this PR (the tag itself is the release artefact, not
+a source change); CI publishes the signed APK to GitHub Releases
+automatically. This PR is the pure-doc twin: it bumps `docs/fdroid.md`
+to point at v0.1.4's full SHA, updates `Builds:` /
+`CurrentVersion` / `CurrentVersionCode`, and extends the §5
+chronology with the v0.1.3 → v0.1.4 bump. Same cadence as PR K for
+v0.1.3. Manual on-device verification of the 9-step walkthrough
+(`specs/002-reset-comparison/plan.md` §10) gates the upstream MR
+edit, not this PR.
+
 ### Notes
 
 - Each PR must keep the main branch green (lint, detekt, unit tests, JaCoCo

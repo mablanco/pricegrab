@@ -111,8 +111,8 @@ Snackbar, tap Undo, verify all four fields and the result are restored.
 - [ ] T023 [P] Add `fastlane/metadata/android/es-ES/changelogs/5.txt` mirroring T022 in Spanish under 500 chars.
 - [ ] T024 Update `tasks.md` of feature 001 (the in-flight PR ledger) with a "PR L — `feat/016-reset-comparison`" entry summarising this feature.
 - [ ] T025 Manual verification on a real device using the 9-step walkthrough from `plan.md`'s "Manual verification" section. Record cold-start regression (must stay below 2 s budget; expected delta is negligible because the new code path is < 200 LOC of UI Kotlin).
-- [ ] T026 Tag `v0.1.4` from `main` after the implementation PR merges and CI is green. Verify the `Signed release APK` job publishes `app-release.apk` to the v0.1.4 GitHub Release.
-- [ ] T027 Update `docs/fdroid.md` §3 build recipe and §5 chronology to point at v0.1.4: bump `Builds[0]` to `versionName: 0.1.4` / `versionCode: 5` / `commit: <full SHA of v0.1.4>`, and bump `CurrentVersion` / `CurrentVersionCode` accordingly. Coordinate with the GitLab MR edit in the same window.
+- [X] T026 Tag `v0.1.4` from `main` after the implementation PR merges and CI is green. Verify the `Signed release APK` job publishes `app-release.apk` to the v0.1.4 GitHub Release. *(Done: tag pinned to `ec6c8a0947e8c3213378cf970de6afebf3c51fbc`; signed APK at <https://github.com/mablanco/pricegrab/releases/download/v0.1.4/app-release.apk>.)*
+- [X] T027 Update `docs/fdroid.md` §3 build recipe and §5 chronology to point at v0.1.4: bump `Builds[0]` to `versionName: 0.1.4` / `versionCode: 5` / `commit: <full SHA of v0.1.4>`, and bump `CurrentVersion` / `CurrentVersionCode` accordingly. Coordinate with the GitLab MR edit in the same window. *(Done in PR #21; upstream GitLab MR edit tracked separately.)*
 
 ---
 
@@ -161,12 +161,15 @@ to be on `main` before implementation starts. The implementation diff
 is bounded by the task list and is expected to land at ~600–900 LOC
 including tests.
 
-### PR N — `feat/017-prep-v0.1.4` *(release cut)*
+### PR N — `chore/017-fdroid-doc-sync-v0.1.4` *(release cut)*
 
 Covers Phase 4 tasks T025–T027 (manual verification on device, tag
 push, F-Droid `Builds:` sync). Mirrors the v0.1.3 cadence (PR J +
 PR K from feature 001) so the F-Droid recipe never lags more than
-one release behind `main`.
+one release behind `main`. The tag push (T026) happens outside the
+PR diff; this PR is the pure-doc twin that bumps `docs/fdroid.md`
+to v0.1.4. Manual on-device verification (T025) is independent and
+gates the upstream GitLab MR edit, not this PR's merge.
 
 ### Notes
 

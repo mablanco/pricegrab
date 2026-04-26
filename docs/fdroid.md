@@ -12,8 +12,8 @@ This file picks up *after* a tag has shipped on GitHub Releases.
 
 ## 1. One-time decisions
 
-Locked in as of v0.1.3 (Mode B switch landed in v0.1.2; v0.1.3 is
-the first version actually submitted to F-Droid — see §5 chronology
+Locked in as of v0.1.4 (Mode B switch landed in v0.1.2; v0.1.4 is
+the first version F-Droid will actually publish — see §5 chronology
 for how we got here from the original v0.1.0 plan):
 
 | Decision | Value | Why |
@@ -28,7 +28,7 @@ for how we got here from the original v0.1.0 plan):
 ## 2. Upstream signing-key fingerprint
 
 Every APK published in GitHub Releases (v0.1.0, v0.1.1, v0.1.2,
-v0.1.3, …) is signed with the same certificate. Its SHA-256 is the value pinned in
+v0.1.3, v0.1.4, …) is signed with the same certificate. Its SHA-256 is the value pinned in
 `AllowedAPKSigningKeys` and must never change without a coordinated
 update to the F-Droid recipe:
 
@@ -84,9 +84,9 @@ Repo: https://github.com/mablanco/pricegrab.git
 Binaries: https://github.com/mablanco/pricegrab/releases/download/v%v/app-release.apk
 
 Builds:
-  - versionName: 0.1.3
-    versionCode: 4
-    commit: cc853d7eaaa5f978db57cb4e74b16f280c661980
+  - versionName: 0.1.4
+    versionCode: 5
+    commit: ec6c8a0947e8c3213378cf970de6afebf3c51fbc
     subdir: android/app
     gradle:
       - yes
@@ -95,8 +95,8 @@ AllowedAPKSigningKeys: 70a9709ce5a4829668d9d50411b959bb90ad2e19d02e2069ad0ff3528
 
 AutoUpdateMode: Version
 UpdateCheckMode: Tags
-CurrentVersion: 0.1.3
-CurrentVersionCode: 4
+CurrentVersion: 0.1.4
+CurrentVersionCode: 5
 ```
 
 **Why these fields.**
@@ -112,7 +112,7 @@ CurrentVersionCode: 4
   the recipe Mode B: F-Droid will never publish an F-Droid-signed
   fallback for this package.
 - `Builds[0].commit:` uses the **full 40-character SHA-1** of the
-  v0.1.3 commit, not the tag name. F-Droid prefers immutable commit
+  v0.1.4 commit, not the tag name. F-Droid prefers immutable commit
   hashes over mutable tags; this convention is also what
   `AutoUpdateMode` itself writes when it auto-generates entries for
   future tags, so the style stays consistent across manual and
@@ -134,7 +134,7 @@ CurrentVersionCode: 4
   is **not** restated here. F-Droid auto-discovers it from
   `fastlane/metadata/android/{en-US,es-ES}/` at the repo root, which
   is exactly where this repo keeps it.
-- v0.1.0, v0.1.1 and v0.1.2 are intentionally **absent** from
+- v0.1.0 through v0.1.3 are intentionally **absent** from
   `Builds:`. v0.1.0/v0.1.1 were initially submitted as `disable:`d
   entries (with inline notes on why each was unbuildable /
   non-reproducible), but the F-Droid reviewer asked us to drop them:
@@ -142,9 +142,13 @@ CurrentVersionCode: 4
   was buildable and reproducible (it's the version where Mode B
   landed), but we never shipped its `Builds:` entry to F-Droid — we
   jumped straight from "submission opened" to v0.1.3 because v0.1.3
-  is the first version with the final launcher icon. Existing
-  GitHub-Releases users (v0.1.0, v0.1.1, v0.1.2) keep updating via
-  F-Droid once it lists v0.1.3, because `AllowedAPKSigningKeys`
+  is the first version with the final launcher icon. v0.1.3 itself
+  was on track to become the first published version (see §5
+  chronology step 6) until v0.1.4 landed during review with the
+  Reset/Undo feature; we then bumped the recipe one more notch so the
+  first F-Droid publication includes that feature too. Existing
+  GitHub-Releases users (v0.1.0 through v0.1.3) keep updating via
+  F-Droid once it lists v0.1.4, because `AllowedAPKSigningKeys`
   accepts the same upstream key, so no upgrade path is broken.
 
 ## 4. F-Droid build-server gotchas the upstream code must respect
@@ -251,7 +255,7 @@ running the local toolchain pays off.
 | Merge Request | [`fdroid/fdroiddata!37136`](https://gitlab.com/fdroid/fdroiddata/-/merge_requests/37136) |
 | Submitting branch | `add-com.mablanco.pricegrab` on [`mabnavarrete/fdroiddata`](https://gitlab.com/mabnavarrete/fdroiddata) |
 | Distribution model | Mode B (reproducible builds, exclusive developer-signed APK) |
-| First buildable / publishable tag | `v0.1.3` (versionCode 4), pinned by full SHA `cc853d7eaaa5f978db57cb4e74b16f280c661980` |
+| First buildable / publishable tag | `v0.1.4` (versionCode 5), pinned by full SHA `ec6c8a0947e8c3213378cf970de6afebf3c51fbc` |
 | Status | Iterating on reviewer feedback; awaiting next CI pipeline run |
 
 What it took to get to the current state, in chronological order:
@@ -281,6 +285,16 @@ What it took to get to the current state, in chronological order:
    upstream key); only the `Builds:` block, `CurrentVersion` and
    `CurrentVersionCode` move forward by one. Landed in
    [PR #17](https://github.com/mablanco/pricegrab/pull/17).
+7. **Bumped target tag from v0.1.3 to v0.1.4** while the upstream MR
+   was still in review, so the Reset/Undo feature
+   ([PR #20](https://github.com/mablanco/pricegrab/pull/20))
+   ships in the first F-Droid publication too. Same Mode B contract
+   — toolchain, signing key and reproducibility constraints are
+   unchanged from step 6 — so the upstream MR edit is a single bump
+   of `Builds[0]` (commit, versionName, versionCode), `CurrentVersion`
+   and `CurrentVersionCode`, with no need to reopen earlier reviewer
+   feedback. Recipe sync landed in
+   [PR #21](https://github.com/mablanco/pricegrab/pull/21).
 
 The actual byte-for-byte reproducibility verification happens *after*
 this MR merges, on F-Droid's main build farm via `fdroid publish`. If
