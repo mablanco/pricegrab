@@ -1,11 +1,19 @@
 #!/usr/bin/env python3
 """Regenerate PriceGrab launcher icons from `branding/icon-source.png`.
 
-Outputs are written under `android/app/src/main/res/mipmap-*/` and are intended
-to be committed to the repository so the build is fully reproducible -- F-Droid
-verifies the published APK byte-for-byte against an upstream-signed build, and
-re-running an icon pipeline at compile time would introduce drift between
-toolchains. Re-run this script only when the source art changes.
+Outputs are written to two destinations:
+
+1. `android/app/src/main/res/mipmap-*/` — the launcher icons baked into
+   the APK (adaptive-icon foreground + legacy + round, per density bucket).
+2. `fastlane/metadata/android/{en-US,es-ES}/images/icon.png` — the 512x512
+   store icon F-Droid auto-discovers from the fastlane tree. Required by
+   F-Droid review (see MR !37136 reviewer feedback, 2026-04-26).
+
+All outputs are committed to the repository so the build is fully
+reproducible -- F-Droid verifies the published APK byte-for-byte against
+an upstream-signed build, and re-running an icon pipeline at compile time
+would introduce drift between toolchains. Re-run this script only when
+the source art changes.
 
 Usage:
     python3 branding/regenerate-icons.py
@@ -68,6 +76,16 @@ DENSITIES: dict[str, float] = {
 FG_DP = 108  # adaptive-icon canvas size in dp
 LEGACY_DP = 48  # legacy launcher icon size in dp
 
+# F-Droid's fastlane convention: a 512x512 PNG at
+# `fastlane/metadata/android/<locale>/images/icon.png` is the store
+# icon used by the F-Droid client list view. F-Droid auto-discovers
+# it on every metadata sync. We render the same cropped square frame
+# at 512 px so the fastlane icon and the launcher icon are visually
+# identical (no separate art pipeline). 512 is the size Google Play
+# / F-Droid both standardised on.
+FASTLANE_ICON_PX = 512
+FASTLANE_LOCALES = ("en-US", "es-ES")
+
 
 def crop_to_square_frame(im: Image.Image) -> Image.Image:
     """Crop the source to the rounded-square frame and pad to a perfect square.
@@ -122,6 +140,11 @@ def save_png(im: Image.Image, path: Path) -> None:
     im.save(path, format="PNG", optimize=True)
 
 
+def render_fastlane_icon(square: Image.Image) -> Image.Image:
+    """Render the 512x512 fastlane store icon — the cropped frame, no padding."""
+    return square.resize((FASTLANE_ICON_PX, FASTLANE_ICON_PX), Image.LANCZOS)
+
+
 def main() -> None:
     src = Image.open(SOURCE)
     square = crop_to_square_frame(src)
@@ -142,7 +165,18 @@ def main() -> None:
         # double-masking would clip the design.
         save_png(legacy, out_dir / "ic_launcher_round.png")
 
+    fastlane_icon = render_fastlane_icon(square)
+    for locale in FASTLANE_LOCALES:
+        save_png(
+            fastlane_icon,
+            REPO_ROOT / "fastlane" / "metadata" / "android" / locale / "images" / "icon.png",
+        )
+
     print(f"Wrote launcher icons under {RES_DIR}")
+    print(
+        f"Wrote {FASTLANE_ICON_PX}x{FASTLANE_ICON_PX} fastlane icon under "
+        f"{REPO_ROOT / 'fastlane' / 'metadata' / 'android'}/{{{','.join(FASTLANE_LOCALES)}}}/images/icon.png"
+    )
 
 
 if __name__ == "__main__":
