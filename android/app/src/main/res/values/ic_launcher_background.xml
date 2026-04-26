@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Adaptive-icon background colour. Must match the dark teal of the rounded
+  square inside the foreground PNGs; otherwise device masks would expose a
+  visible seam between the foreground square and the surrounding background.
+  If you change this value, also update `BG_HEX` in
+  `branding/regenerate-icons.py` and re-run the script.
+-->
+<resources>
+    <color name="ic_launcher_background">#2F5C73</color>
+</resources>

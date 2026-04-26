@@ -162,6 +162,21 @@ boundary (F-Droid, release, docs).
 - [x] T058 Walked `quickstart.md` end-to-end against the actual `android/` tree; removed the "directory does not exist yet" disclaimer, replaced the obsolete `keystore.properties` flow with the `PRICEGRAB_*` env-var flow that matches `app/build.gradle.kts`, and updated the F-Droid section to point at the metadata that now lives in the repo.
 - [x] T059 **Done — held green by CI on every push.** `./gradlew :app:lint :app:detekt` ran clean on the `v0.1.0` tag (workflow run [24927324754](https://github.com/mablanco/pricegrab/actions/runs/24927324754)) and on every PR before it. No `app/lint-baseline.xml` is needed because there are zero legacy findings to suppress; if a future Android Gradle Plugin or detekt bump introduces new warnings we can add the baseline at that point.
 - [x] T060 **Submitted — awaiting F-Droid maintainer review.** Opened [`fdroid/fdroiddata!37136`](https://gitlab.com/fdroid/fdroiddata/-/merge_requests/37136) from a personal GitLab fork (`mabnavarrete/fdroiddata`, branch `add-com.mablanco.pricegrab`) with `metadata/com.mablanco.pricegrab.yml`. Pipeline [`#2479489359`](https://gitlab.com/mabnavarrete/fdroiddata/-/pipelines/2479489359) finished with all 8 visible jobs green: `fdroid build` (compiled v0.1.1 from source), `check apk` (matched the `AllowedAPKSigningKeys` SHA-256), `check source code`, `fdroid lint`, `fdroid rewritemeta`, `git redirect`, `schema validation`, `tools check scripts`. Three upstream-side fixes were needed and are documented in [`docs/fdroid.md`](../../docs/fdroid.md) §5 "Current submission state". Now waiting on a human F-Droid maintainer to merge; this typically takes days to weeks for first-time submissions.
+- [x] T062 **Done — final launcher icon shipped.** Replaced the T008 placeholder
+  vector (`drawable/ic_launcher.xml`, plain green-on-white "pg" tag) with a
+  full adaptive-icon set generated from `branding/icon-source.png` (an
+  illustration of a balance scale with melons and price tags on a dark-teal
+  rounded square). `branding/regenerate-icons.py` produces
+  deterministic PNGs at `mipmap-{m,h,xh,xxh,xxxhdpi}/` for both the foreground
+  layer (108 dp canvas, 5 % inset, transparent padding) and the legacy /
+  round square icons (48 dp canvas, full bleed). The adaptive-icon
+  `<background>` is the same `#2F5C73` sampled from inside the rounded
+  square, so device masks see a uniform colour field with the design centred
+  in the safe zone — no visible seam under any launcher mask. Source PNG and
+  generator script committed under `branding/` so the asset pipeline is
+  reproducible from-scratch (matters for F-Droid Mode B). Themed-icon
+  monochrome layer intentionally omitted; Android 13+ devices fall back to
+  the regular icon, which is the documented graceful path.
 - [ ] T061 **In progress — Mode B Reproducible Builds for F-Droid.** Reviewer asked us to commit to publishing the developer-signed APK rather than F-Droid-signed. Plan in four phases: (1) bump to v0.1.2 with `vcsInfo.include = false` so AGP doesn't embed the git revision in `META-INF/version-control-info.textproto`, the most common reproducibility blocker for Kotlin/Compose apps; (2) update `metadata/com.mablanco.pricegrab.yml` in the GitLab fork to add `Binaries: https://github.com/mablanco/pricegrab/releases/download/v%v/app-release.apk` and a v0.1.2 build entry, and disable the v0.1.1 entry which is non-reproducible by construction; (3) iterate against `diffoscope` output if F-Droid's verify-build fails, tagging v0.1.3+ as needed; (4) once verify passes, rewrite [`docs/fdroid.md`](../../docs/fdroid.md) §1/§3/§5 with the corrected three-mode framework (A/B/C) and the actual settled state. PriceGrab is well-suited (pure Kotlin/Compose, no NDK, no baseline profiles, AGP 8.7.3, `dependenciesInfo.includeInApk = false` already set); reasonable expectation is 1-3 iterations.
 
 ---
@@ -251,6 +266,15 @@ human review), syncs the `disable:` note in [`docs/fdroid.md`](../../docs/fdroid
 documents the three CI failures and fixes in a new "Current
 submission state" subsection, and adds guard-rail wording on why the
 `disable:` note must stay short.
+
+### PR H — `feat/012-app-icon`
+
+Closes **T062**. Drops the Phase-1 placeholder launcher vector
+(`drawable/ic_launcher.xml`) and ships a full adaptive-icon set generated
+deterministically from `branding/icon-source.png` by
+`branding/regenerate-icons.py`. Touches only icon assets and the manifest;
+no behaviour change, no version bump (the icon will land for users with
+the next tagged release).
 
 ### Notes
 
