@@ -12,16 +12,29 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
@@ -39,16 +52,17 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mablanco.pricegrab.R
 import com.mablanco.pricegrab.core.model.ComparisonOutcome
 import com.mablanco.pricegrab.ui.theme.PriceGrabTheme
+import kotlinx.coroutines.withTimeoutOrNull
 import java.util.Locale
 
 /**
- * US1 screen: enter two `(price, quantity)` offers and see which one is
- * cheaper per unit.
+ * Stateful entry point: reads a [CompareViewModel] from the current
+ * [androidx.lifecycle.ViewModelStore] and delegates to the stateless
+ * [CompareScreen] overload.
  *
- * This stateful entry point reads a [CompareViewModel] from the current
- * [androidx.lifecycle.ViewModelStore] and delegates presentation to the
- * stateless [CompareScreen] overload below, keeping UI logic testable without
- * a full activity lifecycle.
+ * The Compare screen owns its own [Scaffold] (with a top app bar and a
+ * snackbar host) so the activity-level `PriceGrabApp` stays a thin
+ * theme + screen wrapper.
  */
 @Composable
 fun CompareScreen(
@@ -62,10 +76,14 @@ fun CompareScreen(
         onQuantityAChange = viewModel::onQuantityAChange,
         onPriceBChange = viewModel::onPriceBChange,
         onQuantityBChange = viewModel::onQuantityBChange,
+        onResetClick = viewModel::resetComparison,
+        onUndoClick = viewModel::undoReset,
+        onUndoDismissed = viewModel::dismissUndo,
         modifier = modifier,
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CompareScreen(
     state: CompareUiState,
@@ -73,6 +91,139 @@ fun CompareScreen(
     onQuantityAChange: (String) -> Unit,
     onPriceBChange: (String) -> Unit,
     onQuantityBChange: (String) -> Unit,
+    onResetClick: () -> Unit,
+    onUndoClick: () -> Unit,
+    onUndoDismissed: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val snackbarHostState = remember { SnackbarHostState() }
+    val priceAFocusRequester = remember { FocusRequester() }
+
+    FocusOnFreshResetEffect(state.undoState, priceAFocusRequester)
+    UndoSnackbarEffect(
+        undoState = state.undoState,
+        snackbarHostState = snackbarHostState,
+        onUndoClick = onUndoClick,
+        onUndoDismissed = onUndoDismissed,
+    )
+
+    Scaffold(
+        modifier = modifier,
+        topBar = { CompareTopBar(enabled = state.isResetEnabled, onResetClick = onResetClick) },
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+    ) { innerPadding ->
+        CompareContent(
+            state = state,
+            onPriceAChange = onPriceAChange,
+            onQuantityAChange = onQuantityAChange,
+            onPriceBChange = onPriceBChange,
+            onQuantityBChange = onQuantityBChange,
+            priceAFocusRequester = priceAFocusRequester,
+            modifier = Modifier.padding(innerPadding),
+        )
+    }
+}
+
+/**
+ * FR-005.3: move keyboard focus to Price A whenever a *fresh* reset
+ * starts a new UndoState. Keyed on the deadline so the effect refires
+ * for each new reset (each has a unique deadline) but does not steal
+ * focus on rotation (rotation preserves the deadline).
+ */
+@Composable
+private fun FocusOnFreshResetEffect(
+    undoState: UndoState?,
+    focusRequester: FocusRequester,
+) {
+    LaunchedEffect(undoState?.expiresAtEpochMillis) {
+        if (undoState != null) {
+            focusRequester.requestFocus()
+        }
+    }
+}
+
+/**
+ * Drive the undo Snackbar from the active [UndoState]
+ * (research.md §3 + §4). Always shown with
+ * `SnackbarDuration.Indefinite` and bounded by `withTimeoutOrNull
+ * (remaining)`, where `remaining = deadline - now()`. The wrapper
+ * uses the coroutine clock, so the lifetime is honoured verbatim
+ * across configuration changes (after rotation, a smaller `remaining`
+ * is computed and the Snackbar shows for exactly that long instead
+ * of restarting from a full 10 s).
+ */
+@Composable
+private fun UndoSnackbarEffect(
+    undoState: UndoState?,
+    snackbarHostState: SnackbarHostState,
+    onUndoClick: () -> Unit,
+    onUndoDismissed: () -> Unit,
+) {
+    val undoMessage = stringResource(R.string.comparison_cleared)
+    val undoActionLabel = stringResource(R.string.undo_action)
+    LaunchedEffect(undoState) {
+        if (undoState == null) {
+            // No active Undo: hide any Snackbar still on screen so the
+            // typing-dismisses-undo path closes the surface immediately.
+            snackbarHostState.currentSnackbarData?.dismiss()
+            return@LaunchedEffect
+        }
+        val remaining = undoState.expiresAtEpochMillis - System.currentTimeMillis()
+        if (remaining <= 0L) {
+            // Stale state (e.g. process death survived the lifetime).
+            // Mirror dismissUndo() upstream so observers stay in sync.
+            onUndoDismissed()
+            return@LaunchedEffect
+        }
+        val result = withTimeoutOrNull(remaining) {
+            snackbarHostState.showSnackbar(
+                message = undoMessage,
+                actionLabel = undoActionLabel,
+                duration = SnackbarDuration.Indefinite,
+                withDismissAction = false,
+            )
+        }
+        when (result) {
+            SnackbarResult.ActionPerformed -> onUndoClick()
+            SnackbarResult.Dismissed, null -> onUndoDismissed()
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun CompareTopBar(enabled: Boolean, onResetClick: () -> Unit) {
+    val resetDescription = stringResource(R.string.reset_action_description)
+    CenterAlignedTopAppBar(
+        title = { Text(stringResource(R.string.app_name)) },
+        actions = {
+            IconButton(
+                onClick = onResetClick,
+                enabled = enabled,
+                modifier = Modifier
+                    .testTag(TEST_TAG_RESET)
+                    .semantics { contentDescription = resetDescription },
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Refresh,
+                    // contentDescription set on the IconButton's
+                    // semantics so TalkBack reads
+                    // "Clear all fields and start a new comparison".
+                    contentDescription = null,
+                )
+            }
+        },
+    )
+}
+
+@Composable
+private fun CompareContent(
+    state: CompareUiState,
+    onPriceAChange: (String) -> Unit,
+    onQuantityAChange: (String) -> Unit,
+    onPriceBChange: (String) -> Unit,
+    onQuantityBChange: (String) -> Unit,
+    priceAFocusRequester: FocusRequester,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -96,6 +247,7 @@ fun CompareScreen(
             onPriceChange = onPriceAChange,
             onQuantityChange = onQuantityAChange,
             testTagPrefix = TEST_TAG_OFFER_A,
+            priceFocusRequester = priceAFocusRequester,
         )
 
         OfferCard(
@@ -107,6 +259,7 @@ fun CompareScreen(
             onPriceChange = onPriceBChange,
             onQuantityChange = onQuantityBChange,
             testTagPrefix = TEST_TAG_OFFER_B,
+            priceFocusRequester = null,
         )
 
         ResultCard(outcome = state.outcome)
@@ -123,6 +276,7 @@ private fun OfferCard(
     onPriceChange: (String) -> Unit,
     onQuantityChange: (String) -> Unit,
     testTagPrefix: String,
+    priceFocusRequester: FocusRequester?,
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -142,6 +296,7 @@ private fun OfferCard(
                 error = priceError,
                 imeAction = ImeAction.Next,
                 testTag = "${testTagPrefix}_price",
+                focusRequester = priceFocusRequester,
             )
 
             LabeledNumberField(
@@ -152,6 +307,7 @@ private fun OfferCard(
                 error = quantityError,
                 imeAction = ImeAction.Done,
                 testTag = "${testTagPrefix}_quantity",
+                focusRequester = null,
             )
         }
     }
@@ -166,7 +322,13 @@ private fun LabeledNumberField(
     error: InputError?,
     imeAction: ImeAction,
     testTag: String,
+    focusRequester: FocusRequester?,
 ) {
+    val baseModifier = Modifier
+        .fillMaxWidth()
+        .testTag(testTag)
+        .semantics { this.contentDescription = contentDescription }
+
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
@@ -180,10 +342,11 @@ private fun LabeledNumberField(
             keyboardType = KeyboardType.Decimal,
             imeAction = imeAction,
         ),
-        modifier = Modifier
-            .fillMaxWidth()
-            .testTag(testTag)
-            .semantics { this.contentDescription = contentDescription },
+        modifier = if (focusRequester != null) {
+            baseModifier.focusRequester(focusRequester)
+        } else {
+            baseModifier
+        },
     )
 }
 
@@ -263,6 +426,7 @@ const val TEST_TAG_OFFER_B: String = "offerB"
 const val TEST_TAG_RESULT: String = "result"
 const val TEST_TAG_RESULT_TEXT: String = "result_text"
 const val TEST_TAG_RESULT_SAVINGS: String = "result_savings"
+const val TEST_TAG_RESET: String = "reset_action"
 
 // ---- Layout constants -------------------------------------------------------
 
@@ -283,6 +447,9 @@ private fun CompareScreenEmptyPreview() {
             onQuantityAChange = {},
             onPriceBChange = {},
             onQuantityBChange = {},
+            onResetClick = {},
+            onUndoClick = {},
+            onUndoDismissed = {},
         )
     }
 }
@@ -306,6 +473,9 @@ private fun CompareScreenAWinsPreview() {
             onQuantityAChange = {},
             onPriceBChange = {},
             onQuantityBChange = {},
+            onResetClick = {},
+            onUndoClick = {},
+            onUndoDismissed = {},
         )
     }
 }

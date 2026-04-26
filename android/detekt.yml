@@ -20,6 +20,16 @@ complexity:
     constructorThreshold: 8
     ignoreAnnotated:
       - 'Composable'
+  TooManyFunctions:
+    # Compose screen files routinely host a top-level @Composable plus
+    # several private @Composable helpers (effects, sub-panels, Preview
+    # hosts) — the natural unit of code for a screen, not a god-object.
+    # Same shape for the feature-rich Compare ViewModel: 4 input setters
+    # + 3 reset/undo actions + the per-field error mapping helpers fit
+    # under one cohesive class. Bumping from the default 11 absorbs that
+    # without sacrificing the rule's god-object intent.
+    thresholdInFiles: 16
+    thresholdInClasses: 16
 
 style:
   MagicNumber:
