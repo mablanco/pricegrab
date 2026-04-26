@@ -18,6 +18,15 @@ import java.util.Locale
  * Reactive model: every keystroke re-parses both offers and re-computes the
  * comparison outcome. This is cheap because the full state only holds 4 small
  * strings; there is no async work or I/O.
+ *
+ * Feature 002 additions:
+ *  - [resetComparison] captures a [PreResetSnapshot], clears the four raw
+ *    fields, and exposes an [UndoState] for the screen to surface as a
+ *    Snackbar.
+ *  - [undoReset] restores the captured snapshot atomically.
+ *  - [dismissUndo] clears the [UndoState] without restoring (used by the
+ *    typing-while-snackbar-visible path and by the host activity's
+ *    `ON_STOP` listener).
  */
 class CompareViewModel(
     private val savedStateHandle: SavedStateHandle,
@@ -29,6 +38,7 @@ class CompareViewModel(
             quantityARaw = savedStateHandle[KEY_QUANTITY_A] ?: "",
             priceBRaw = savedStateHandle[KEY_PRICE_B] ?: "",
             quantityBRaw = savedStateHandle[KEY_QUANTITY_B] ?: "",
+            undoState = restoreUndoStateFromSavedState(),
         ),
     )
 
@@ -43,8 +53,91 @@ class CompareViewModel(
     fun onPriceBChange(value: String) = update { it.copy(priceBRaw = sanitize(value)) }
     fun onQuantityBChange(value: String) = update { it.copy(quantityBRaw = sanitize(value)) }
 
+    /**
+     * Atomically clear the four raw inputs and the displayed result, and
+     * (when the form was non-empty) start an [UndoState] that the screen
+     * can surface as a Material 3 Snackbar.
+     *
+     * No-op when the form is already empty (FR-004 / AS-1.3): no state
+     * change, no `UndoState`. The button is also `enabled = false` in
+     * that case, so reaching this branch through normal interaction is
+     * not possible — it is defended here for completeness.
+     */
+    fun resetComparison() {
+        val current = _state.value
+        if (!current.isResetEnabled) return
+
+        val snapshot = PreResetSnapshot(
+            priceARaw = current.priceARaw,
+            quantityARaw = current.quantityARaw,
+            priceBRaw = current.priceBRaw,
+            quantityBRaw = current.quantityBRaw,
+        )
+        val deadline = System.currentTimeMillis() + UNDO_LIFETIME_MS
+
+        savedStateHandle[KEY_PRICE_A] = ""
+        savedStateHandle[KEY_QUANTITY_A] = ""
+        savedStateHandle[KEY_PRICE_B] = ""
+        savedStateHandle[KEY_QUANTITY_B] = ""
+        savedStateHandle[KEY_UNDO_PRICE_A] = snapshot.priceARaw
+        savedStateHandle[KEY_UNDO_QUANTITY_A] = snapshot.quantityARaw
+        savedStateHandle[KEY_UNDO_PRICE_B] = snapshot.priceBRaw
+        savedStateHandle[KEY_UNDO_QUANTITY_B] = snapshot.quantityBRaw
+        savedStateHandle[KEY_UNDO_DEADLINE] = deadline
+
+        val cleared = CompareUiState(
+            undoState = UndoState(snapshot, deadline),
+        )
+        _state.value = recomputeOutcome(cleared)
+    }
+
+    /**
+     * Restore the four raw strings to whatever they were immediately
+     * before the most recent [resetComparison]. No-op when no
+     * [UndoState] is active.
+     */
+    fun undoReset() {
+        val undo = _state.value.undoState ?: return
+        val snap = undo.snapshot
+
+        savedStateHandle[KEY_PRICE_A] = snap.priceARaw
+        savedStateHandle[KEY_QUANTITY_A] = snap.quantityARaw
+        savedStateHandle[KEY_PRICE_B] = snap.priceBRaw
+        savedStateHandle[KEY_QUANTITY_B] = snap.quantityBRaw
+        clearUndoFromSavedState()
+
+        val restored = CompareUiState(
+            priceARaw = snap.priceARaw,
+            quantityARaw = snap.quantityARaw,
+            priceBRaw = snap.priceBRaw,
+            quantityBRaw = snap.quantityBRaw,
+        )
+        _state.value = recomputeOutcome(restored)
+    }
+
+    /**
+     * Clear the active [UndoState] without restoring. Triggered by:
+     *  - the user starting to type into any of the four fields
+     *    (handled internally by [update]);
+     *  - the host activity reaching `Lifecycle.Event.ON_STOP`;
+     *  - the Snackbar reaching its dismissal threshold (timeout or swipe).
+     */
+    fun dismissUndo() {
+        if (_state.value.undoState == null) return
+        clearUndoFromSavedState()
+        _state.value = _state.value.copy(undoState = null)
+    }
+
     private fun update(transform: (CompareUiState) -> CompareUiState) {
-        val next = transform(_state.value)
+        var next = transform(_state.value)
+        // FR-008.1: typing into any field dismisses an active Undo
+        // affordance. We mutate `next` *before* writing to the
+        // SavedStateHandle so the cleared keys are the ones that
+        // survive a configuration change.
+        if (next.undoState != null) {
+            clearUndoFromSavedState()
+            next = next.copy(undoState = null)
+        }
         savedStateHandle[KEY_PRICE_A] = next.priceARaw
         savedStateHandle[KEY_QUANTITY_A] = next.quantityARaw
         savedStateHandle[KEY_PRICE_B] = next.priceBRaw
@@ -98,11 +191,53 @@ class CompareViewModel(
         else -> null
     }
 
+    private fun clearUndoFromSavedState() {
+        savedStateHandle.remove<String>(KEY_UNDO_PRICE_A)
+        savedStateHandle.remove<String>(KEY_UNDO_QUANTITY_A)
+        savedStateHandle.remove<String>(KEY_UNDO_PRICE_B)
+        savedStateHandle.remove<String>(KEY_UNDO_QUANTITY_B)
+        savedStateHandle.remove<Long>(KEY_UNDO_DEADLINE)
+    }
+
+    /**
+     * Reconstruct an [UndoState] from the SavedStateHandle, or `null`
+     * when no Undo is active or when the deadline has already passed
+     * (e.g. process death survived the lifetime).
+     */
+    private fun restoreUndoStateFromSavedState(): UndoState? {
+        val deadline: Long = savedStateHandle[KEY_UNDO_DEADLINE] ?: return null
+        if (deadline <= System.currentTimeMillis()) return null
+        val priceA: String = savedStateHandle[KEY_UNDO_PRICE_A] ?: return null
+        val quantityA: String = savedStateHandle[KEY_UNDO_QUANTITY_A] ?: return null
+        val priceB: String = savedStateHandle[KEY_UNDO_PRICE_B] ?: return null
+        val quantityB: String = savedStateHandle[KEY_UNDO_QUANTITY_B] ?: return null
+        return UndoState(
+            snapshot = PreResetSnapshot(priceA, quantityA, priceB, quantityB),
+            expiresAtEpochMillis = deadline,
+        )
+    }
+
     private companion object {
         const val KEY_PRICE_A = "priceA"
         const val KEY_QUANTITY_A = "quantityA"
         const val KEY_PRICE_B = "priceB"
         const val KEY_QUANTITY_B = "quantityB"
+
+        const val KEY_UNDO_PRICE_A = "undoPriceA"
+        const val KEY_UNDO_QUANTITY_A = "undoQuantityA"
+        const val KEY_UNDO_PRICE_B = "undoPriceB"
+        const val KEY_UNDO_QUANTITY_B = "undoQuantityB"
+        const val KEY_UNDO_DEADLINE = "undoDeadline"
+
+        /**
+         * Material 3 `SnackbarDuration.Long` is documented as ~10 seconds.
+         * We track the deadline in wall-clock time (research.md §3) so the
+         * affordance can survive rotation with its remaining lifetime
+         * intact; the Snackbar UI uses `withTimeoutOrNull(remaining)` to
+         * truncate the show duration when the state is restored
+         * mid-window after a configuration change.
+         */
+        const val UNDO_LIFETIME_MS = 10_000L
 
         val BLOCKED_CHARS: Set<Char> = setOf('-', '+', 'e', 'E')
     }

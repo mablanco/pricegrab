@@ -1,10 +1,12 @@
 package com.mablanco.pricegrab.ui.compare
 
 import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performTextInput
@@ -64,5 +66,31 @@ class CompareScreenAccessibilityTest {
 
         composeRule.onNodeWithTag("result").assert(hasContentDescriptionContaining(headline))
         composeRule.onNodeWithTag("result").assert(hasContentDescriptionContaining(savings))
+    }
+
+    /**
+     * US002 (T009): the Reset action surfaced in the top app bar must
+     * carry a non-empty content description, the `Role.Button` semantic
+     * role (so TalkBack reads "button" after the description), and the
+     * disabled state exposed via `SemanticsProperties.Disabled` when the
+     * form is empty.
+     */
+    @Test
+    fun resetActionExposesContentDescriptionAndButtonRole() {
+        val ctx = composeRule.activity
+        val description = ctx.getString(R.string.reset_action_description)
+
+        composeRule.onNodeWithTag(TEST_TAG_RESET).assertIsDisplayed()
+        composeRule.onNodeWithTag(TEST_TAG_RESET)
+            .assert(hasContentDescriptionContaining(description))
+        composeRule.onNodeWithTag(TEST_TAG_RESET)
+            .assert(SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Button))
+    }
+
+    @Test
+    fun resetActionIsDisabledOnColdLaunch() {
+        composeRule.onNodeWithTag(TEST_TAG_RESET).assertIsNotEnabled()
+        composeRule.onNodeWithTag(TEST_TAG_RESET)
+            .assert(SemanticsMatcher.keyIsDefined(SemanticsProperties.Disabled))
     }
 }

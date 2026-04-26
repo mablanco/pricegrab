@@ -26,10 +26,13 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
@@ -70,10 +73,7 @@ fun CompareScreen(
         onQuantityAChange = viewModel::onQuantityAChange,
         onPriceBChange = viewModel::onPriceBChange,
         onQuantityBChange = viewModel::onQuantityBChange,
-        // Real wiring lands in feature 002 task T010 (resetComparison).
-        // Phase-1 placeholder: keep the click compiling so the disabled-state
-        // assertions in T009 can run before any reset behaviour exists.
-        onResetClick = {},
+        onResetClick = viewModel::resetComparison,
         modifier = modifier,
     )
 }
@@ -91,6 +91,18 @@ fun CompareScreen(
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     val resetDescription = stringResource(R.string.reset_action_description)
+    val priceAFocusRequester = remember { FocusRequester() }
+
+    // Move keyboard focus to Price A whenever a *fresh* reset starts a
+    // new UndoState. Keyed on the deadline so the effect refires for
+    // each reset (a new reset has a unique deadline) but does not steal
+    // focus on rotation (the deadline is preserved across configuration
+    // change). FR-005.3.
+    LaunchedEffect(state.undoState?.expiresAtEpochMillis) {
+        if (state.undoState != null) {
+            priceAFocusRequester.requestFocus()
+        }
+    }
 
     Scaffold(
         modifier = modifier,
@@ -141,6 +153,7 @@ fun CompareScreen(
                 onPriceChange = onPriceAChange,
                 onQuantityChange = onQuantityAChange,
                 testTagPrefix = TEST_TAG_OFFER_A,
+                priceFocusRequester = priceAFocusRequester,
             )
 
             OfferCard(
@@ -152,6 +165,7 @@ fun CompareScreen(
                 onPriceChange = onPriceBChange,
                 onQuantityChange = onQuantityBChange,
                 testTagPrefix = TEST_TAG_OFFER_B,
+                priceFocusRequester = null,
             )
 
             ResultCard(outcome = state.outcome)
@@ -169,6 +183,7 @@ private fun OfferCard(
     onPriceChange: (String) -> Unit,
     onQuantityChange: (String) -> Unit,
     testTagPrefix: String,
+    priceFocusRequester: FocusRequester?,
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -188,6 +203,7 @@ private fun OfferCard(
                 error = priceError,
                 imeAction = ImeAction.Next,
                 testTag = "${testTagPrefix}_price",
+                focusRequester = priceFocusRequester,
             )
 
             LabeledNumberField(
@@ -198,6 +214,7 @@ private fun OfferCard(
                 error = quantityError,
                 imeAction = ImeAction.Done,
                 testTag = "${testTagPrefix}_quantity",
+                focusRequester = null,
             )
         }
     }
@@ -212,7 +229,13 @@ private fun LabeledNumberField(
     error: InputError?,
     imeAction: ImeAction,
     testTag: String,
+    focusRequester: FocusRequester?,
 ) {
+    val baseModifier = Modifier
+        .fillMaxWidth()
+        .testTag(testTag)
+        .semantics { this.contentDescription = contentDescription }
+
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
@@ -226,10 +249,11 @@ private fun LabeledNumberField(
             keyboardType = KeyboardType.Decimal,
             imeAction = imeAction,
         ),
-        modifier = Modifier
-            .fillMaxWidth()
-            .testTag(testTag)
-            .semantics { this.contentDescription = contentDescription },
+        modifier = if (focusRequester != null) {
+            baseModifier.focusRequester(focusRequester)
+        } else {
+            baseModifier
+        },
     )
 }
 
