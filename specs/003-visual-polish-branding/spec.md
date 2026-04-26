@@ -2,7 +2,7 @@
 
 **Feature Branch**: `003-visual-polish-branding`
 **Created**: 2026-04-26
-**Status**: Draft
+**Status**: Ready for planning (initial clarifications resolved on 2026-04-26)
 **Input**: User description: "Polish the visual style of the Unit-Price Comparison Screen to make it more engaging and on-brand, while preserving WCAG-AA accessibility, ES/EN parity, and the offline / cold-start budget. Open question to resolve in the spec: whether the app name (or some equivalent branding element) should be visible on the comparison screen."
 
 ## User Scenarios & Testing *(mandatory)*
@@ -107,28 +107,31 @@ rework later and gives the brand identity introduced in US1 a place to
 live. Marked P3 because it is the lowest-risk-to-defer of the three
 stories: even if we ship US1 + US2 alone, the app is more polished.
 
-**Independent Test**: Once the branding placement is chosen
-(see FR-001 / [NEEDS CLARIFICATION] markers), the chosen treatment can
-be added or removed in isolation without touching the input or result
-regions. A reviewer can validate the choice with the same visual
+**Independent Test**: With the branding placement resolved
+(FR-001 — small glyph + plain text title in the top app bar), the
+chosen treatment can be added or removed in isolation without touching
+the input or result regions. A reviewer can validate the choice with the same visual
 side-by-side as US1.
 
 **Acceptance Scenarios**:
 
-1. **Given** the design decision in [NEEDS CLARIFICATION 1] resolves
-   to "show app name on screen", **When** the Compare screen renders,
-   **Then** the on-screen branding occupies less than 12% of the
-   portrait viewport vertical space and never obscures or pushes any
-   input below the fold on a Pixel 4a-class device.
-2. **Given** the design decision in [NEEDS CLARIFICATION 1] resolves
-   to "no on-screen branding", **When** the Compare screen renders,
-   **Then** the visual hierarchy from US1 still feels intentional
-   without a wordmark / logo (i.e. the screen does not look "missing
-   a header").
-3. **Given** any branding element is added,
-   **When** TalkBack reaches it, **Then** it is either announced as
-   the app name (with role = heading) or marked decorative if it is
-   purely visual ornament alongside an existing announceable label.
+1. **Given** the resolved branding placement (small glyph + plain
+   text title in the top app bar),
+   **When** the Compare screen renders,
+   **Then** the top app bar height stays within Material 3
+   defaults (no oversized header), the glyph never obscures or
+   pushes any input below the fold on a Pixel 4a-class device, and
+   the title remains the only top-bar text content (no tagline).
+2. **Given** the user enables TalkBack,
+   **When** focus reaches the top app bar,
+   **Then** TalkBack announces "PriceGrab" exactly once (from the
+   title text) and does NOT announce the glyph — the glyph is
+   marked decorative via `invisibleToUser` semantics.
+3. **Given** the user is on Android 12+ with any custom wallpaper,
+   **When** the Compare screen renders,
+   **Then** the colors come from the brand-derived `ColorScheme`
+   (dark teal seed from FR-003) and NOT from Material You /
+   wallpaper-derived dynamic color.
 
 ---
 
@@ -138,10 +141,11 @@ side-by-side as US1.
   Result region in particular cannot grow so large that, at 200%
   scale, it pushes inputs below the fold or truncates the winner
   callout.
-- **Dynamic color (Material You) on Android 12+**: see
-  [NEEDS CLARIFICATION 2]. If we opt in, brand expression must still
-  be recognizable when dynamic color is *not* available
-  (Android < 12 or user has not set a wallpaper-derived palette).
+- **Dynamic color (Material You) on Android 12+**: opted out by
+  resolution of clarification 2. The brand-derived `ColorScheme` is
+  always used; the feature must NOT silently fall back to dynamic
+  color on Android 12+ (no `dynamicLightColorScheme` /
+  `dynamicDarkColorScheme` calls in the theme).
 - **Dark mode contrast drop**: every new text/background pair MUST hit
   WCAG 2.1 AA (≥4.5:1 normal text, ≥3:1 large text & UI components)
   in **both** light and dark themes.
@@ -172,35 +176,33 @@ side-by-side as US1.
 #### Visual identity (US1 + US3)
 
 - **FR-001**: The Compare screen MUST display a coherent visual brand
-  identity (color, typography hierarchy, spacing rhythm, optional
-  brand mark) that makes it recognizable as PriceGrab at a glance.
-  [NEEDS CLARIFICATION 1: branding element placement —
-  (a) app-name wordmark inside the top app bar (replacing the plain
-  text title), (b) logo glyph only as a small icon next to the
-  title, (c) full wordmark + glyph centered above the inputs,
-  (d) no on-screen branding (rely on launcher icon + top app bar
-  title alone). What does Marco want?]
+  identity (color, typography hierarchy, spacing rhythm, brand mark)
+  that makes it recognizable as PriceGrab at a glance. The brand
+  mark on the Compare screen is rendered as a **small logo glyph
+  immediately preceding the plain-text "PriceGrab" title inside the
+  top app bar** (resolution of clarification 1, option b). The text
+  title remains a regular `Text` composable so TalkBack continues to
+  announce it without any extra `contentDescription` work, and the
+  glyph is decorative (`invisibleToUser` semantics).
 - **FR-002**: The Compare screen MUST stay within Material 3 (Material
   You) components, typography scale, elevation tokens, and motion
   primitives. No third-party UI library, no custom Canvas-based
   branding asset that bypasses Material 3 theming.
 - **FR-003**: The brand seed color MUST be a single source of truth
   used to derive the Material 3 `ColorScheme` for both light and
-  dark themes. [NEEDS CLARIFICATION 3: brand seed color value —
-  (a) match the dark teal of the launcher icon
-  (`branding/regenerate-icons.py` already exposes this via the
-  `BACKGROUND` constant and the icon's sampled corner color),
-  (b) a freshly-chosen accent color, (c) Material You dynamic color
-  on Android 12+ with a fixed seed fallback. The choice in
-  [NEEDS CLARIFICATION 2] determines whether (c) is even on the table.]
-- **FR-004**: The Compare screen MUST work coherently in BOTH the
-  app's brand-derived palette AND, on Android 12+, optionally
-  Material You dynamic color. [NEEDS CLARIFICATION 2: Material You
-  dynamic color opt-in — (a) opt in (use `dynamicColorScheme()` on
-  Android 12+, fall back to brand-derived `ColorScheme` below),
-  (b) opt out (always ship the brand-derived `ColorScheme` for
-  consistency), (c) opt in but document a manual override toggle
-  (out of scope for v0.1.5 if so).]
+  dark themes. The seed color is **the dark teal of the launcher
+  icon background** (resolution of clarification 3, option a — the
+  `BACKGROUND` constant in `branding/regenerate-icons.py`, sampled
+  from the icon's corners; the exact hex is recorded in the planning
+  artefacts). Reusing the launcher-icon palette keeps brand identity
+  consistent across the launcher, the splash, and the in-app surface.
+- **FR-004**: The Compare screen MUST always render with the
+  brand-derived `ColorScheme` (resolution of clarification 2,
+  option b — opt out of Material You dynamic color). Rationale:
+  PriceGrab is a single-purpose, branded utility; consistency of
+  brand identity across users and devices is more valuable than
+  wallpaper-derived theming. A future opt-in toggle in a settings
+  screen is a separate feature, explicitly out of scope here.
 - **FR-005**: The visual treatment MUST be coherent in both light and
   dark theme. The user-perceived brand identity (logo, accent color,
   emphasis hierarchy) MUST not invert, disappear, or drop below
@@ -252,8 +254,10 @@ side-by-side as US1.
 ### Key Entities *(visual system)*
 
 - **Brand seed color**: a single hex value that drives the Material 3
-  `ColorScheme` derivation for light and dark mode. Resolution
-  pending [NEEDS CLARIFICATION 3].
+  `ColorScheme` derivation for light and dark mode. Resolved to the
+  launcher-icon dark teal (clarification 3, option a). Exact hex is
+  pinned during `/speckit.plan` from the source-of-truth in
+  `branding/regenerate-icons.py`.
 - **Typography hierarchy**: an explicit assignment of Material 3
   typography tokens (`displayMedium`, `headlineSmall`, `titleLarge`,
   `bodyLarge`, `labelMedium`, …) to each piece of text on the Compare
@@ -263,8 +267,9 @@ side-by-side as US1.
 - **Spacing rhythm**: an explicit set of spacing values
   (e.g. 4 / 8 / 12 / 16 / 24 dp) used consistently between fields,
   cards, and the result region.
-- **Brand mark (optional)**: a logo glyph and/or wordmark, depending
-  on the resolution of [NEEDS CLARIFICATION 1].
+- **Brand mark**: a small logo glyph rendered immediately before the
+  plain-text "PriceGrab" title inside the top app bar, treated as
+  decorative for TalkBack (clarification 1, option b).
 
 ## Success Criteria *(mandatory)*
 
@@ -300,9 +305,9 @@ side-by-side as US1.
   treatment. Only `androidx.compose.material3` already in the
   dependency graph.
 - **Launcher icon palette is the brand starting point**. The dark
-  teal of the launcher icon (introduced in v0.1.3) is the working
-  hypothesis for the brand seed unless [NEEDS CLARIFICATION 3]
-  resolves otherwise.
+  teal of the launcher icon (introduced in v0.1.3) is the brand seed
+  for the Material 3 `ColorScheme` derivation, per FR-003 and the
+  resolution of clarification 3.
 - **No new feature behavior**. This is purely a visual / branding
   feature. No history, no multi-product comparison, no share, no
   settings UI. Reset / Undo from feature 002 is preserved
@@ -328,23 +333,33 @@ side-by-side as US1.
   Mode-B reproducibility property from feature 001 / `docs/fdroid.md`.
   No timestamped resources, no machine-specific metadata.
 
-## Open clarifications to resolve before `/speckit.plan`
+## Initial clarifications resolved
 
-These are the three [NEEDS CLARIFICATION] markers above, restated in
-one place for the clarification round:
+The three open clarifications surfaced in the initial spec draft were
+resolved with Marco on 2026-04-26 before `/speckit.plan`. Recorded
+here for traceability:
 
-1. **[NEEDS CLARIFICATION 1] Branding element placement on the
-   Compare screen.** Options:
-   (a) wordmark inside the top app bar replacing the plain text
-   title; (b) logo glyph only, as a small icon next to the title;
-   (c) full wordmark + glyph centered above the inputs; (d) no
-   on-screen branding (rely on launcher icon + plain top-bar title).
-2. **[NEEDS CLARIFICATION 2] Material You dynamic color (Android
-   12+) opt-in.** Options: (a) opt in with brand-derived fallback;
-   (b) opt out (always brand-derived for consistency); (c) opt in
-   with a manual override toggle (toggle is itself out of scope for
-   v0.1.5 if chosen).
-3. **[NEEDS CLARIFICATION 3] Brand seed color.** Options:
-   (a) match the launcher icon's dark teal; (b) a freshly-chosen
-   accent color; (c) tied to the resolution of clarification 2 if
-   we go full Material You.
+1. **Branding placement on the Compare screen** — option (b): a small
+   logo glyph immediately preceding the plain-text "PriceGrab" title
+   inside the top app bar. Rationale: keeps the title as a regular
+   `Text` composable so TalkBack announces it without extra
+   `contentDescription` work; adds brand presence with the same
+   silhouette as the launcher icon; lower risk than swapping the
+   title for a graphical wordmark; smaller vertical footprint than
+   a dedicated header above the inputs (preserves the no-scroll
+   constraint on a Pixel 4a-class device). The glyph itself is
+   decorative.
+2. **Material You dynamic color** — option (b): opt out. Rationale:
+   PriceGrab is a single-purpose, branded utility; consistency of
+   brand identity across users and devices is more valuable than
+   wallpaper-derived theming. Reviewers, screenshots and the F-Droid
+   listing all benefit from a single, predictable look. A future
+   per-user toggle in a settings screen is a separate feature,
+   explicitly out of scope here.
+3. **Brand seed color** — option (a): match the dark teal of the
+   launcher icon. Rationale: the icon was approved for v0.1.3 (and
+   is the version submitted to F-Droid); reusing its `BACKGROUND`
+   constant from `branding/regenerate-icons.py` as the Material 3
+   seed color keeps the launcher → splash → in-app surface visually
+   coherent without introducing a new palette to govern. The exact
+   hex is pinned during `/speckit.plan`.
