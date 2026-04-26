@@ -139,17 +139,34 @@ Within Foundational, T002 / T003 / T005 are `[P]`. Within US1, T007–T009 (test
 
 ## Implementation Strategy (PRs)
 
-To keep PRs small and reviewable, land feature 002 as a single PR on the
-feature branch `002-reset-comparison`. The phases inside the PR are:
+To keep PRs small and reviewable, land feature 002 across three PRs,
+mirroring feature 001's cadence:
 
-### PR L — `feat/016-reset-comparison` *(against `002-reset-comparison`)*
+### PR L — `002-reset-comparison` *(planning only — this PR)*
+
+Covers `spec.md`, `plan.md`, `research.md`, and `tasks.md`. No source
+code touched. This PR exists so Marco has a single, stable artifact to
+review and sign off on before any Kotlin / XML lands. CI runs the
+standard PR pipeline; the only relevant signal here is that lint /
+detekt / unit tests still pass on a no-source-change PR (they should,
+but the gate stays in force).
+
+### PR M — `feat/016-reset-comparison-impl`
 
 Covers Phases 1–3 and Phase 4 task T024 (the cross-feature ledger
-update). Phase 4 T021–T023 (version bump + changelogs) ride along in the
-same PR so the feature is releasable on merge. T025 (manual
-verification), T026 (tag push) and T027 (F-Droid sync) ship as a
-separate, smaller release-cut PR after the implementation lands, mirroring
-the v0.1.3 cadence (PR J + PR K from feature 001).
+update). Phase 4 T021–T023 (version bump + changelogs) ride along in
+the same PR so the feature is releasable on merge. Branched off
+`main` *after* PR L merges, so the planning artefacts are guaranteed
+to be on `main` before implementation starts. The implementation diff
+is bounded by the task list and is expected to land at ~600–900 LOC
+including tests.
+
+### PR N — `feat/017-prep-v0.1.4` *(release cut)*
+
+Covers Phase 4 tasks T025–T027 (manual verification on device, tag
+push, F-Droid `Builds:` sync). Mirrors the v0.1.3 cadence (PR J +
+PR K from feature 001) so the F-Droid recipe never lags more than
+one release behind `main`.
 
 ### Notes
 
