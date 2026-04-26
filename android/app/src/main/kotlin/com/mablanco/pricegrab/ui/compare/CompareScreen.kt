@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -37,6 +38,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.contentDescription
@@ -52,6 +54,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mablanco.pricegrab.R
 import com.mablanco.pricegrab.core.model.ComparisonOutcome
 import com.mablanco.pricegrab.ui.theme.PriceGrabTheme
+import com.mablanco.pricegrab.ui.theme.spacing
 import kotlinx.coroutines.withTimeoutOrNull
 import java.util.Locale
 
@@ -195,7 +198,30 @@ private fun UndoSnackbarEffect(
 private fun CompareTopBar(enabled: Boolean, onResetClick: () -> Unit) {
     val resetDescription = stringResource(R.string.reset_action_description)
     CenterAlignedTopAppBar(
-        title = { Text(stringResource(R.string.app_name)) },
+        title = {
+            // Brandmark glyph + plain-text title rendered as a single Row so
+            // they read as one composite "PriceGrab" mark to TalkBack (the
+            // Icon is decorative — `contentDescription = null` keeps it out
+            // of the merged semantics tree, the Text carries the
+            // announcement).
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.s),
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_brandmark),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier
+                        .size(BRANDMARK_SIZE)
+                        .testTag(TEST_TAG_BRANDMARK),
+                )
+                Text(
+                    text = stringResource(R.string.app_name),
+                    style = MaterialTheme.typography.titleLarge,
+                )
+            }
+        },
         actions = {
             IconButton(
                 onClick = onResetClick,
@@ -226,16 +252,17 @@ private fun CompareContent(
     priceAFocusRequester: FocusRequester,
     modifier: Modifier = Modifier,
 ) {
+    val spacing = MaterialTheme.spacing
     Column(
         modifier = modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(SCREEN_PADDING),
-        verticalArrangement = Arrangement.spacedBy(SECTION_SPACING),
+            .padding(spacing.l),
+        verticalArrangement = Arrangement.spacedBy(spacing.l),
     ) {
         Text(
             text = stringResource(R.string.compare_heading),
-            style = MaterialTheme.typography.headlineSmall,
+            style = MaterialTheme.typography.titleLarge,
         )
 
         OfferCard(
@@ -278,13 +305,14 @@ private fun OfferCard(
     testTagPrefix: String,
     priceFocusRequester: FocusRequester?,
 ) {
+    val spacing = MaterialTheme.spacing
     Card(
         modifier = Modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
     ) {
         Column(
-            modifier = Modifier.padding(SCREEN_PADDING),
-            verticalArrangement = Arrangement.spacedBy(FIELD_SPACING),
+            modifier = Modifier.padding(spacing.l),
+            verticalArrangement = Arrangement.spacedBy(spacing.m),
         ) {
             Text(text = title, style = MaterialTheme.typography.titleMedium)
 
@@ -365,6 +393,7 @@ private fun ResultCard(outcome: ComparisonOutcome?) {
     // the full thought on every state change.
     val a11ySummary = if (savingsLine != null) "$headline. $savingsLine" else headline
 
+    val spacing = MaterialTheme.spacing
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -375,9 +404,9 @@ private fun ResultCard(outcome: ComparisonOutcome?) {
             },
     ) {
         Row(
-            modifier = Modifier.padding(SCREEN_PADDING),
+            modifier = Modifier.padding(spacing.l),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(FIELD_SPACING),
+            horizontalArrangement = Arrangement.spacedBy(spacing.m),
         ) {
             if (outcome is ComparisonOutcome.AWins || outcome is ComparisonOutcome.BWins) {
                 Icon(
@@ -386,7 +415,7 @@ private fun ResultCard(outcome: ComparisonOutcome?) {
                     tint = MaterialTheme.colorScheme.primary,
                 )
             }
-            Column(verticalArrangement = Arrangement.spacedBy(RESULT_LINE_SPACING)) {
+            Column(verticalArrangement = Arrangement.spacedBy(spacing.s)) {
                 Text(
                     text = headline,
                     style = MaterialTheme.typography.titleMedium,
@@ -427,13 +456,14 @@ const val TEST_TAG_RESULT: String = "result"
 const val TEST_TAG_RESULT_TEXT: String = "result_text"
 const val TEST_TAG_RESULT_SAVINGS: String = "result_savings"
 const val TEST_TAG_RESET: String = "reset_action"
+const val TEST_TAG_BRANDMARK: String = "brandmark"
 
 // ---- Layout constants -------------------------------------------------------
 
-private val SCREEN_PADDING = 16.dp
-private val SECTION_SPACING = 16.dp
-private val FIELD_SPACING = 12.dp
-private val RESULT_LINE_SPACING = 4.dp
+// Material 3's default top-app-bar leading icon slot is 24dp; we keep the
+// brandmark at the same size so it visually aligns with the trailing reset
+// IconButton's 24dp glyph and stays inside the 64dp app-bar height.
+private val BRANDMARK_SIZE = 24.dp
 
 // ---- Previews ---------------------------------------------------------------
 

@@ -5,9 +5,11 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assert
+import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -92,5 +94,26 @@ class CompareScreenAccessibilityTest {
         composeRule.onNodeWithTag(TEST_TAG_RESET).assertIsNotEnabled()
         composeRule.onNodeWithTag(TEST_TAG_RESET)
             .assert(SemanticsMatcher.keyIsDefined(SemanticsProperties.Disabled))
+    }
+
+    /**
+     * US003 / FR-002: the top app bar exposes the brand identity via a
+     * brandmark glyph immediately followed by the plain-text "PriceGrab"
+     * title. The glyph is purely decorative, so:
+     *   - the merged semantic tree announces "PriceGrab" exactly once
+     *     (TalkBack must not double-read the icon and the text);
+     *   - the brandmark node carries no contentDescription of its own.
+     */
+    @Test
+    fun topAppBarBrandingExposesTitleOnceAndBrandmarkIsDecorative() {
+        val ctx = composeRule.activity
+        val brand = ctx.getString(R.string.app_name)
+
+        composeRule.onAllNodesWithText(brand).assertCountEquals(1)
+
+        composeRule.onNodeWithTag(TEST_TAG_BRANDMARK).assertIsDisplayed()
+        composeRule.onNodeWithTag(TEST_TAG_BRANDMARK).assert(
+            SemanticsMatcher.keyNotDefined(SemanticsProperties.ContentDescription),
+        )
     }
 }

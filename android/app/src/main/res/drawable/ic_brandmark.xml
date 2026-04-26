@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  PriceGrab on-screen brandmark.
+
+  A small price-tag silhouette tinted with the active ColorScheme's
+  primary role, used inside the Compare screen's top app bar
+  immediately before the plain-text "PriceGrab" title. The glyph
+  echoes the launcher icon's price-tag intent without copying the
+  launcher's photographic detail (which would not survive at 24dp).
+
+  Geometry: 24x24 viewport so it slots cleanly into the Material 3
+  default top-app-bar leading space without resizing. The single
+  path below is the canonical Material "local offer" tag silhouette
+  with a soft inner cut for the tag eyelet, kept simple so it
+  remains crisp on every density bucket.
+
+  Decorative: marked invisibleToUser at the call site
+  (CompareScreen.kt) — TalkBack reads "PriceGrab" from the title
+  text only, never twice.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24"
+    android:tint="?attr/colorPrimary">
+    <path
+        android:fillColor="@android:color/white"
+        android:pathData="M21.41,11.58l-9,-9C12.04,2.21 11.53,2 11,2H4c-1.1,0 -2,0.9 -2,2v7c0,0.53 0.21,1.04 0.59,1.41l9,9c0.78,0.78 2.05,0.78 2.83,0l7,-7c0.78,-0.78 0.78,-2.04 -0.01,-2.83zM5.5,7C4.67,7 4,6.33 4,5.5S4.67,4 5.5,4 7,4.67 7,5.5 6.33,7 5.5,7z" />
+</vector>
