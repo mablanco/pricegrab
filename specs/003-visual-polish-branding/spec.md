@@ -356,10 +356,11 @@ here for traceability:
    listing all benefit from a single, predictable look. A future
    per-user toggle in a settings screen is a separate feature,
    explicitly out of scope here.
-3. **Brand seed color** — option (a): match the dark teal of the
-   launcher icon. Rationale: the icon was approved for v0.1.3 (and
-   is the version submitted to F-Droid); reusing its `BACKGROUND`
-   constant from `branding/regenerate-icons.py` as the Material 3
-   seed color keeps the launcher → splash → in-app surface visually
-   coherent without introducing a new palette to govern. The exact
-   hex is pinned during `/speckit.plan`.
+3. **Brand seed color** — option (a): match the launcher icon's
+   background. Rationale: the icon was approved for v0.1.3 (and is
+   the version submitted to F-Droid); reusing its `BG_HEX` constant
+   from `branding/regenerate-icons.py` as the Material 3 seed color
+   keeps the launcher → in-app surface visually coherent without
+   introducing a new palette to govern. The exact hex pinned at
+   plan time is **`#2F5C73`** (steel blue), as recorded in
+   `branding/regenerate-icons.py`.
