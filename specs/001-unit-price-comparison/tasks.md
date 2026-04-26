@@ -164,9 +164,9 @@ boundary (F-Droid, release, docs).
 - [x] T060 **Submitted — awaiting F-Droid maintainer review.** Opened [`fdroid/fdroiddata!37136`](https://gitlab.com/fdroid/fdroiddata/-/merge_requests/37136) from a personal GitLab fork (`mabnavarrete/fdroiddata`, branch `add-com.mablanco.pricegrab`) with `metadata/com.mablanco.pricegrab.yml`. Pipeline [`#2479489359`](https://gitlab.com/mabnavarrete/fdroiddata/-/pipelines/2479489359) finished with all 8 visible jobs green: `fdroid build` (compiled v0.1.1 from source), `check apk` (matched the `AllowedAPKSigningKeys` SHA-256), `check source code`, `fdroid lint`, `fdroid rewritemeta`, `git redirect`, `schema validation`, `tools check scripts`. Three upstream-side fixes were needed and are documented in [`docs/fdroid.md`](../../docs/fdroid.md) §5 "Current submission state". Now waiting on a human F-Droid maintainer to merge; this typically takes days to weeks for first-time submissions.
 - [x] T062 **Done — final launcher icon shipped.** Replaced the T008 placeholder
   vector (`drawable/ic_launcher.xml`, plain green-on-white "pg" tag) with a
-  full adaptive-icon set generated from `branding/icon-source.png` (a Gemini-
-  generated illustration of a balance scale with melons and price tags on a
-  dark-teal rounded square). `branding/regenerate-icons.py` produces
+  full adaptive-icon set generated from `branding/icon-source.png` (an
+  illustration of a balance scale with melons and price tags on a dark-teal
+  rounded square). `branding/regenerate-icons.py` produces
   deterministic PNGs at `mipmap-{m,h,xh,xxh,xxxhdpi}/` for both the foreground
   layer (108 dp canvas, 5 % inset, transparent padding) and the legacy /
   round square icons (48 dp canvas, full bleed). The adaptive-icon
