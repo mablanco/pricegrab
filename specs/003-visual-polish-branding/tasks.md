@@ -122,7 +122,7 @@ implementation PR lands a release-ready `main`.
 - [ ] T018 [P] Bump `android/app/build.gradle.kts`: `versionCode = 6`, `versionName = "0.1.5"`.
 - [ ] T019 [P] Create `fastlane/metadata/android/en-US/changelogs/6.txt` with a 2–4 line description of the visual polish & branding feature (no marketing fluff; mention the brandmark in the top app bar, the new palette derived from the launcher icon, the more prominent result card, and the explicit Material 3 typography / spacing). Cap at ~500 characters.
 - [ ] T020 [P] Mirror T019 in `fastlane/metadata/android/es-ES/changelogs/6.txt` in Spanish.
-- [ ] T021 Update the master PR ledger in `specs/001-unit-price-comparison/tasks.md` with a new `### PR L — 003-visual-polish-branding` (planning only) section, a `### PR M — feat/018-visual-polish-impl` (implementation) section, and a `### PR N — chore/019-fdroid-doc-sync-v0.1.5` (release cut) section. Cross-reference the feature 002 ledger entries for the cadence.
+- [ ] T021 Update the master PR ledger in `specs/001-unit-price-comparison/tasks.md` with a new `### PR O — 003-visual-polish-branding` (planning only) section, a `### PR P — feat/018-visual-polish-impl` (implementation) section, and a `### PR Q — chore/019-fdroid-doc-sync-v0.1.5` (release cut) section. Cross-reference the feature 002 ledger entries (PR L / PR M / PR N) for the cadence.
 - [ ] T022 Manual verification on a real device using the 9-step walkthrough from `plan.md`'s "Manual verification" section. Record cold-start regression (must stay below 2 s budget). Do this on the signed v0.1.5 release APK (not on a debug build) so the verification matches what F-Droid will republish.
 - [ ] T023 Tag `v0.1.5` from `main` after the implementation PR merges and CI is green. Verify the `Signed release APK` job publishes `app-release.apk` to the v0.1.5 GitHub Release.
 - [ ] T024 Update `docs/fdroid.md` §3 build recipe and §5 chronology to point at v0.1.5: bump `Builds[0]` to `versionName: 0.1.5` / `versionCode: 6` / `commit: <full SHA of v0.1.5>`, and bump `CurrentVersion` / `CurrentVersionCode` accordingly. Coordinate with the GitLab MR edit in the same window.
@@ -131,9 +131,10 @@ implementation PR lands a release-ready `main`.
 
 ## PR strategy
 
-Same three-PR cadence introduced in feature 002:
+Same three-PR cadence introduced in feature 002 (PR L / PR M / PR N).
+Feature 003's PR letters in the global master ledger are O / P / Q.
 
-### PR L — `003-visual-polish-branding` *(planning only)*
+### PR O — `003-visual-polish-branding` *(planning only)*
 
 This PR ships only `specs/003-visual-polish-branding/` (spec.md,
 plan.md, research.md, tasks.md) and the `.specify/feature.json`
@@ -142,18 +143,18 @@ reviews the contract (visual identity decisions, FR-001..FR-015,
 SC-001..SC-008) and signs off on it before any Kotlin / drawable
 lands.
 
-### PR M — `feat/018-visual-polish-impl` *(implementation)*
+### PR P — `feat/018-visual-polish-impl` *(implementation)*
 
 Phases 1–3 (T001–T017) plus the release-prep tasks (T018–T021).
 Lands the brand-derived palette, the explicit typography / spacing
 tokens, the brandmark glyph in the top app bar, and the hero result
-card. Branched off `main` *after* PR L merged, so the planning
+card. Branched off `main` *after* PR O merged, so the planning
 artefacts are on `main` before any code lands. The implementation
 diff is bounded by the task list and is expected to land at
 ~400–600 LOC including tests, well under the spec's 200 KB APK growth
 target.
 
-### PR N — `chore/019-fdroid-doc-sync-v0.1.5` *(release cut)*
+### PR Q — `chore/019-fdroid-doc-sync-v0.1.5` *(release cut)*
 
 Covers Phase 4 tasks T022–T024 (manual verification on device, tag
 push, F-Droid `Builds:` sync). Mirrors the v0.1.4 cadence (PR N from
