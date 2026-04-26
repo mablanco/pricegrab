@@ -12,11 +12,12 @@ This file picks up *after* a tag has shipped on GitHub Releases.
 
 ## 1. One-time decisions
 
-Locked in for v0.1.0:
+Locked in as of v0.1.2 (Mode B switch — see §5 chronology for how we
+got here from the original v0.1.0 plan):
 
 | Decision | Value | Why |
 |----------|-------|-----|
-| Distribution model | F-Droid builds and signs the APK with its own key, AND `AllowedAPKSigningKeys` pins our upstream key. | Users who already installed the upstream APK from GitHub Releases can keep updating from F-Droid without uninstall/reinstall, because either signature is accepted. Reproducible builds is a longer rabbit hole we deferred. |
+| Distribution model | **F-Droid Mode B — reproducible builds, exclusive developer-signed APK.** F-Droid rebuilds the APK from source, verifies it byte-for-byte against the upstream-signed APK on GitHub Releases, and distributes the upstream binary unchanged. F-Droid never signs PriceGrab with its own key. | Reviewer guidance after the initial submission. Eliminates dual-signature confusion: every channel ships exactly one APK, signed by the upstream developer key. Pinned via `Binaries:` + `AllowedAPKSigningKeys` (see §3). Requires the upstream build to be byte-reproducible — see §4 gotcha 3. |
 | Source location | `https://github.com/mablanco/pricegrab.git` | Public repository under the personal `mablanco` GitHub account. |
 | License | MIT | F-Droid accepts MIT as a [free license](https://www.gnu.org/licenses/license-list.html). |
 | Author identity | `Marco Antonio Blanco <marcoantonio.blanco@protonmail.com>` | Public identity used in the F-Droid listing. ProtonMail address is intentionally separate from any work email. |
@@ -25,8 +26,10 @@ Locked in for v0.1.0:
 
 ## 2. Upstream signing-key fingerprint
 
-The v0.1.0 APK published in GitHub Releases is signed with this
-certificate:
+Every APK published in GitHub Releases (v0.1.0, v0.1.1, v0.1.2, …) is
+signed with the same certificate. Its SHA-256 is the value pinned in
+`AllowedAPKSigningKeys` and must never change without a coordinated
+update to the F-Droid recipe:
 
 ```text
 SHA-256 (cert) = 70:a9:70:9c:e5:a4:82:96:68:d9:d5:04:11:b9:59:bb:90:ad:2e:19:d0:2e:20:69:ad:0f:f3:52:81:81:a9:fb
@@ -77,18 +80,12 @@ AutoName: PriceGrab
 RepoType: git
 Repo: https://github.com/mablanco/pricegrab.git
 
-Builds:
-  - versionName: 0.1.0
-    versionCode: 1
-    disable: gradle getByName fails after signingConfigs strip; fixed in v0.1.1.
-    commit: v0.1.0
-    subdir: android/app
-    gradle:
-      - yes
+Binaries: https://github.com/mablanco/pricegrab/releases/download/v%v/app-release.apk
 
-  - versionName: 0.1.1
-    versionCode: 2
-    commit: v0.1.1
+Builds:
+  - versionName: 0.1.2
+    versionCode: 3
+    commit: 365adf7b276351a1823c0e46d8887b335ae28eac
     subdir: android/app
     gradle:
       - yes
@@ -97,12 +94,28 @@ AllowedAPKSigningKeys: 70a9709ce5a4829668d9d50411b959bb90ad2e19d02e2069ad0ff3528
 
 AutoUpdateMode: Version
 UpdateCheckMode: Tags
-CurrentVersion: 0.1.1
-CurrentVersionCode: 2
+CurrentVersion: 0.1.2
+CurrentVersionCode: 3
 ```
 
 **Why these fields.**
 
+- `Binaries:` points at the upstream-signed APK on GitHub Releases.
+  `v%v` is `fdroidserver`'s substitution for `versionName`. In Mode B,
+  F-Droid downloads the upstream APK from this URL after rebuilding
+  from source and compares the two byte-for-byte; on success it
+  publishes the upstream APK (not its rebuild) to keep the developer
+  signature intact.
+- `AllowedAPKSigningKeys` pins the SHA-256 of the developer signing
+  certificate from §2. Combined with `Binaries:`, this is what makes
+  the recipe Mode B: F-Droid will never publish an F-Droid-signed
+  fallback for this package.
+- `Builds[0].commit:` uses the **full 40-character SHA-1** of the
+  v0.1.2 commit, not the tag name. F-Droid prefers immutable commit
+  hashes over mutable tags; this convention is also what
+  `AutoUpdateMode` itself writes when it auto-generates entries for
+  future tags, so the style stays consistent across manual and
+  auto-generated `Builds` blocks.
 - `subdir: android/app` — points to the directory that contains the
   application module's `build.gradle.kts`. F-Droid walks up to the
   Gradle root (`android/`, where `settings.gradle.kts` and `gradlew`
@@ -110,15 +123,6 @@ CurrentVersionCode: 2
   [!37136](https://gitlab.com/fdroid/fdroiddata/-/merge_requests/37136).
 - `gradle: [yes]` — uses the default release variant; we have no
   product flavours.
-- `disable:` on the v0.1.0 entry preserves the historical fact that
-  v0.1.0 was published upstream while making sure F-Droid's
-  buildserver doesn't keep re-attempting a known-broken build. New
-  installs from F-Droid start at v0.1.1. Keep the message short
-  (≤ ~80 characters): `fdroid rewritemeta` enforces line wrapping on
-  long values and a wrapped multi-line scalar is fragile to edit in
-  GitLab's web editor.
-- `AllowedAPKSigningKeys` pinning is what lets users with the upstream
-  GitHub APK keep updating from F-Droid without an uninstall.
 - `AutoUpdateMode: Version` together with `UpdateCheckMode: Tags`
   means: every time a new `vX.Y.Z` tag lands in the upstream repo,
   fdroidserver picks it up automatically and adds a fresh `Builds`
@@ -129,6 +133,13 @@ CurrentVersionCode: 2
   is **not** restated here. F-Droid auto-discovers it from
   `fastlane/metadata/android/{en-US,es-ES}/` at the repo root, which
   is exactly where this repo keeps it.
+- v0.1.0 and v0.1.1 are intentionally **absent** from `Builds:`. They
+  were initially submitted as `disable:`d entries (with inline notes
+  on why each was unbuildable / non-reproducible), but the F-Droid
+  reviewer asked us to drop them: F-Droid only wants to track versions
+  it can actually publish. Existing v0.1.0 / v0.1.1 users from GitHub
+  Releases keep updating via F-Droid because `AllowedAPKSigningKeys`
+  accepts the same upstream key, so no upgrade path is broken.
 
 ## 4. F-Droid build-server gotchas the upstream code must respect
 
@@ -158,8 +169,29 @@ resilient to both:
    committed `gradle-wrapper.jar` (custom CI checks, build-script
    plugins) must be skippable when the file is absent.
 
-If either invariant ever has to be relaxed, document the reason and
-the workaround here so we never re-debug it from scratch.
+3. **AGP `vcsInfo` embedding is non-reproducible** and must be
+   disabled in `release` builds for Mode B to work. AGP 8.3+ writes
+   the local git revision and project path into
+   `META-INF/version-control-info.textproto` by default. Two
+   checkouts of the same source on different machines / paths
+   necessarily produce different bytes there, so the upstream-signed
+   APK and F-Droid's rebuild can never match byte-for-byte. We turn
+   this off in `app/build.gradle.kts`:
+
+   ```kotlin
+   release {
+       // ...
+       vcsInfo.include = false
+   }
+   ```
+
+   Landed in v0.1.2. Re-enabling `vcsInfo` in the future would mean
+   abandoning Mode B and falling back to F-Droid signing the APK with
+   its own key.
+
+If any of these three invariants ever has to be relaxed, document
+the reason and the workaround here so we never re-debug it from
+scratch.
 
 ### If `issuebot` complains about `subdir: android/app`
 
@@ -212,23 +244,39 @@ running the local toolchain pays off.
 |------|-------|
 | Merge Request | [`fdroid/fdroiddata!37136`](https://gitlab.com/fdroid/fdroiddata/-/merge_requests/37136) |
 | Submitting branch | `add-com.mablanco.pricegrab` on [`mabnavarrete/fdroiddata`](https://gitlab.com/mabnavarrete/fdroiddata) |
-| Latest pipeline | [`#2479489359`](https://gitlab.com/mabnavarrete/fdroiddata/-/pipelines/2479489359) — all 8 visible jobs green |
-| Builds compiled by F-Droid | `0.1.0` (disabled, see §4 gotcha 1), `0.1.1` (success) |
-| Status | Awaiting human review by F-Droid maintainers |
+| Distribution model | Mode B (reproducible builds, exclusive developer-signed APK) |
+| First buildable / publishable tag | `v0.1.2` (versionCode 3), pinned by full SHA `365adf7b276351a1823c0e46d8887b335ae28eac` |
+| Status | Iterating on reviewer feedback; awaiting next CI pipeline run |
 
-What it took to get the pipeline green, in order:
+What it took to get to the current state, in chronological order:
 
 1. `schema validation` rejected `AutoUpdateMode: Version v%v` —
    modern fdroidserver only accepts `None`, `Version`, or
    `Version +<suffix>`. Fixed by switching to `AutoUpdateMode: Version`.
 2. `fdroid build` rejected the unconditional `signingConfigs.getByName("release")`
    call in `app/build.gradle.kts`. Fixed in [PR #12](https://github.com/mablanco/pricegrab/pull/12)
-   for the v0.1.1 tag (see §4, gotcha 1). The unbuildable v0.1.0
-   entry is kept with `disable:` so the historical record remains.
-3. `fdroid rewritemeta` rejected an over-long `disable:` value (it
-   auto-wraps long plain scalars and the committed line did not
-   match the canonical wrap). Fixed by shortening the note to the
-   78-character form shown in §3.
+   for the v0.1.1 tag (see §4 gotcha 1).
+3. `fdroid rewritemeta` rejected an over-long `disable:` value on the
+   then-still-present v0.1.0 entry; fixed by shortening the note. Now
+   obsolete: there are no `disable:` entries left after step 5 below.
+4. **Mode A → Mode B switch** after the reviewer asked us to add
+   `Binaries:` and `AllowedAPKSigningKeys` so F-Droid can publish the
+   upstream-signed APK rather than its own. v0.1.2 added with
+   `vcsInfo.include = false` (see §4 gotcha 3) so the upstream build
+   becomes byte-reproducible. Landed in
+   [PR #14](https://github.com/mablanco/pricegrab/pull/14).
+5. **Reviewer asked to drop v0.1.0 / v0.1.1 entries** entirely (no
+   value in tracking versions F-Droid will never publish) and to
+   replace `commit: v0.1.2` with the full SHA-1 of that tag. Both
+   applied directly in the GitLab fork.
+
+The actual byte-for-byte reproducibility verification happens *after*
+this MR merges, on F-Droid's main build farm via `fdroid publish`. If
+verification fails there, the iteration loop is: read the
+`diffoscope` output, fix the upstream code, ship `v0.1.3+`, and
+update the recipe's `Builds:` block with the new SHA. The
+`AllowedAPKSigningKeys` value does not need to change as long as the
+upstream signing key is the same.
 
 ## 6. Ongoing release-time obligations
 
@@ -252,6 +300,6 @@ After every new tag (`vX.Y.Z`) lands on `main`:
 - [F-Droid Inclusion Policy](https://f-droid.org/docs/Inclusion_Policy/)
 - [Build Metadata Reference](https://f-droid.org/docs/Build_Metadata_Reference/)
 - [Submitting to F-Droid Quick Start Guide](https://f-droid.org/docs/Submitting_to_F-Droid_Quick_Start_Guide/)
-- [Reproducible Builds](https://f-droid.org/docs/Reproducible_Builds/) — possible follow-up once the project stabilises.
+- [Reproducible Builds](https://f-droid.org/docs/Reproducible_Builds/) — the framework that defines Mode B; required reading for anyone debugging an `fdroid publish` verification failure.
 - [`fdroid/fdroiddata` repository](https://gitlab.com/fdroid/fdroiddata)
 - [`fdroid/issuebot` repository](https://gitlab.com/fdroid/issuebot)

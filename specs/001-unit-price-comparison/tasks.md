@@ -276,6 +276,30 @@ deterministically from `branding/icon-source.png` by
 no behaviour change, no version bump (the icon will land for users with
 the next tagged release).
 
+### PR I — `chore/013-fdroid-doc-sync`
+
+Bookkeeping after the F-Droid reviewer feedback. Pure docs-only change to
+[`docs/fdroid.md`](../../docs/fdroid.md):
+
+- §1 distribution-model row rewritten to describe Mode B (reproducible
+  builds, exclusive developer-signed APK) instead of the original
+  Mode-A-with-pinned-key plan.
+- §3 build recipe updated to the post-reviewer-feedback YAML: only the
+  v0.1.2 build entry, pinned by the full 40-character commit SHA
+  (`365adf7b…`); `Binaries:` line added; `CurrentVersion` / `CurrentVersionCode`
+  bumped to `0.1.2` / `3`. v0.1.0 / v0.1.1 entries removed per reviewer ask.
+- §3 "Why these fields" rewritten to explain `Binaries`, the full-SHA
+  convention, and why the older versions are intentionally absent.
+- §4 added gotcha 3 (`vcsInfo.include = false` is mandatory for Mode B
+  reproducibility, landed in v0.1.2).
+- §5 "Current submission state" rewritten with the actual chronology of
+  reviewer iterations through the Mode-A → Mode-B transition.
+
+No source code changes. The actual GitLab MR edits to drop v0.1.0/v0.1.1
+and switch to the full-SHA `commit:` value are applied separately by
+Marco in the GitLab web editor; this PR keeps the upstream playbook in
+sync with that state.
+
 ### Notes
 
 - Each PR must keep the main branch green (lint, detekt, unit tests, JaCoCo
