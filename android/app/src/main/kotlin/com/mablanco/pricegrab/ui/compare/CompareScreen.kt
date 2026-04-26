@@ -22,8 +22,10 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -50,6 +52,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mablanco.pricegrab.R
 import com.mablanco.pricegrab.core.model.ComparisonOutcome
 import com.mablanco.pricegrab.ui.theme.PriceGrabTheme
+import kotlinx.coroutines.withTimeoutOrNull
 import java.util.Locale
 
 /**
@@ -74,6 +77,8 @@ fun CompareScreen(
         onPriceBChange = viewModel::onPriceBChange,
         onQuantityBChange = viewModel::onQuantityBChange,
         onResetClick = viewModel::resetComparison,
+        onUndoClick = viewModel::undoReset,
+        onUndoDismissed = viewModel::dismissUndo,
         modifier = modifier,
     )
 }
@@ -87,11 +92,15 @@ fun CompareScreen(
     onPriceBChange: (String) -> Unit,
     onQuantityBChange: (String) -> Unit,
     onResetClick: () -> Unit,
+    onUndoClick: () -> Unit,
+    onUndoDismissed: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     val resetDescription = stringResource(R.string.reset_action_description)
     val priceAFocusRequester = remember { FocusRequester() }
+    val undoMessage = stringResource(R.string.comparison_cleared)
+    val undoActionLabel = stringResource(R.string.undo_action)
 
     // Move keyboard focus to Price A whenever a *fresh* reset starts a
     // new UndoState. Keyed on the deadline so the effect refires for
@@ -101,6 +110,43 @@ fun CompareScreen(
     LaunchedEffect(state.undoState?.expiresAtEpochMillis) {
         if (state.undoState != null) {
             priceAFocusRequester.requestFocus()
+        }
+    }
+
+    // Drive the Snackbar from the active UndoState (research.md §3 + §4).
+    //
+    // We always show with `SnackbarDuration.Indefinite` and bound the
+    // visibility ourselves with `withTimeoutOrNull(remaining)`. That
+    // wrapper uses the coroutine clock, so the lifetime is honoured
+    // verbatim across configuration changes (after rotation, the new
+    // LaunchedEffect computes `remaining = deadline - now()` and shows
+    // the Snackbar for that long instead of restarting from 10 s).
+    LaunchedEffect(state.undoState) {
+        val undo = state.undoState
+        if (undo == null) {
+            // No active Undo: hide any Snackbar still on screen so the
+            // typing-dismisses-undo path closes the surface immediately.
+            snackbarHostState.currentSnackbarData?.dismiss()
+            return@LaunchedEffect
+        }
+        val remaining = undo.expiresAtEpochMillis - System.currentTimeMillis()
+        if (remaining <= 0L) {
+            // Stale state (e.g. process death survived the lifetime).
+            // Mirror dismissUndo() upstream so observers stay in sync.
+            onUndoDismissed()
+            return@LaunchedEffect
+        }
+        val result = withTimeoutOrNull(remaining) {
+            snackbarHostState.showSnackbar(
+                message = undoMessage,
+                actionLabel = undoActionLabel,
+                duration = SnackbarDuration.Indefinite,
+                withDismissAction = false,
+            )
+        }
+        when (result) {
+            SnackbarResult.ActionPerformed -> onUndoClick()
+            SnackbarResult.Dismissed, null -> onUndoDismissed()
         }
     }
 
@@ -355,6 +401,8 @@ private fun CompareScreenEmptyPreview() {
             onPriceBChange = {},
             onQuantityBChange = {},
             onResetClick = {},
+            onUndoClick = {},
+            onUndoDismissed = {},
         )
     }
 }
@@ -379,6 +427,8 @@ private fun CompareScreenAWinsPreview() {
             onPriceBChange = {},
             onQuantityBChange = {},
             onResetClick = {},
+            onUndoClick = {},
+            onUndoDismissed = {},
         )
     }
 }
