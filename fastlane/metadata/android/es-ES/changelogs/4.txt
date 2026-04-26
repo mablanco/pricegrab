@@ -1,0 +1,2 @@
+Icono definitivo:
+• Se sustituye el icono provisional de la Fase 1 (una etiqueta verde con el monograma "pg") por el icono de marca permanente de PriceGrab: una balanza con melones y etiquetas de precio sobre un cuadrado redondeado azul-petróleo. Adaptativo en Android 8+. Sin cambios de comportamiento.

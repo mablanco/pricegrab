@@ -1,0 +1,2 @@
+Final launcher icon:
+• The Phase-1 placeholder icon (a green-on-white "pg" tag) is replaced by PriceGrab's permanent brand icon: a balance scale with melons and price tags on a dark-teal rounded square. Adaptive on Android 8+. No other behaviour changes.
