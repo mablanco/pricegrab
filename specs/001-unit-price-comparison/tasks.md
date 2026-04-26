@@ -355,6 +355,44 @@ v0.1.3. Manual on-device verification of the 9-step walkthrough
 (`specs/002-reset-comparison/plan.md` §10) gates the upstream MR
 edit, not this PR.
 
+### PR O — `003-visual-polish-branding` *(feature 003 — planning only)*
+
+Spec + plan + research + tasks for feature 003 (Visual polish &
+branding for the Compare screen). No source code touched. Sets
+the contract Marco reviews and signs off on before any Kotlin /
+drawable / theme change lands. See the detailed PR strategy
+inside
+[`specs/003-visual-polish-branding/tasks.md`](../../specs/003-visual-polish-branding/tasks.md)
+for the cadence (PR O → PR P → PR Q), which mirrors feature 002's
+PR L → PR M → PR N.
+
+### PR P — `feat/018-visual-polish-impl`
+
+Feature 003 implementation. Phases 1–3 (T001–T017) plus the
+release-prep tasks (T018–T021). Lands the brand-derived palette
+(MTB TonalSpot scheme seeded from the launcher icon's `#2F5C73`,
+WCAG 2.1 AA verified for every text/background pair), the
+explicit Material 3 typography hierarchy, the centralised
+`Spacing` `CompositionLocal`, the in-app `ic_brandmark` glyph in
+the top app bar, and the elevated `HeroResultCard` with its
+`Modifier.semantics { heading() }` headline. Bumps the app to
+0.1.4 → 0.1.5 with en/es changelogs for `versionCode 6`.
+Branched off `main` *after* PR O merged, so the planning
+artefacts were on `main` before any code landed.
+
+### PR Q — `chore/019-fdroid-doc-sync-v0.1.5` *(feature 003 — release cut)*
+
+Phase 4 release-cut tasks (T022–T024). Tag `v0.1.5` is pushed
+from `main` outside this PR (the tag itself is the release
+artefact, not a source change); CI publishes the signed APK to
+GitHub Releases automatically. This PR is the pure-doc twin: it
+bumps `docs/fdroid.md` to point at v0.1.5's full SHA, updates
+`Builds:` / `CurrentVersion` / `CurrentVersionCode`, and extends
+the §5 chronology with the v0.1.4 → v0.1.5 bump. Same cadence as
+PR N for v0.1.4. Manual on-device verification of the 9-step
+walkthrough (`specs/003-visual-polish-branding/plan.md`
+§"Manual verification") gates the upstream MR edit, not this PR.
+
 ### Notes
 
 - Each PR must keep the main branch green (lint, detekt, unit tests, JaCoCo

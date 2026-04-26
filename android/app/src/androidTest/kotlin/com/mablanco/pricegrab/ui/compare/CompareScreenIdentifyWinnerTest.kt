@@ -30,7 +30,7 @@ class CompareScreenIdentifyWinnerTest {
         composeRule.onNodeWithTag("offerB_price").performTextInput("4.00")
         composeRule.onNodeWithTag("offerB_quantity").performTextInput("1000")
 
-        val expected = composeRule.activity.getString(R.string.result_b_wins)
+        val expected = composeRule.activity.getString(R.string.result_winner_b)
         composeRule.onNodeWithText(expected).assertIsDisplayed()
     }
 
@@ -41,7 +41,7 @@ class CompareScreenIdentifyWinnerTest {
         composeRule.onNodeWithTag("offerB_price").performTextInput("2.00")
         composeRule.onNodeWithTag("offerB_quantity").performTextInput("100")
 
-        val expected = composeRule.activity.getString(R.string.result_a_wins)
+        val expected = composeRule.activity.getString(R.string.result_winner_a)
         composeRule.onNodeWithText(expected).assertIsDisplayed()
     }
 }

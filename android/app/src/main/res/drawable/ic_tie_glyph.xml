@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Tie outcome glyph for the hero result card.
+
+  Two stacked horizontal bars (the mathematical "equals" sign) so the
+  visual cue is "these two offers are equivalent". Tinted via the active
+  ColorScheme's primary role so it harmonises with the brandmark.
+
+  Decorative — `contentDescription = null` at the call site keeps it
+  out of the merged semantic tree; the announcement comes from the
+  headline text only.
+
+  Tinting: same rationale as ic_brandmark.xml — colour is applied
+  from Compose via Icon(painter, tint = MaterialTheme.colorScheme.primary)
+  rather than via android:tint here. Avoids an AAPT
+  ?attr/colorPrimary lookup against the app's attr namespace.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:fillColor="@android:color/white"
+        android:pathData="M4,9h16v2H4zM4,13h16v2H4z" />
+</vector>

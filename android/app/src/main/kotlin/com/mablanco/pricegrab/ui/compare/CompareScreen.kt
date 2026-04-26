@@ -7,15 +7,17 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -37,9 +39,11 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.ImeAction
@@ -52,6 +56,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mablanco.pricegrab.R
 import com.mablanco.pricegrab.core.model.ComparisonOutcome
 import com.mablanco.pricegrab.ui.theme.PriceGrabTheme
+import com.mablanco.pricegrab.ui.theme.spacing
 import kotlinx.coroutines.withTimeoutOrNull
 import java.util.Locale
 
@@ -195,7 +200,30 @@ private fun UndoSnackbarEffect(
 private fun CompareTopBar(enabled: Boolean, onResetClick: () -> Unit) {
     val resetDescription = stringResource(R.string.reset_action_description)
     CenterAlignedTopAppBar(
-        title = { Text(stringResource(R.string.app_name)) },
+        title = {
+            // Brandmark glyph + plain-text title rendered as a single Row so
+            // they read as one composite "PriceGrab" mark to TalkBack (the
+            // Icon is decorative — `contentDescription = null` keeps it out
+            // of the merged semantics tree, the Text carries the
+            // announcement).
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.s),
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_brandmark),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier
+                        .size(BRANDMARK_SIZE)
+                        .testTag(TEST_TAG_BRANDMARK),
+                )
+                Text(
+                    text = stringResource(R.string.app_name),
+                    style = MaterialTheme.typography.titleLarge,
+                )
+            }
+        },
         actions = {
             IconButton(
                 onClick = onResetClick,
@@ -226,16 +254,17 @@ private fun CompareContent(
     priceAFocusRequester: FocusRequester,
     modifier: Modifier = Modifier,
 ) {
+    val spacing = MaterialTheme.spacing
     Column(
         modifier = modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(SCREEN_PADDING),
-        verticalArrangement = Arrangement.spacedBy(SECTION_SPACING),
+            .padding(spacing.l),
+        verticalArrangement = Arrangement.spacedBy(spacing.l),
     ) {
         Text(
             text = stringResource(R.string.compare_heading),
-            style = MaterialTheme.typography.headlineSmall,
+            style = MaterialTheme.typography.titleLarge,
         )
 
         OfferCard(
@@ -262,7 +291,7 @@ private fun CompareContent(
             priceFocusRequester = null,
         )
 
-        ResultCard(outcome = state.outcome)
+        ResultRegion(outcome = state.outcome)
     }
 }
 
@@ -278,13 +307,14 @@ private fun OfferCard(
     testTagPrefix: String,
     priceFocusRequester: FocusRequester?,
 ) {
+    val spacing = MaterialTheme.spacing
     Card(
         modifier = Modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
     ) {
         Column(
-            modifier = Modifier.padding(SCREEN_PADDING),
-            verticalArrangement = Arrangement.spacedBy(FIELD_SPACING),
+            modifier = Modifier.padding(spacing.l),
+            verticalArrangement = Arrangement.spacedBy(spacing.m),
         ) {
             Text(text = title, style = MaterialTheme.typography.titleMedium)
 
@@ -350,22 +380,36 @@ private fun LabeledNumberField(
     )
 }
 
+/**
+ * Outer wrapper for the result region. Always emitted so the polite live
+ * region (and its `result` test tag) stays in the merged tree across
+ * cold launch → typing → reset transitions, even when the inner content
+ * switches between the placeholder hint and the elevated hero card.
+ *
+ * - When `outcome == null`: render a soft placeholder Text (no Card frame).
+ * - When `outcome != null`: render the [HeroResultCard].
+ *
+ * Either branch announces its content via the same content description on
+ * the wrapper, so TalkBack speaks one full thought per state change.
+ */
 @Composable
-private fun ResultCard(outcome: ComparisonOutcome?) {
+private fun ResultRegion(outcome: ComparisonOutcome?) {
     val configuration = LocalConfiguration.current
     val locale = ConfigurationCompat.getLocales(configuration).get(0) ?: Locale.getDefault()
 
-    val headline = stringResource(outcome.headlineRes())
+    val placeholder = stringResource(R.string.result_placeholder)
+    val headline = outcome?.headlineRes()?.let { stringResource(it) }
     val savings = ResultPresenter.present(outcome, locale)
     val savingsLine: String? = savings?.let {
-        stringResource(R.string.savings_template, it.perUnitDelta, it.percentDelta)
+        stringResource(R.string.result_savings, it.perUnitDelta)
     }
-    // Live-region announcement reads the headline first, then the savings
-    // detail. We keep them in a single content description so TalkBack speaks
-    // the full thought on every state change.
-    val a11ySummary = if (savingsLine != null) "$headline. $savingsLine" else headline
+    val a11ySummary: String = when {
+        headline == null -> placeholder
+        savingsLine != null -> "$headline. $savingsLine"
+        else -> headline
+    }
 
-    Card(
+    Column(
         modifier = Modifier
             .fillMaxWidth()
             .testTag(TEST_TAG_RESULT)
@@ -374,33 +418,94 @@ private fun ResultCard(outcome: ComparisonOutcome?) {
                 contentDescription = a11ySummary
             },
     ) {
+        if (outcome == null) {
+            Text(
+                text = placeholder,
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        } else {
+            HeroResultCard(
+                outcome = outcome,
+                headline = headline ?: "",
+                savingsLine = savingsLine,
+            )
+        }
+    }
+}
+
+/**
+ * The polished, elevated result card introduced by feature 003 / US2.
+ *
+ * Visual treatment:
+ * - [ElevatedCard] surface (a tonal lift over the offer cards' standard
+ *   [Card], so the result reads as the hero of the screen).
+ * - Leading icon: `Icons.Filled.Check` for a winner, the custom
+ *   `ic_tie_glyph` (= sign) for a tie. Both are decorative — the
+ *   announcement comes from the headline + savings text on the
+ *   wrapper's content description.
+ * - Headline in `headlineSmall` (Bold via [PriceGrabTypography]) with
+ *   `Modifier.semantics { heading() }` so TalkBack reads it as a
+ *   heading.
+ * - Body in `bodyLarge` for the per-unit savings line; collapsed when
+ *   savings are not applicable (i.e., a tie).
+ */
+@Composable
+private fun HeroResultCard(
+    outcome: ComparisonOutcome,
+    headline: String,
+    savingsLine: String?,
+) {
+    val spacing = MaterialTheme.spacing
+    ElevatedCard(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = spacing.s)
+            .testTag(TEST_TAG_HERO_RESULT),
+        elevation = CardDefaults.elevatedCardElevation(),
+    ) {
         Row(
-            modifier = Modifier.padding(SCREEN_PADDING),
+            modifier = Modifier.padding(spacing.l),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(FIELD_SPACING),
+            horizontalArrangement = Arrangement.spacedBy(spacing.m),
         ) {
-            if (outcome is ComparisonOutcome.AWins || outcome is ComparisonOutcome.BWins) {
-                Icon(
-                    imageVector = Icons.Filled.CheckCircle,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary,
-                )
-            }
-            Column(verticalArrangement = Arrangement.spacedBy(RESULT_LINE_SPACING)) {
+            HeroResultIcon(outcome)
+            Column(verticalArrangement = Arrangement.spacedBy(spacing.s)) {
                 Text(
                     text = headline,
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.testTag(TEST_TAG_RESULT_TEXT),
+                    style = MaterialTheme.typography.headlineSmall,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier
+                        .testTag(TEST_TAG_RESULT_TEXT)
+                        .semantics { heading() },
                 )
                 if (savingsLine != null) {
                     Text(
                         text = savingsLine,
-                        style = MaterialTheme.typography.bodyMedium,
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.testTag(TEST_TAG_RESULT_SAVINGS),
                     )
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun HeroResultIcon(outcome: ComparisonOutcome) {
+    val tint = MaterialTheme.colorScheme.primary
+    when (outcome) {
+        is ComparisonOutcome.AWins, is ComparisonOutcome.BWins -> Icon(
+            imageVector = Icons.Filled.Check,
+            contentDescription = null,
+            tint = tint,
+        )
+        ComparisonOutcome.Tie -> Icon(
+            painter = painterResource(R.drawable.ic_tie_glyph),
+            contentDescription = null,
+            tint = tint,
+        )
     }
 }
 
@@ -412,28 +517,34 @@ private fun InputError.messageRes(): Int = when (this) {
 }
 
 @StringRes
-private fun ComparisonOutcome?.headlineRes(): Int = when (this) {
-    null -> R.string.result_placeholder
-    ComparisonOutcome.Tie -> R.string.result_tie
-    is ComparisonOutcome.AWins -> R.string.result_a_wins
-    is ComparisonOutcome.BWins -> R.string.result_b_wins
+private fun ComparisonOutcome.headlineRes(): Int = when (this) {
+    ComparisonOutcome.Tie -> R.string.result_tied
+    is ComparisonOutcome.AWins -> R.string.result_winner_a
+    is ComparisonOutcome.BWins -> R.string.result_winner_b
 }
 
 // ---- Test tags (constants so tests can reference them) ----------------------
 
 const val TEST_TAG_OFFER_A: String = "offerA"
 const val TEST_TAG_OFFER_B: String = "offerB"
+
+// The outer result region (always emitted, hosts the polite live region).
 const val TEST_TAG_RESULT: String = "result"
+
+// The elevated hero card (only emitted when a comparison result exists).
+const val TEST_TAG_HERO_RESULT: String = "heroResult"
+
 const val TEST_TAG_RESULT_TEXT: String = "result_text"
 const val TEST_TAG_RESULT_SAVINGS: String = "result_savings"
 const val TEST_TAG_RESET: String = "reset_action"
+const val TEST_TAG_BRANDMARK: String = "brandmark"
 
 // ---- Layout constants -------------------------------------------------------
 
-private val SCREEN_PADDING = 16.dp
-private val SECTION_SPACING = 16.dp
-private val FIELD_SPACING = 12.dp
-private val RESULT_LINE_SPACING = 4.dp
+// Material 3's default top-app-bar leading icon slot is 24dp; we keep the
+// brandmark at the same size so it visually aligns with the trailing reset
+// IconButton's 24dp glyph and stays inside the 64dp app-bar height.
+private val BRANDMARK_SIZE = 24.dp
 
 // ---- Previews ---------------------------------------------------------------
 
