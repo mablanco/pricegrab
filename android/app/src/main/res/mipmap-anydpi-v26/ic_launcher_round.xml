@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Round-icon variant: identical to `ic_launcher.xml`. Modern launchers always
+  pick the adaptive XML over either round or square legacy PNGs when both
+  exist, so the round variant only matters as a manifest pointer.
+-->
+<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+    <background android:drawable="@color/ic_launcher_background" />
+    <foreground android:drawable="@mipmap/ic_launcher_foreground" />
+</adaptive-icon>
