@@ -1,0 +1,5 @@
+Estilo visual y branding:
+• La barra superior muestra ahora un pequeño icono de etiqueta de precio junto al título "PriceGrab", de modo que la pantalla refuerza la identidad de la app de un vistazo.
+• La paleta de colores se deriva ya del azul acero del icono lanzador (sustituyendo el verde provisional de v0.1.4); cada par texto/fondo verificado contra WCAG 2.1 AA.
+• El resultado de la comparación se muestra en una tarjeta hero elevada, con titular más rotundo y una línea de cuerpo "Ahorras X por unidad" más concisa.
+• Material You (color dinámico) queda intencionadamente desactivado — la app mantiene una identidad de marca consistente en cualquier dispositivo.

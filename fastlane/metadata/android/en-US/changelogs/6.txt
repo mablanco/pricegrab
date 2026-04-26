@@ -1,0 +1,5 @@
+Visual polish & branding:
+• A small price-tag brandmark now sits next to the "PriceGrab" title in the top app bar so the screen carries the brand at a glance.
+• The colour palette is now derived from the launcher icon's steel-blue seed (replacing the v0.1.4 placeholder green), with every text/background pair verified against WCAG 2.1 AA contrast.
+• The comparison result is shown in an elevated hero card with a bolder headline and a tighter "Save X per unit" body line.
+• Material You dynamic colour is intentionally off — the app keeps a consistent brand identity across devices.
