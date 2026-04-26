@@ -1,0 +1,2 @@
+Reiniciar y Deshacer:
+• Una nueva acción Reiniciar (icono de actualización) en la barra superior borra las dos ofertas y el resultado de comparación de forma atómica, y ofrece un Deshacer durante 10 segundos mediante un Snackbar para recuperar la comparación anterior con un toque. Al teclear en cualquier campo, mandar la app a segundo plano o dejar que termine la cuenta atrás, la opción Deshacer desaparece.

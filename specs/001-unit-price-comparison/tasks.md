@@ -322,6 +322,26 @@ of pure-doc change as PR I: the actual GitLab YAML edit is still
 done by hand in the web editor, this PR keeps the upstream playbook
 truthful.
 
+### PR L — `002-reset-comparison` *(feature 002 — planning only)*
+
+Spec + plan + research + tasks for feature 002 (Reset / Start a
+new comparison). No source code touched. Sets the contract Marco
+reviews and signs off on before any Kotlin / XML lands. See the
+detailed PR strategy inside
+[`specs/002-reset-comparison/tasks.md`](../../specs/002-reset-comparison/tasks.md)
+for the cadence (PR L → PR M → PR N) introduced in feature 002.
+
+### PR M — `feat/016-reset-comparison-impl`
+
+Feature 002 implementation. Phases 1–3 (T001–T020) plus the
+release-prep tasks (T021–T024). Lands the Reset/Undo loop end to
+end: foundational shell (Scaffold, top app bar, undo state types),
+US1 one-tap reset (resetComparison + focus + tests), US2 undo
+(undoReset + dismissUndo + Snackbar wiring + ON_STOP hook + tests),
+the version bump 0.1.3 → 0.1.4, and en/es changelogs for
+`versionCode 5`. Branched off `main` *after* PR L merged, so the
+planning artefacts were on `main` before any code landed.
+
 ### Notes
 
 - Each PR must keep the main branch green (lint, detekt, unit tests, JaCoCo

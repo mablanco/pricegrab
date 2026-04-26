@@ -97,39 +97,78 @@ fun CompareScreen(
     modifier: Modifier = Modifier,
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
-    val resetDescription = stringResource(R.string.reset_action_description)
     val priceAFocusRequester = remember { FocusRequester() }
-    val undoMessage = stringResource(R.string.comparison_cleared)
-    val undoActionLabel = stringResource(R.string.undo_action)
 
-    // Move keyboard focus to Price A whenever a *fresh* reset starts a
-    // new UndoState. Keyed on the deadline so the effect refires for
-    // each reset (a new reset has a unique deadline) but does not steal
-    // focus on rotation (the deadline is preserved across configuration
-    // change). FR-005.3.
-    LaunchedEffect(state.undoState?.expiresAtEpochMillis) {
-        if (state.undoState != null) {
-            priceAFocusRequester.requestFocus()
+    FocusOnFreshResetEffect(state.undoState, priceAFocusRequester)
+    UndoSnackbarEffect(
+        undoState = state.undoState,
+        snackbarHostState = snackbarHostState,
+        onUndoClick = onUndoClick,
+        onUndoDismissed = onUndoDismissed,
+    )
+
+    Scaffold(
+        modifier = modifier,
+        topBar = { CompareTopBar(enabled = state.isResetEnabled, onResetClick = onResetClick) },
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+    ) { innerPadding ->
+        CompareContent(
+            state = state,
+            onPriceAChange = onPriceAChange,
+            onQuantityAChange = onQuantityAChange,
+            onPriceBChange = onPriceBChange,
+            onQuantityBChange = onQuantityBChange,
+            priceAFocusRequester = priceAFocusRequester,
+            modifier = Modifier.padding(innerPadding),
+        )
+    }
+}
+
+/**
+ * FR-005.3: move keyboard focus to Price A whenever a *fresh* reset
+ * starts a new UndoState. Keyed on the deadline so the effect refires
+ * for each new reset (each has a unique deadline) but does not steal
+ * focus on rotation (rotation preserves the deadline).
+ */
+@Composable
+private fun FocusOnFreshResetEffect(
+    undoState: UndoState?,
+    focusRequester: FocusRequester,
+) {
+    LaunchedEffect(undoState?.expiresAtEpochMillis) {
+        if (undoState != null) {
+            focusRequester.requestFocus()
         }
     }
+}
 
-    // Drive the Snackbar from the active UndoState (research.md §3 + §4).
-    //
-    // We always show with `SnackbarDuration.Indefinite` and bound the
-    // visibility ourselves with `withTimeoutOrNull(remaining)`. That
-    // wrapper uses the coroutine clock, so the lifetime is honoured
-    // verbatim across configuration changes (after rotation, the new
-    // LaunchedEffect computes `remaining = deadline - now()` and shows
-    // the Snackbar for that long instead of restarting from 10 s).
-    LaunchedEffect(state.undoState) {
-        val undo = state.undoState
-        if (undo == null) {
+/**
+ * Drive the undo Snackbar from the active [UndoState]
+ * (research.md §3 + §4). Always shown with
+ * `SnackbarDuration.Indefinite` and bounded by `withTimeoutOrNull
+ * (remaining)`, where `remaining = deadline - now()`. The wrapper
+ * uses the coroutine clock, so the lifetime is honoured verbatim
+ * across configuration changes (after rotation, a smaller `remaining`
+ * is computed and the Snackbar shows for exactly that long instead
+ * of restarting from a full 10 s).
+ */
+@Composable
+private fun UndoSnackbarEffect(
+    undoState: UndoState?,
+    snackbarHostState: SnackbarHostState,
+    onUndoClick: () -> Unit,
+    onUndoDismissed: () -> Unit,
+) {
+    val undoMessage = stringResource(R.string.comparison_cleared)
+    val undoActionLabel = stringResource(R.string.undo_action)
+    LaunchedEffect(undoState) {
+        if (undoState == null) {
             // No active Undo: hide any Snackbar still on screen so the
             // typing-dismisses-undo path closes the surface immediately.
             snackbarHostState.currentSnackbarData?.dismiss()
             return@LaunchedEffect
         }
-        val remaining = undo.expiresAtEpochMillis - System.currentTimeMillis()
+        val remaining = undoState.expiresAtEpochMillis - System.currentTimeMillis()
         if (remaining <= 0L) {
             // Stale state (e.g. process death survived the lifetime).
             // Mirror dismissUndo() upstream so observers stay in sync.
@@ -149,73 +188,81 @@ fun CompareScreen(
             SnackbarResult.Dismissed, null -> onUndoDismissed()
         }
     }
+}
 
-    Scaffold(
-        modifier = modifier,
-        topBar = {
-            CenterAlignedTopAppBar(
-                title = { Text(stringResource(R.string.app_name)) },
-                actions = {
-                    IconButton(
-                        onClick = onResetClick,
-                        enabled = state.isResetEnabled,
-                        modifier = Modifier
-                            .testTag(TEST_TAG_RESET)
-                            .semantics { contentDescription = resetDescription },
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.Refresh,
-                            // contentDescription is set on the IconButton's
-                            // semantics block above so TalkBack reads
-                            // "Clear all fields and start a new comparison"
-                            // even though Refresh is the visual glyph.
-                            contentDescription = null,
-                        )
-                    }
-                },
-            )
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun CompareTopBar(enabled: Boolean, onResetClick: () -> Unit) {
+    val resetDescription = stringResource(R.string.reset_action_description)
+    CenterAlignedTopAppBar(
+        title = { Text(stringResource(R.string.app_name)) },
+        actions = {
+            IconButton(
+                onClick = onResetClick,
+                enabled = enabled,
+                modifier = Modifier
+                    .testTag(TEST_TAG_RESET)
+                    .semantics { contentDescription = resetDescription },
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Refresh,
+                    // contentDescription set on the IconButton's
+                    // semantics so TalkBack reads
+                    // "Clear all fields and start a new comparison".
+                    contentDescription = null,
+                )
+            }
         },
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
-    ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .verticalScroll(rememberScrollState())
-                .padding(SCREEN_PADDING),
-            verticalArrangement = Arrangement.spacedBy(SECTION_SPACING),
-        ) {
-            Text(
-                text = stringResource(R.string.compare_heading),
-                style = MaterialTheme.typography.headlineSmall,
-            )
+    )
+}
 
-            OfferCard(
-                title = stringResource(R.string.offer_a_title),
-                priceRaw = state.priceARaw,
-                priceError = state.priceAError,
-                quantityRaw = state.quantityARaw,
-                quantityError = state.quantityAError,
-                onPriceChange = onPriceAChange,
-                onQuantityChange = onQuantityAChange,
-                testTagPrefix = TEST_TAG_OFFER_A,
-                priceFocusRequester = priceAFocusRequester,
-            )
+@Composable
+private fun CompareContent(
+    state: CompareUiState,
+    onPriceAChange: (String) -> Unit,
+    onQuantityAChange: (String) -> Unit,
+    onPriceBChange: (String) -> Unit,
+    onQuantityBChange: (String) -> Unit,
+    priceAFocusRequester: FocusRequester,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(SCREEN_PADDING),
+        verticalArrangement = Arrangement.spacedBy(SECTION_SPACING),
+    ) {
+        Text(
+            text = stringResource(R.string.compare_heading),
+            style = MaterialTheme.typography.headlineSmall,
+        )
 
-            OfferCard(
-                title = stringResource(R.string.offer_b_title),
-                priceRaw = state.priceBRaw,
-                priceError = state.priceBError,
-                quantityRaw = state.quantityBRaw,
-                quantityError = state.quantityBError,
-                onPriceChange = onPriceBChange,
-                onQuantityChange = onQuantityBChange,
-                testTagPrefix = TEST_TAG_OFFER_B,
-                priceFocusRequester = null,
-            )
+        OfferCard(
+            title = stringResource(R.string.offer_a_title),
+            priceRaw = state.priceARaw,
+            priceError = state.priceAError,
+            quantityRaw = state.quantityARaw,
+            quantityError = state.quantityAError,
+            onPriceChange = onPriceAChange,
+            onQuantityChange = onQuantityAChange,
+            testTagPrefix = TEST_TAG_OFFER_A,
+            priceFocusRequester = priceAFocusRequester,
+        )
 
-            ResultCard(outcome = state.outcome)
-        }
+        OfferCard(
+            title = stringResource(R.string.offer_b_title),
+            priceRaw = state.priceBRaw,
+            priceError = state.priceBError,
+            quantityRaw = state.quantityBRaw,
+            quantityError = state.quantityBError,
+            onPriceChange = onPriceBChange,
+            onQuantityChange = onQuantityBChange,
+            testTagPrefix = TEST_TAG_OFFER_B,
+            priceFocusRequester = null,
+        )
+
+        ResultCard(outcome = state.outcome)
     }
 }
 

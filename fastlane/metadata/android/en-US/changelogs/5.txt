@@ -1,0 +1,2 @@
+Reset & Undo:
+• A new Reset action (refresh icon) in the top app bar atomically clears both offers and the comparison result, then offers a 10-second Undo via a Snackbar so the previous comparison can be restored with one tap. Typing into any field, backgrounding the app, or letting the timer run out dismisses the Undo affordance.
