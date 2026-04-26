@@ -207,17 +207,21 @@ class CompareViewModel(
     private fun restoreUndoStateFromSavedState(): UndoState? {
         val deadline: Long = savedStateHandle[KEY_UNDO_DEADLINE] ?: return null
         if (deadline <= System.currentTimeMillis()) return null
+        val snapshot = readUndoSnapshotFromSavedState() ?: return null
+        return UndoState(snapshot, deadline)
+    }
+
+    private fun readUndoSnapshotFromSavedState(): PreResetSnapshot? {
         val priceA: String? = savedStateHandle[KEY_UNDO_PRICE_A]
         val quantityA: String? = savedStateHandle[KEY_UNDO_QUANTITY_A]
         val priceB: String? = savedStateHandle[KEY_UNDO_PRICE_B]
         val quantityB: String? = savedStateHandle[KEY_UNDO_QUANTITY_B]
-        if (priceA == null || quantityA == null || priceB == null || quantityB == null) {
-            return null
-        }
-        return UndoState(
-            snapshot = PreResetSnapshot(priceA, quantityA, priceB, quantityB),
-            expiresAtEpochMillis = deadline,
-        )
+        // Two narrow guards rather than one four-way `||`: keeps the
+        // ComplexCondition score below detekt's threshold and the smart
+        // cast on the four locals propagates to the constructor below.
+        if (priceA == null || quantityA == null) return null
+        if (priceB == null || quantityB == null) return null
+        return PreResetSnapshot(priceA, quantityA, priceB, quantityB)
     }
 
     private companion object {
