@@ -72,7 +72,6 @@ Categories:
 License: MIT
 AuthorName: Marco Antonio Blanco
 AuthorEmail: marcoantonio.blanco@protonmail.com
-WebSite: https://github.com/mablanco/pricegrab
 SourceCode: https://github.com/mablanco/pricegrab
 IssueTracker: https://github.com/mablanco/pricegrab/issues
 
@@ -101,6 +100,16 @@ CurrentVersionCode: 5
 
 **Why these fields.**
 
+- `WebSite:` is **omitted** on purpose. The
+  [Build Metadata Reference](https://f-droid.org/en/docs/Build_Metadata_Reference/#WebSite)
+  requires `WebSite` to be a *different* URL from `SourceCode` (a
+  product page or marketing site, not the repo), and PriceGrab does
+  not have one. F-Droid's reviewer enforced this on MR
+  [!37136](https://gitlab.com/fdroid/fdroiddata/-/merge_requests/37136)
+  by removing the `WebSite:` line directly in the MR; this doc is
+  the upstream twin of that change so the next sync stays clean.
+  When/if a marketing page lands, set `WebSite:` to that page —
+  never to the GitHub repo URL again.
 - `Binaries:` points at the upstream-signed APK on GitHub Releases.
   `v%v` is `fdroidserver`'s substitution for `versionName`. In Mode B,
   F-Droid downloads the upstream APK from this URL after rebuilding
@@ -130,10 +139,15 @@ CurrentVersionCode: 5
   entry — no manual MR per release. The schema only accepts `None`,
   `Version`, or `Version +<suffix>`; older docs that mention the
   `v%v` placeholder are obsolete.
-- The store metadata (title, descriptions, screenshots, changelogs)
-  is **not** restated here. F-Droid auto-discovers it from
-  `fastlane/metadata/android/{en-US,es-ES}/` at the repo root, which
-  is exactly where this repo keeps it.
+- The store metadata (title, descriptions, screenshots, changelogs,
+  **store icon**) is **not** restated here. F-Droid auto-discovers it
+  from `fastlane/metadata/android/{en-US,es-ES}/` at the repo root,
+  which is exactly where this repo keeps it. The 512×512 store icon
+  lives at `…/<locale>/images/icon.png` and is regenerated
+  deterministically by `branding/regenerate-icons.py` from the same
+  `branding/icon-source.png` that produces the launcher mipmaps —
+  one source of truth for both the in-app icon and the F-Droid list
+  thumbnail. (Required by F-Droid review on MR !37136, 2026-04-26.)
 - v0.1.0 through v0.1.3 are intentionally **absent** from
   `Builds:`. v0.1.0/v0.1.1 were initially submitted as `disable:`d
   entries (with inline notes on why each was unbuildable /
@@ -295,6 +309,21 @@ What it took to get to the current state, in chronological order:
    and `CurrentVersionCode`, with no need to reopen earlier reviewer
    feedback. Recipe sync landed in
    [PR #21](https://github.com/mablanco/pricegrab/pull/21).
+8. **Reviewer feedback on the v0.1.4 review pass** (2026-04-26):
+   (a) `WebSite:` had to be removed — F-Droid's
+   [Build Metadata Reference](https://f-droid.org/en/docs/Build_Metadata_Reference/#WebSite)
+   only allows `WebSite:` when it is **distinct** from `SourceCode:`,
+   and PriceGrab has no marketing page yet. Reviewer applied the
+   removal directly in the MR; this repo's twin landed in
+   [PR #24](https://github.com/mablanco/pricegrab/pull/24).
+   (b) The fastlane tree was missing the 512×512 store icon at
+   `fastlane/metadata/android/<locale>/images/icon.png`. Generated
+   deterministically from `branding/icon-source.png` by the existing
+   `branding/regenerate-icons.py` pipeline (extended in the same PR
+   to also emit the fastlane icon, so the launcher mipmaps and the
+   fastlane store icon stay in lock-step from a single source of
+   truth). No tag bump needed: the fastlane tree is metadata only,
+   not part of the APK, so reproducibility for v0.1.4 is unaffected.
 
 The actual byte-for-byte reproducibility verification happens *after*
 this MR merges, on F-Droid's main build farm via `fdroid publish`. If
