@@ -32,11 +32,16 @@ SOURCE = Path(__file__).resolve().parent / "icon-source.png"
 RES_DIR = REPO_ROOT / "android" / "app" / "src" / "main" / "res"
 
 # Pixel-coordinate box of the rounded-square frame inside `icon-source.png`.
-# Measured by walking the central column / row until the dark-teal background
-# starts. Keep these in sync with the source image; if you replace the source
-# with a different crop, re-measure with `branding/measure-source.py` (TODO if
-# we ever need it again -- the values here come from the original Gemini PNG).
-FRAME_BOX = (844, 188, 1972, 1350)  # (left, top, right, bottom), right/bottom exclusive
+# Measured by walking the central column / row from each edge inward until the
+# dark-teal frame starts. Keep these in sync with the source image; if the
+# source is recropped, re-measure (a one-shot script using
+# `PIL.Image.getpixel` + a teal predicate is enough -- see the PR #15
+# description for the recipe). Right/bottom are exclusive (PIL.crop convention).
+#
+# Source dimensions: 1286 x 1313 (post-crop, April 2026). Inner rounded-square
+# bounding box: 1128 x 1162. Same physical art as the original 2816 x 1536
+# source; the crop only trimmed the surrounding light-grey halo.
+FRAME_BOX = (79, 75, 1207, 1237)
 
 # Adaptive-icon background colour, sampled from inside the rounded-square frame.
 # Must match `values/ic_launcher_background.xml` exactly so the device mask sees
@@ -67,7 +72,7 @@ LEGACY_DP = 48  # legacy launcher icon size in dp
 def crop_to_square_frame(im: Image.Image) -> Image.Image:
     """Crop the source to the rounded-square frame and pad to a perfect square.
 
-    The Gemini-generated source frame is slightly taller than wide (1128x1162);
+    The source frame is slightly taller than wide (1128x1162);
     rather than distorting the art with a non-uniform resize we pad to the
     larger side with the frame's own background colour, which is invisible.
 
