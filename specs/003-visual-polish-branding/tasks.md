@@ -124,8 +124,8 @@ implementation PR lands a release-ready `main`.
 - [X] T020 [P] Mirror T019 in `fastlane/metadata/android/es-ES/changelogs/6.txt` in Spanish.
 - [X] T021 Update the master PR ledger in `specs/001-unit-price-comparison/tasks.md` with a new `### PR O — 003-visual-polish-branding` (planning only) section, a `### PR P — feat/018-visual-polish-impl` (implementation) section, and a `### PR Q — chore/019-fdroid-doc-sync-v0.1.5` (release cut) section. Cross-reference the feature 002 ledger entries (PR L / PR M / PR N) for the cadence.
 - [ ] T022 Manual verification on a real device using the 9-step walkthrough from `plan.md`'s "Manual verification" section. Record cold-start regression (must stay below 2 s budget). Do this on the signed v0.1.5 release APK (not on a debug build) so the verification matches what F-Droid will republish.
-- [ ] T023 Tag `v0.1.5` from `main` after the implementation PR merges and CI is green. Verify the `Signed release APK` job publishes `app-release.apk` to the v0.1.5 GitHub Release.
-- [ ] T024 Update `docs/fdroid.md` §3 build recipe and §5 chronology to point at v0.1.5: bump `Builds[0]` to `versionName: 0.1.5` / `versionCode: 6` / `commit: <full SHA of v0.1.5>`, and bump `CurrentVersion` / `CurrentVersionCode` accordingly. Coordinate with the GitLab MR edit in the same window.
+- [X] T023 Tag `v0.1.5` from `main` after the implementation PR merges and CI is green. Verify the `Signed release APK` job publishes `app-release.apk` to the v0.1.5 GitHub Release.
+- [X] T024 Update `docs/fdroid.md` §3 build recipe and §5 chronology to point at v0.1.5: bump `Builds[0]` to `versionName: 0.1.5` / `versionCode: 6` / `commit: <full SHA of v0.1.5>`, and bump `CurrentVersion` / `CurrentVersionCode` accordingly. Coordinate with the GitLab MR edit in the same window.
 
 ---
 

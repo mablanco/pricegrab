@@ -83,9 +83,9 @@ Repo: https://github.com/mablanco/pricegrab.git
 Binaries: https://github.com/mablanco/pricegrab/releases/download/v%v/app-release.apk
 
 Builds:
-  - versionName: 0.1.4
-    versionCode: 5
-    commit: ec6c8a0947e8c3213378cf970de6afebf3c51fbc
+  - versionName: 0.1.5
+    versionCode: 6
+    commit: 139697036839c8355ce098db035ed5349fca1fdc
     subdir: android/app
     gradle:
       - yes
@@ -94,8 +94,8 @@ AllowedAPKSigningKeys: 70a9709ce5a4829668d9d50411b959bb90ad2e19d02e2069ad0ff3528
 
 AutoUpdateMode: Version
 UpdateCheckMode: Tags
-CurrentVersion: 0.1.4
-CurrentVersionCode: 5
+CurrentVersion: 0.1.5
+CurrentVersionCode: 6
 ```
 
 **Why these fields.**
@@ -121,7 +121,7 @@ CurrentVersionCode: 5
   the recipe Mode B: F-Droid will never publish an F-Droid-signed
   fallback for this package.
 - `Builds[0].commit:` uses the **full 40-character SHA-1** of the
-  v0.1.4 commit, not the tag name. F-Droid prefers immutable commit
+  v0.1.5 commit, not the tag name. F-Droid prefers immutable commit
   hashes over mutable tags; this convention is also what
   `AutoUpdateMode` itself writes when it auto-generates entries for
   future tags, so the style stays consistent across manual and
@@ -269,8 +269,8 @@ running the local toolchain pays off.
 | Merge Request | [`fdroid/fdroiddata!37136`](https://gitlab.com/fdroid/fdroiddata/-/merge_requests/37136) |
 | Submitting branch | `add-com.mablanco.pricegrab` on [`mabnavarrete/fdroiddata`](https://gitlab.com/mabnavarrete/fdroiddata) |
 | Distribution model | Mode B (reproducible builds, exclusive developer-signed APK) |
-| First buildable / publishable tag | `v0.1.4` (versionCode 5), pinned by full SHA `ec6c8a0947e8c3213378cf970de6afebf3c51fbc` |
-| Status | Iterating on reviewer feedback; awaiting next CI pipeline run |
+| First buildable / publishable tag | `v0.1.5` (versionCode 6), pinned by full SHA `139697036839c8355ce098db035ed5349fca1fdc` |
+| Status | Reviewer cleared the v0.1.5 bump (2026-04-27); awaiting next `issuebot` CI pipeline + maintainer merge |
 
 What it took to get to the current state, in chronological order:
 
@@ -324,6 +324,19 @@ What it took to get to the current state, in chronological order:
    fastlane store icon stay in lock-step from a single source of
    truth). No tag bump needed: the fastlane tree is metadata only,
    not part of the APK, so reproducibility for v0.1.4 is unaffected.
+9. **Bumped target tag from v0.1.4 to v0.1.5** (2026-04-27) so the
+   first version F-Droid actually publishes is the one that ships
+   feature 003 (visual polish & branding —
+   [PR #23](https://github.com/mablanco/pricegrab/pull/23)). v0.1.5
+   was already tagged from `main` and the signed APK was pushed to
+   [GitHub Releases](https://github.com/mablanco/pricegrab/releases/tag/v0.1.5)
+   while the v0.1.4 review pass was still ongoing — same Mode B
+   contract (toolchain, signing key and reproducibility constraints
+   unchanged from step 6/7) — and the reviewer explicitly confirmed
+   they were happy to switch the target tag rather than publish
+   v0.1.4 first. Recipe sync (this section, plus `Builds[0].commit /
+   versionName / versionCode`, `CurrentVersion`, `CurrentVersionCode`)
+   landed in [PR #25](https://github.com/mablanco/pricegrab/pull/25).
 
 The actual byte-for-byte reproducibility verification happens *after*
 this MR merges, on F-Droid's main build farm via `fdroid publish`. If
