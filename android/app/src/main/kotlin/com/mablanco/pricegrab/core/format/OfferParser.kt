@@ -2,6 +2,7 @@ package com.mablanco.pricegrab.core.format
 
 import com.mablanco.pricegrab.core.model.Offer
 import com.mablanco.pricegrab.core.model.OfferParseResult
+import com.mablanco.pricegrab.core.model.QuantityUnit
 import java.util.Locale
 
 /**
@@ -15,6 +16,7 @@ object OfferParser {
     fun parse(
         rawPrice: String,
         rawQuantity: String,
+        quantityUnit: QuantityUnit,
         locale: Locale,
     ): OfferParseResult {
         if (rawPrice.isBlank()) return OfferParseResult.EmptyPrice
@@ -28,6 +30,8 @@ object OfferParser {
         if (price.signum() < 0) return OfferParseResult.NegativePrice
         if (quantity.signum() <= 0) return OfferParseResult.NonPositiveQuantity
 
-        return OfferParseResult.Success(Offer(price = price, quantity = quantity))
+        return OfferParseResult.Success(
+            Offer(price = price, quantity = quantity, quantityUnit = quantityUnit),
+        )
     }
 }

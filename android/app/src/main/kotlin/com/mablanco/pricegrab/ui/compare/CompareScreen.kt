@@ -48,13 +48,14 @@ import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.os.ConfigurationCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mablanco.pricegrab.R
 import com.mablanco.pricegrab.core.model.ComparisonOutcome
+import com.mablanco.pricegrab.core.model.Dimension
+import com.mablanco.pricegrab.core.model.QuantityUnit
 import com.mablanco.pricegrab.ui.theme.PriceGrabTheme
 import com.mablanco.pricegrab.ui.theme.spacing
 import kotlinx.coroutines.withTimeoutOrNull
@@ -81,6 +82,8 @@ fun CompareScreen(
         onQuantityAChange = viewModel::onQuantityAChange,
         onPriceBChange = viewModel::onPriceBChange,
         onQuantityBChange = viewModel::onQuantityBChange,
+        onQuantityUnitAChange = viewModel::onQuantityUnitAChange,
+        onQuantityUnitBChange = viewModel::onQuantityUnitBChange,
         onResetClick = viewModel::resetComparison,
         onUndoClick = viewModel::undoReset,
         onUndoDismissed = viewModel::dismissUndo,
@@ -96,6 +99,8 @@ fun CompareScreen(
     onQuantityAChange: (String) -> Unit,
     onPriceBChange: (String) -> Unit,
     onQuantityBChange: (String) -> Unit,
+    onQuantityUnitAChange: (QuantityUnit) -> Unit,
+    onQuantityUnitBChange: (QuantityUnit) -> Unit,
     onResetClick: () -> Unit,
     onUndoClick: () -> Unit,
     onUndoDismissed: () -> Unit,
@@ -123,6 +128,8 @@ fun CompareScreen(
             onQuantityAChange = onQuantityAChange,
             onPriceBChange = onPriceBChange,
             onQuantityBChange = onQuantityBChange,
+            onQuantityUnitAChange = onQuantityUnitAChange,
+            onQuantityUnitBChange = onQuantityUnitBChange,
             priceAFocusRequester = priceAFocusRequester,
             modifier = Modifier.padding(innerPadding),
         )
@@ -251,6 +258,8 @@ private fun CompareContent(
     onQuantityAChange: (String) -> Unit,
     onPriceBChange: (String) -> Unit,
     onQuantityBChange: (String) -> Unit,
+    onQuantityUnitAChange: (QuantityUnit) -> Unit,
+    onQuantityUnitBChange: (QuantityUnit) -> Unit,
     priceAFocusRequester: FocusRequester,
     modifier: Modifier = Modifier,
 ) {
@@ -273,8 +282,10 @@ private fun CompareContent(
             priceError = state.priceAError,
             quantityRaw = state.quantityARaw,
             quantityError = state.quantityAError,
+            quantityUnit = state.quantityUnitA,
             onPriceChange = onPriceAChange,
             onQuantityChange = onQuantityAChange,
+            onQuantityUnitChange = onQuantityUnitAChange,
             testTagPrefix = TEST_TAG_OFFER_A,
             priceFocusRequester = priceAFocusRequester,
         )
@@ -285,16 +296,23 @@ private fun CompareContent(
             priceError = state.priceBError,
             quantityRaw = state.quantityBRaw,
             quantityError = state.quantityBError,
+            quantityUnit = state.quantityUnitB,
             onPriceChange = onPriceBChange,
             onQuantityChange = onQuantityBChange,
+            onQuantityUnitChange = onQuantityUnitBChange,
             testTagPrefix = TEST_TAG_OFFER_B,
             priceFocusRequester = null,
         )
 
-        ResultRegion(outcome = state.outcome)
+        ResultRegion(
+            outcome = state.outcome,
+            incompatibleUnits = state.incompatibleUnits,
+            dimension = state.outcome?.let { state.quantityUnitA.dimension },
+        )
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun OfferCard(
     title: String,
@@ -302,8 +320,10 @@ private fun OfferCard(
     priceError: InputError?,
     quantityRaw: String,
     quantityError: InputError?,
+    quantityUnit: QuantityUnit,
     onPriceChange: (String) -> Unit,
     onQuantityChange: (String) -> Unit,
+    onQuantityUnitChange: (QuantityUnit) -> Unit,
     testTagPrefix: String,
     priceFocusRequester: FocusRequester?,
 ) {
@@ -327,18 +347,33 @@ private fun OfferCard(
                 imeAction = ImeAction.Next,
                 testTag = "${testTagPrefix}_price",
                 focusRequester = priceFocusRequester,
+                modifier = Modifier.fillMaxWidth(),
             )
 
-            LabeledNumberField(
-                value = quantityRaw,
-                onValueChange = onQuantityChange,
-                labelRes = R.string.quantity_label,
-                contentDescription = stringResource(R.string.cd_quantity_field, title),
-                error = quantityError,
-                imeAction = ImeAction.Done,
-                testTag = "${testTagPrefix}_quantity",
-                focusRequester = null,
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(spacing.s),
+                verticalAlignment = Alignment.Top,
+            ) {
+                val unitName = stringResource(quantityUnit.nameRes())
+                LabeledNumberField(
+                    value = quantityRaw,
+                    onValueChange = onQuantityChange,
+                    labelRes = R.string.quantity_label,
+                    contentDescription = "${stringResource(R.string.cd_quantity_field, title)}, $unitName",
+                    error = quantityError,
+                    imeAction = ImeAction.Done,
+                    testTag = "${testTagPrefix}_quantity",
+                    focusRequester = null,
+                    modifier = Modifier.weight(1f),
+                )
+                QuantityUnitSelector(
+                    offerTitle = title,
+                    selectedUnit = quantityUnit,
+                    onUnitSelected = onQuantityUnitChange,
+                    testTag = "${testTagPrefix}_unit",
+                )
+            }
         }
     }
 }
@@ -353,9 +388,9 @@ private fun LabeledNumberField(
     imeAction: ImeAction,
     testTag: String,
     focusRequester: FocusRequester?,
+    modifier: Modifier = Modifier,
 ) {
-    val baseModifier = Modifier
-        .fillMaxWidth()
+    val baseModifier = modifier
         .testTag(testTag)
         .semantics { this.contentDescription = contentDescription }
 
@@ -393,17 +428,21 @@ private fun LabeledNumberField(
  * the wrapper, so TalkBack speaks one full thought per state change.
  */
 @Composable
-private fun ResultRegion(outcome: ComparisonOutcome?) {
+private fun ResultRegion(
+    outcome: ComparisonOutcome?,
+    incompatibleUnits: Boolean,
+    dimension: Dimension?,
+) {
     val configuration = LocalConfiguration.current
     val locale = ConfigurationCompat.getLocales(configuration).get(0) ?: Locale.getDefault()
 
     val placeholder = stringResource(R.string.result_placeholder)
+    val incompatibleMessage = stringResource(R.string.error_incompatible_units)
     val headline = outcome?.headlineRes()?.let { stringResource(it) }
-    val savings = ResultPresenter.present(outcome, locale)
-    val savingsLine: String? = savings?.let {
-        stringResource(R.string.result_savings, it.perUnitDelta)
-    }
+    val savings = ResultPresenter.present(outcome, dimension, locale)
+    val savingsLine: String? = savings?.let { formatSavingsLine(it.perUnitDelta, dimension) }
     val a11ySummary: String = when {
+        incompatibleUnits -> incompatibleMessage
         headline == null -> placeholder
         savingsLine != null -> "$headline. $savingsLine"
         else -> headline
@@ -418,20 +457,42 @@ private fun ResultRegion(outcome: ComparisonOutcome?) {
                 contentDescription = a11ySummary
             },
     ) {
-        if (outcome == null) {
-            Text(
-                text = placeholder,
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        } else {
-            HeroResultCard(
-                outcome = outcome,
-                headline = headline ?: "",
-                savingsLine = savingsLine,
-            )
+        when {
+            incompatibleUnits -> {
+                Text(
+                    text = incompatibleMessage,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.testTag(TEST_TAG_INCOMPATIBLE_UNITS),
+                )
+            }
+            outcome == null -> {
+                Text(
+                    text = placeholder,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+            else -> {
+                HeroResultCard(
+                    outcome = outcome,
+                    headline = headline ?: "",
+                    savingsLine = savingsLine,
+                )
+            }
         }
     }
+}
+
+@Composable
+private fun formatSavingsLine(perUnitDelta: String, dimension: Dimension?): String? {
+    if (dimension == null) return null
+    @StringRes val templateRes = when (dimension) {
+        Dimension.Mass -> R.string.result_savings_per_kg
+        Dimension.Volume -> R.string.result_savings_per_L
+        Dimension.Count -> R.string.result_savings_per_piece
+    }
+    return stringResource(templateRes, perUnitDelta)
 }
 
 /**
@@ -536,6 +597,7 @@ const val TEST_TAG_HERO_RESULT: String = "heroResult"
 
 const val TEST_TAG_RESULT_TEXT: String = "result_text"
 const val TEST_TAG_RESULT_SAVINGS: String = "result_savings"
+const val TEST_TAG_INCOMPATIBLE_UNITS: String = "incompatible_units"
 const val TEST_TAG_RESET: String = "reset_action"
 const val TEST_TAG_BRANDMARK: String = "brandmark"
 
@@ -545,48 +607,3 @@ const val TEST_TAG_BRANDMARK: String = "brandmark"
 // brandmark at the same size so it visually aligns with the trailing reset
 // IconButton's 24dp glyph and stays inside the 64dp app-bar height.
 private val BRANDMARK_SIZE = 24.dp
-
-// ---- Previews ---------------------------------------------------------------
-
-@Preview(showBackground = true)
-@Composable
-private fun CompareScreenEmptyPreview() {
-    PriceGrabTheme {
-        CompareScreen(
-            state = CompareUiState(),
-            onPriceAChange = {},
-            onQuantityAChange = {},
-            onPriceBChange = {},
-            onQuantityBChange = {},
-            onResetClick = {},
-            onUndoClick = {},
-            onUndoDismissed = {},
-        )
-    }
-}
-
-@Preview(showBackground = true, name = "A wins with savings")
-@Composable
-private fun CompareScreenAWinsPreview() {
-    PriceGrabTheme {
-        CompareScreen(
-            state = CompareUiState(
-                priceARaw = "2.50",
-                quantityARaw = "500",
-                priceBRaw = "4.00",
-                quantityBRaw = "800",
-                outcome = ComparisonOutcome.AWins(
-                    perUnitDelta = java.math.BigDecimal("0.001"),
-                    percentDelta = java.math.BigDecimal("20"),
-                ),
-            ),
-            onPriceAChange = {},
-            onQuantityAChange = {},
-            onPriceBChange = {},
-            onQuantityBChange = {},
-            onResetClick = {},
-            onUndoClick = {},
-            onUndoDismissed = {},
-        )
-    }
-}

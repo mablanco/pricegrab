@@ -6,6 +6,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.unit.Density
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.mablanco.pricegrab.ui.theme.PriceGrabTheme
@@ -49,6 +50,8 @@ class CompareScreenLargeFontTest {
                         onQuantityAChange = {},
                         onPriceBChange = {},
                         onQuantityBChange = {},
+                        onQuantityUnitAChange = {},
+                        onQuantityUnitBChange = {},
                         onResetClick = {},
                         onUndoClick = {},
                         onUndoDismissed = {},
@@ -59,11 +62,17 @@ class CompareScreenLargeFontTest {
 
         composeRule.onNodeWithText(BRAND_TITLE).assertIsDisplayed()
         composeRule.onNodeWithTag(TEST_TAG_BRANDMARK).assertIsDisplayed()
-        composeRule.onNodeWithTag("${TEST_TAG_OFFER_A}_price").assertIsDisplayed()
-        composeRule.onNodeWithTag("${TEST_TAG_OFFER_A}_quantity").assertIsDisplayed()
-        composeRule.onNodeWithTag("${TEST_TAG_OFFER_B}_price").assertIsDisplayed()
-        composeRule.onNodeWithTag("${TEST_TAG_OFFER_B}_quantity").assertIsDisplayed()
-        composeRule.onNodeWithTag(TEST_TAG_RESULT).assertIsDisplayed()
+        assertTagVisible("${TEST_TAG_OFFER_A}_price")
+        assertTagVisible("${TEST_TAG_OFFER_A}_quantity")
+        assertTagVisible("${TEST_TAG_OFFER_A}_unit")
+        assertTagVisible("${TEST_TAG_OFFER_B}_price")
+        assertTagVisible("${TEST_TAG_OFFER_B}_quantity")
+        assertTagVisible("${TEST_TAG_OFFER_B}_unit")
+        assertTagVisible(TEST_TAG_RESULT)
+    }
+
+    private fun assertTagVisible(testTag: String) {
+        composeRule.onNodeWithTag(testTag).performScrollTo().assertIsDisplayed()
     }
 
     private companion object {

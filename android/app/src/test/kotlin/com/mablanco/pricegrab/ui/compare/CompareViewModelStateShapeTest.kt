@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
+import org.junit.Rule
 import org.junit.Test
 
 /**
@@ -16,6 +17,9 @@ import org.junit.Test
  * so the foundational phase has its own green test signal.
  */
 class CompareViewModelStateShapeTest {
+
+    @get:Rule
+    val localeRule = EnUsLocaleRule()
 
     @Test
     fun freshStateExposesNoUndoStateAndDisabledResetButton() {
