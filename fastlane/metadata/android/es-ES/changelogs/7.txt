@@ -1,0 +1,2 @@
+Zona segura del icono:
+• El marco redondeado se reduce ~14 % para que la flecha y la etiqueta de precio no se corten bajo las máscaras circulares del launcher y F-Droid.

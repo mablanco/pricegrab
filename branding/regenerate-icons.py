@@ -56,13 +56,15 @@ FRAME_BOX = (79, 75, 1207, 1237)
 # a uniform colour field with the design centred inside the safe zone.
 BG_HEX = "#2F5C73"
 
-# Foreground inset: the cropped frame is rendered at this fraction of the
-# 108-dp adaptive-icon canvas, surrounded by transparent padding. The padding
-# falls onto the same `BG_HEX` colour, so the seam is invisible. 0.95 leaves
-# ~5 dp of margin around the frame, which keeps the design's outermost
-# elements (top-right arrow, bottom-right price tag) inside the 72-dp visible
-# square that all device masks must respect.
-FG_SCALE = 0.95
+# Art inset: the cropped frame is rendered at this fraction of every output
+# canvas (adaptive-icon foreground, legacy mipmaps, and the 512 px fastlane
+# store icon). The surrounding band is filled with `BG_HEX` (opaque outputs)
+# or left transparent (adaptive foreground only). 0.86 leaves ~7 % margin
+# per side — enough to keep the rounded-square frame and its outermost
+# elements (top-right arrow, bottom-right price tag) inside the circular
+# masks F-Droid and most launchers apply. v0.1.5 used 0.95 for adaptive
+# foreground only and full-bleed legacy / fastlane icons, which clipped.
+ART_SCALE = 0.86
 
 # Density buckets and their pixel-per-dp multipliers.
 DENSITIES: dict[str, float] = {
@@ -79,10 +81,8 @@ LEGACY_DP = 48  # legacy launcher icon size in dp
 # F-Droid's fastlane convention: a 512x512 PNG at
 # `fastlane/metadata/android/<locale>/images/icon.png` is the store
 # icon used by the F-Droid client list view. F-Droid auto-discovers
-# it on every metadata sync. We render the same cropped square frame
-# at 512 px so the fastlane icon and the launcher icon are visually
-# identical (no separate art pipeline). 512 is the size Google Play
-# / F-Droid both standardised on.
+# it on every metadata sync. We render with the same ``ART_SCALE`` inset
+# as the launcher mipmaps so every surface shows identical proportions.
 FASTLANE_ICON_PX = 512
 FASTLANE_LOCALES = ("en-US", "es-ES")
 
@@ -120,19 +120,38 @@ def crop_to_square_frame(im: Image.Image) -> Image.Image:
     return canvas
 
 
-def render_foreground(square: Image.Image, canvas_px: int) -> Image.Image:
-    """Render the adaptive-icon foreground: square art on a transparent canvas."""
-    art_side = int(round(canvas_px * FG_SCALE))
-    art = square.resize((art_side, art_side), Image.LANCZOS).convert("RGBA")
-    canvas = Image.new("RGBA", (canvas_px, canvas_px), (0, 0, 0, 0))
+def _bg_rgb() -> tuple[int, int, int]:
+    return tuple(int(BG_HEX[i : i + 2], 16) for i in (1, 3, 5))
+
+
+def render_padded_square(
+    square: Image.Image,
+    canvas_px: int,
+    *,
+    transparent: bool,
+) -> Image.Image:
+    """Centre the frame at ``ART_SCALE`` inside a square canvas."""
+    art_side = int(round(canvas_px * ART_SCALE))
+    art = square.resize((art_side, art_side), Image.LANCZOS)
     offset = (canvas_px - art_side) // 2
+    if transparent:
+        art = art.convert("RGBA")
+        canvas = Image.new("RGBA", (canvas_px, canvas_px), (0, 0, 0, 0))
+    else:
+        art = art.convert("RGB")
+        canvas = Image.new("RGB", (canvas_px, canvas_px), _bg_rgb())
     canvas.paste(art, (offset, offset))
     return canvas
 
 
+def render_foreground(square: Image.Image, canvas_px: int) -> Image.Image:
+    """Render the adaptive-icon foreground: padded art on a transparent canvas."""
+    return render_padded_square(square, canvas_px, transparent=True)
+
+
 def render_legacy(square: Image.Image, canvas_px: int) -> Image.Image:
-    """Render a legacy (pre-Android-8) launcher icon: full square at canvas size."""
-    return square.resize((canvas_px, canvas_px), Image.LANCZOS)
+    """Render a legacy (pre-Android-8) launcher icon with safe-zone padding."""
+    return render_padded_square(square, canvas_px, transparent=False)
 
 
 def save_png(im: Image.Image, path: Path) -> None:
@@ -141,8 +160,8 @@ def save_png(im: Image.Image, path: Path) -> None:
 
 
 def render_fastlane_icon(square: Image.Image) -> Image.Image:
-    """Render the 512x512 fastlane store icon — the cropped frame, no padding."""
-    return square.resize((FASTLANE_ICON_PX, FASTLANE_ICON_PX), Image.LANCZOS)
+    """Render the 512x512 fastlane store icon with the same inset as launchers."""
+    return render_padded_square(square, FASTLANE_ICON_PX, transparent=False)
 
 
 def main() -> None:
