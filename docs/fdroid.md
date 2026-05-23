@@ -85,7 +85,7 @@ Binaries: https://github.com/mablanco/pricegrab/releases/download/v%v/app-releas
 Builds:
   - versionName: 0.1.7
     versionCode: 8
-    commit: e375505bc046e28024049fb57a16ad0e428b2b19
+    commit: 80c11dc4b8dd622be2d3082fd9ec0acc672fde4c
     subdir: android/app
     gradle:
       - yes
