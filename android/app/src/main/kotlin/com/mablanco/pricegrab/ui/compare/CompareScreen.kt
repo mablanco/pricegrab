@@ -17,10 +17,7 @@ import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -35,10 +32,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -54,7 +48,6 @@ import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.os.ConfigurationCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -385,53 +378,6 @@ private fun OfferCard(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun QuantityUnitSelector(
-    offerTitle: String,
-    selectedUnit: QuantityUnit,
-    onUnitSelected: (QuantityUnit) -> Unit,
-    testTag: String,
-) {
-    var expanded by remember { mutableStateOf(false) }
-    val unitDescription = stringResource(R.string.cd_quantity_unit, offerTitle)
-
-    ExposedDropdownMenuBox(
-        expanded = expanded,
-        onExpandedChange = { expanded = it },
-        modifier = Modifier.widthIn(min = UNIT_SELECTOR_MIN_WIDTH),
-    ) {
-        OutlinedTextField(
-            value = stringResource(selectedUnit.codeRes()),
-            onValueChange = {},
-            readOnly = true,
-            singleLine = true,
-            label = null,
-            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-            colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(),
-            modifier = Modifier
-                .menuAnchor()
-                .testTag(testTag)
-                .semantics { contentDescription = unitDescription },
-        )
-        ExposedDropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false },
-        ) {
-            QuantityUnit.entries.forEach { unit ->
-                DropdownMenuItem(
-                    text = { Text(stringResource(unit.nameRes())) },
-                    onClick = {
-                        onUnitSelected(unit)
-                        expanded = false
-                    },
-                    contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
-                )
-            }
-        }
-    }
-}
-
 @Composable
 private fun LabeledNumberField(
     value: String,
@@ -638,24 +584,6 @@ private fun ComparisonOutcome.headlineRes(): Int = when (this) {
     is ComparisonOutcome.BWins -> R.string.result_winner_b
 }
 
-@StringRes
-private fun QuantityUnit.codeRes(): Int = when (this) {
-    QuantityUnit.Gram -> R.string.unit_code_g
-    QuantityUnit.Kilogram -> R.string.unit_code_kg
-    QuantityUnit.Millilitre -> R.string.unit_code_ml
-    QuantityUnit.Litre -> R.string.unit_code_L
-    QuantityUnit.Piece -> R.string.unit_code_pcs
-}
-
-@StringRes
-private fun QuantityUnit.nameRes(): Int = when (this) {
-    QuantityUnit.Gram -> R.string.unit_name_gram
-    QuantityUnit.Kilogram -> R.string.unit_name_kilogram
-    QuantityUnit.Millilitre -> R.string.unit_name_millilitre
-    QuantityUnit.Litre -> R.string.unit_name_litre
-    QuantityUnit.Piece -> R.string.unit_name_piece
-}
-
 // ---- Test tags (constants so tests can reference them) ----------------------
 
 const val TEST_TAG_OFFER_A: String = "offerA"
@@ -679,53 +607,3 @@ const val TEST_TAG_BRANDMARK: String = "brandmark"
 // brandmark at the same size so it visually aligns with the trailing reset
 // IconButton's 24dp glyph and stays inside the 64dp app-bar height.
 private val BRANDMARK_SIZE = 24.dp
-private val UNIT_SELECTOR_MIN_WIDTH = 72.dp
-
-// ---- Previews ---------------------------------------------------------------
-
-@Preview(showBackground = true)
-@Composable
-private fun CompareScreenEmptyPreview() {
-    PriceGrabTheme {
-        CompareScreen(
-            state = CompareUiState(),
-            onPriceAChange = {},
-            onQuantityAChange = {},
-            onPriceBChange = {},
-            onQuantityBChange = {},
-            onQuantityUnitAChange = {},
-            onQuantityUnitBChange = {},
-            onResetClick = {},
-            onUndoClick = {},
-            onUndoDismissed = {},
-        )
-    }
-}
-
-@Preview(showBackground = true, name = "A wins with savings")
-@Composable
-private fun CompareScreenAWinsPreview() {
-    PriceGrabTheme {
-        CompareScreen(
-            state = CompareUiState(
-                priceARaw = "2.50",
-                quantityARaw = "500",
-                priceBRaw = "4.00",
-                quantityBRaw = "800",
-                outcome = ComparisonOutcome.AWins(
-                    perUnitDelta = java.math.BigDecimal("0.001"),
-                    percentDelta = java.math.BigDecimal("20"),
-                ),
-            ),
-            onPriceAChange = {},
-            onQuantityAChange = {},
-            onPriceBChange = {},
-            onQuantityBChange = {},
-            onQuantityUnitAChange = {},
-            onQuantityUnitBChange = {},
-            onResetClick = {},
-            onUndoClick = {},
-            onUndoDismissed = {},
-        )
-    }
-}

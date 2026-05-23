@@ -21,13 +21,13 @@ class CompareViewModel(
 
     private val _state: MutableStateFlow<CompareUiState> = MutableStateFlow(
         CompareUiState(
-            priceARaw = savedStateHandle[KEY_PRICE_A] ?: "",
-            quantityARaw = savedStateHandle[KEY_QUANTITY_A] ?: "",
-            priceBRaw = savedStateHandle[KEY_PRICE_B] ?: "",
-            quantityBRaw = savedStateHandle[KEY_QUANTITY_B] ?: "",
-            quantityUnitA = readQuantityUnit(KEY_QUANTITY_UNIT_A),
-            quantityUnitB = readQuantityUnit(KEY_QUANTITY_UNIT_B),
-            undoState = restoreUndoStateFromSavedState(),
+            priceARaw = savedStateHandle[CompareViewModelKeys.PRICE_A] ?: "",
+            quantityARaw = savedStateHandle[CompareViewModelKeys.QUANTITY_A] ?: "",
+            priceBRaw = savedStateHandle[CompareViewModelKeys.PRICE_B] ?: "",
+            quantityBRaw = savedStateHandle[CompareViewModelKeys.QUANTITY_B] ?: "",
+            quantityUnitA = readQuantityUnit(savedStateHandle, CompareViewModelKeys.QUANTITY_UNIT_A),
+            quantityUnitB = readQuantityUnit(savedStateHandle, CompareViewModelKeys.QUANTITY_UNIT_B),
+            undoState = restoreUndoStateFromSavedState(savedStateHandle),
         ),
     )
 
@@ -60,19 +60,19 @@ class CompareViewModel(
         )
         val deadline = System.currentTimeMillis() + UNDO_LIFETIME_MS
 
-        savedStateHandle[KEY_PRICE_A] = ""
-        savedStateHandle[KEY_QUANTITY_A] = ""
-        savedStateHandle[KEY_PRICE_B] = ""
-        savedStateHandle[KEY_QUANTITY_B] = ""
-        savedStateHandle[KEY_QUANTITY_UNIT_A] = QuantityUnit.Gram.name
-        savedStateHandle[KEY_QUANTITY_UNIT_B] = QuantityUnit.Gram.name
-        savedStateHandle[KEY_UNDO_PRICE_A] = snapshot.priceARaw
-        savedStateHandle[KEY_UNDO_QUANTITY_A] = snapshot.quantityARaw
-        savedStateHandle[KEY_UNDO_PRICE_B] = snapshot.priceBRaw
-        savedStateHandle[KEY_UNDO_QUANTITY_B] = snapshot.quantityBRaw
-        savedStateHandle[KEY_UNDO_QUANTITY_UNIT_A] = snapshot.quantityUnitA.name
-        savedStateHandle[KEY_UNDO_QUANTITY_UNIT_B] = snapshot.quantityUnitB.name
-        savedStateHandle[KEY_UNDO_DEADLINE] = deadline
+        savedStateHandle[CompareViewModelKeys.PRICE_A] = ""
+        savedStateHandle[CompareViewModelKeys.QUANTITY_A] = ""
+        savedStateHandle[CompareViewModelKeys.PRICE_B] = ""
+        savedStateHandle[CompareViewModelKeys.QUANTITY_B] = ""
+        savedStateHandle[CompareViewModelKeys.QUANTITY_UNIT_A] = QuantityUnit.Gram.name
+        savedStateHandle[CompareViewModelKeys.QUANTITY_UNIT_B] = QuantityUnit.Gram.name
+        savedStateHandle[CompareViewModelKeys.UNDO_PRICE_A] = snapshot.priceARaw
+        savedStateHandle[CompareViewModelKeys.UNDO_QUANTITY_A] = snapshot.quantityARaw
+        savedStateHandle[CompareViewModelKeys.UNDO_PRICE_B] = snapshot.priceBRaw
+        savedStateHandle[CompareViewModelKeys.UNDO_QUANTITY_B] = snapshot.quantityBRaw
+        savedStateHandle[CompareViewModelKeys.UNDO_QUANTITY_UNIT_A] = snapshot.quantityUnitA.name
+        savedStateHandle[CompareViewModelKeys.UNDO_QUANTITY_UNIT_B] = snapshot.quantityUnitB.name
+        savedStateHandle[CompareViewModelKeys.UNDO_DEADLINE] = deadline
 
         val cleared = CompareUiState(
             undoState = UndoState(snapshot, deadline),
@@ -84,13 +84,13 @@ class CompareViewModel(
         val undo = _state.value.undoState ?: return
         val snap = undo.snapshot
 
-        savedStateHandle[KEY_PRICE_A] = snap.priceARaw
-        savedStateHandle[KEY_QUANTITY_A] = snap.quantityARaw
-        savedStateHandle[KEY_PRICE_B] = snap.priceBRaw
-        savedStateHandle[KEY_QUANTITY_B] = snap.quantityBRaw
-        savedStateHandle[KEY_QUANTITY_UNIT_A] = snap.quantityUnitA.name
-        savedStateHandle[KEY_QUANTITY_UNIT_B] = snap.quantityUnitB.name
-        clearUndoFromSavedState()
+        savedStateHandle[CompareViewModelKeys.PRICE_A] = snap.priceARaw
+        savedStateHandle[CompareViewModelKeys.QUANTITY_A] = snap.quantityARaw
+        savedStateHandle[CompareViewModelKeys.PRICE_B] = snap.priceBRaw
+        savedStateHandle[CompareViewModelKeys.QUANTITY_B] = snap.quantityBRaw
+        savedStateHandle[CompareViewModelKeys.QUANTITY_UNIT_A] = snap.quantityUnitA.name
+        savedStateHandle[CompareViewModelKeys.QUANTITY_UNIT_B] = snap.quantityUnitB.name
+        clearUndoFromSavedState(savedStateHandle)
 
         val restored = CompareUiState(
             priceARaw = snap.priceARaw,
@@ -105,22 +105,22 @@ class CompareViewModel(
 
     fun dismissUndo() {
         if (_state.value.undoState == null) return
-        clearUndoFromSavedState()
+        clearUndoFromSavedState(savedStateHandle)
         _state.value = _state.value.copy(undoState = null)
     }
 
     private fun update(transform: (CompareUiState) -> CompareUiState) {
         var next = transform(_state.value)
         if (next.undoState != null) {
-            clearUndoFromSavedState()
+            clearUndoFromSavedState(savedStateHandle)
             next = next.copy(undoState = null)
         }
-        savedStateHandle[KEY_PRICE_A] = next.priceARaw
-        savedStateHandle[KEY_QUANTITY_A] = next.quantityARaw
-        savedStateHandle[KEY_PRICE_B] = next.priceBRaw
-        savedStateHandle[KEY_QUANTITY_B] = next.quantityBRaw
-        savedStateHandle[KEY_QUANTITY_UNIT_A] = next.quantityUnitA.name
-        savedStateHandle[KEY_QUANTITY_UNIT_B] = next.quantityUnitB.name
+        savedStateHandle[CompareViewModelKeys.PRICE_A] = next.priceARaw
+        savedStateHandle[CompareViewModelKeys.QUANTITY_A] = next.quantityARaw
+        savedStateHandle[CompareViewModelKeys.PRICE_B] = next.priceBRaw
+        savedStateHandle[CompareViewModelKeys.QUANTITY_B] = next.quantityBRaw
+        savedStateHandle[CompareViewModelKeys.QUANTITY_UNIT_A] = next.quantityUnitA.name
+        savedStateHandle[CompareViewModelKeys.QUANTITY_UNIT_B] = next.quantityUnitB.name
         _state.value = recomputeOutcome(next)
     }
 
@@ -172,66 +172,7 @@ class CompareViewModel(
         else -> null
     }
 
-    private fun readQuantityUnit(key: String): QuantityUnit {
-        val stored: String? = savedStateHandle[key]
-        return stored?.let { runCatching { QuantityUnit.valueOf(it) }.getOrNull() }
-            ?: QuantityUnit.Gram
-    }
-
-    private fun clearUndoFromSavedState() {
-        savedStateHandle.remove<String>(KEY_UNDO_PRICE_A)
-        savedStateHandle.remove<String>(KEY_UNDO_QUANTITY_A)
-        savedStateHandle.remove<String>(KEY_UNDO_PRICE_B)
-        savedStateHandle.remove<String>(KEY_UNDO_QUANTITY_B)
-        savedStateHandle.remove<String>(KEY_UNDO_QUANTITY_UNIT_A)
-        savedStateHandle.remove<String>(KEY_UNDO_QUANTITY_UNIT_B)
-        savedStateHandle.remove<Long>(KEY_UNDO_DEADLINE)
-    }
-
-    private fun restoreUndoStateFromSavedState(): UndoState? {
-        val deadline: Long = savedStateHandle[KEY_UNDO_DEADLINE] ?: return null
-        if (deadline <= System.currentTimeMillis()) return null
-        val snapshot = readUndoSnapshotFromSavedState() ?: return null
-        return UndoState(snapshot, deadline)
-    }
-
-    private fun readUndoSnapshotFromSavedState(): PreResetSnapshot? {
-        val priceA: String? = savedStateHandle[KEY_UNDO_PRICE_A]
-        val quantityA: String? = savedStateHandle[KEY_UNDO_QUANTITY_A]
-        val priceB: String? = savedStateHandle[KEY_UNDO_PRICE_B]
-        val quantityB: String? = savedStateHandle[KEY_UNDO_QUANTITY_B]
-        val unitA: String? = savedStateHandle[KEY_UNDO_QUANTITY_UNIT_A]
-        val unitB: String? = savedStateHandle[KEY_UNDO_QUANTITY_UNIT_B]
-        if (priceA == null || quantityA == null) return null
-        if (priceB == null || quantityB == null) return null
-        return PreResetSnapshot(
-            priceARaw = priceA,
-            quantityARaw = quantityA,
-            priceBRaw = priceB,
-            quantityBRaw = quantityB,
-            quantityUnitA = unitA?.let { runCatching { QuantityUnit.valueOf(it) }.getOrNull() }
-                ?: QuantityUnit.Gram,
-            quantityUnitB = unitB?.let { runCatching { QuantityUnit.valueOf(it) }.getOrNull() }
-                ?: QuantityUnit.Gram,
-        )
-    }
-
     private companion object {
-        const val KEY_PRICE_A = "priceA"
-        const val KEY_QUANTITY_A = "quantityA"
-        const val KEY_PRICE_B = "priceB"
-        const val KEY_QUANTITY_B = "quantityB"
-        const val KEY_QUANTITY_UNIT_A = "quantityUnitA"
-        const val KEY_QUANTITY_UNIT_B = "quantityUnitB"
-
-        const val KEY_UNDO_PRICE_A = "undoPriceA"
-        const val KEY_UNDO_QUANTITY_A = "undoQuantityA"
-        const val KEY_UNDO_PRICE_B = "undoPriceB"
-        const val KEY_UNDO_QUANTITY_B = "undoQuantityB"
-        const val KEY_UNDO_QUANTITY_UNIT_A = "undoQuantityUnitA"
-        const val KEY_UNDO_QUANTITY_UNIT_B = "undoQuantityUnitB"
-        const val KEY_UNDO_DEADLINE = "undoDeadline"
-
         const val UNDO_LIFETIME_MS = 10_000L
 
         val BLOCKED_CHARS: Set<Char> = setOf('-', '+', 'e', 'E')
