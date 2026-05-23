@@ -2,7 +2,8 @@
 
 **Feature Branch**: `004-quantity-units`
 **Created**: 2026-05-23
-**Status**: Draft — awaiting Marco review before `/speckit.plan`
+**Status**: Planning complete (2026-05-23) — plan, research, data-model,
+contracts, and tasks on branch `004-quantity-units` (PR #29)
 **Input**: User description: "Quantity units for offer comparison: let the shopper label each quantity with g, kg, ml, L, or pieces; convert within the same dimension so 500 g vs 1 kg compares fairly; show savings per normalized unit in results. Icon padding bump (ART_SCALE) ships in this feature's release prep, not as a standalone version."
 
 ## User Scenarios & Testing *(mandatory)*
@@ -228,6 +229,16 @@ wording include unit names in Spanish; repeat in `en-US`.
   (`ART_SCALE` 0.86 → ~0.82) is **not** part of this spec's user
   stories but **will** ship in this feature's release-prep phase (same
   tag, no icon-only micro-release) per Marco's direction.
+
+## Initial clarifications resolved (2026-05-23)
+
+Marco confirmed during spec review:
+
+1. **Unit set** — `{g, kg, ml, L, pcs}` is correct for v1.
+2. **Default unit** — **grams (`g`)** on cold launch and after Reset.
+3. **Display convention** — result savings always name **per kg** (mass),
+   **per L** (volume), or **per piece** (count), regardless of which
+   scale the shopper typed in the inputs.
 
 ## Out of Scope
 

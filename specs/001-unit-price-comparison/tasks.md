@@ -393,6 +393,39 @@ PR N for v0.1.4. Manual on-device verification of the 9-step
 walkthrough (`specs/003-visual-polish-branding/plan.md`
 §"Manual verification") gates the upstream MR edit, not this PR.
 
+### PR R — `004-quantity-units` *(feature 004 — planning only — PR #29)*
+
+Spec + plan + research + data-model + contracts + tasks for feature
+004 (quantity units for offer comparison). No source code touched.
+Sets the contract Marco reviews and signs off on before any Kotlin /
+XML / icon asset change lands. See the detailed PR strategy inside
+[`specs/004-quantity-units/tasks.md`](../../specs/004-quantity-units/tasks.md)
+for the cadence (PR R → PR S → PR T), which mirrors feature 003's
+PR O → PR P → PR Q.
+
+### PR S — `feat/020-quantity-units-impl`
+
+Feature 004 implementation. Phases 1–3 (T001–T030) plus release-prep
+tasks (T031–T034, T037). Lands `QuantityUnit` / `Dimension`, normalized
+`Offer.unitPrice`, unit dropdowns on the Compare screen, cross-dimension
+rejection, per kg / per L / per piece savings copy, reset/undo unit
+snapshot integration, `ART_SCALE` 0.82 icon regeneration, and the app
+version bump 0.1.6 → 0.1.7 (`versionCode` 8). Branched off `main`
+*after* PR R merges, so the planning artefacts were on `main` before
+any code lands.
+
+### PR T — `chore/021-fdroid-doc-sync-v0.1.7` *(feature 004 — release cut)*
+
+Phase 4 doc-sync task (T038). Tag `v0.1.7` is pushed from `main`
+outside this PR; CI publishes the signed APK to GitHub Releases
+automatically. This PR is the pure-doc twin: it bumps `docs/fdroid.md`
+to point at v0.1.7's full SHA, updates `Builds:` /
+`CurrentVersion` / `CurrentVersionCode`, and extends the §5
+chronology with the v0.1.6 → v0.1.7 bump. Same cadence as PR Q for
+v0.1.5. Manual on-device verification of the 11-step walkthrough
+(`specs/004-quantity-units/plan.md` § Manual verification) gates the
+upstream MR edit, not this PR.
+
 ### Notes
 
 - Each PR must keep the main branch green (lint, detekt, unit tests, JaCoCo
