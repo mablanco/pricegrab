@@ -1,0 +1,5 @@
+Unidades de cantidad y comparación justa:
+• Etiqueta cada cantidad en g, kg, ml, L o piezas para que 500 g frente a 1 kg se comparen bien.
+• La app bloquea dimensiones mezcladas (p. ej. gramos frente a mililitros) con un error claro en lugar de un ganador falso.
+• El ahorro se muestra por kg, por L o por pieza — ya no un vago "por unidad".
+• Zona segura del icono: marco ~18 % más pequeño para que la etiqueta de precio no se corte bajo máscaras circulares.
