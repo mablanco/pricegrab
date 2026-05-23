@@ -7,6 +7,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsFocused
 import androidx.compose.ui.test.assertIsNotEnabled
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
@@ -93,7 +94,8 @@ class CompareScreenResetTest {
 
         val gramCode = composeRule.activity.getString(R.string.unit_code_g)
         composeRule.onNodeWithTag("${TEST_TAG_OFFER_A}_unit").assertIsDisplayed()
-        composeRule.onNodeWithText(gramCode).assertIsDisplayed()
+        composeRule.onNodeWithTag("${TEST_TAG_OFFER_A}_unit").assert(hasText(gramCode))
+        composeRule.onNodeWithTag("${TEST_TAG_OFFER_B}_unit").assert(hasText(gramCode))
     }
 
     @Test
@@ -108,7 +110,8 @@ class CompareScreenResetTest {
         composeRule.onNodeWithText(ctx.getString(R.string.undo_action)).performClick()
         composeRule.waitForIdle()
 
-        composeRule.onNodeWithText(ctx.getString(R.string.unit_code_kg)).assertIsDisplayed()
+        composeRule.onNodeWithTag("${TEST_TAG_OFFER_A}_unit")
+            .assert(hasText(ctx.getString(R.string.unit_code_kg)))
     }
 
     private fun selectUnit(testTag: String, @androidx.annotation.StringRes menuItemRes: Int) {
