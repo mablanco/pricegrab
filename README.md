@@ -6,6 +6,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 [![Platform: Android](https://img.shields.io/badge/platform-Android-3DDC84.svg)](https://developer.android.com/)
 [![Latest release](https://img.shields.io/github/v/release/mablanco/pricegrab?color=3DDC84&label=release)](https://github.com/mablanco/pricegrab/releases/latest)
+[![Get it on F-Droid](https://fdroid.gitlab.io/artwork/badge/get-it-on-en.svg)](https://f-droid.org/packages/com.mablanco.pricegrab/)
 
 ---
 
@@ -29,12 +30,12 @@ Hace años desarrollé una versión preliminar de esta aplicación. Este proyect
 
 ### Estado del proyecto
 
-**`v0.1.0` publicada** en [GitHub Releases](https://github.com/mablanco/pricegrab/releases/tag/v0.1.0). El APK firmado pesa ~0.91 MB. La primera feature está completa: comparación de dos ofertas, cálculo del ahorro absoluto y porcentual, soporte completo de TalkBack, rotación e idioma.
+**[`v0.1.5`](https://github.com/mablanco/pricegrab/releases/tag/v0.1.5) publicada** en [GitHub Releases](https://github.com/mablanco/pricegrab/releases/latest) y disponible en [F-Droid](https://f-droid.org/packages/com.mablanco.pricegrab/). Comparación de dos ofertas, reset/undo, branding visual (feature 003), TalkBack, rotación e idioma.
 
 - Cómo se firma y se libera el APK: [`docs/release.md`](./docs/release.md).
 - Especificación, plan y tareas: [`specs/001-unit-price-comparison/`](./specs/001-unit-price-comparison/).
 - Principios del producto: [`.specify/memory/constitution.md`](./.specify/memory/constitution.md) (versión 1.0.1).
-- Pendiente para la submission a F-Droid: abrir el MR en [`fdroiddata`](https://gitlab.com/fdroid/fdroiddata) con la receta de [`docs/fdroid.md`](./docs/fdroid.md) y mantener la cadena de firma estable en futuros tags.
+- Historia de la submission a F-Droid (Mode B, reproducible builds): [`docs/fdroid.md`](./docs/fdroid.md).
 
 ### Cómo construirla
 
@@ -51,7 +52,7 @@ Guía completa en [`specs/001-unit-price-comparison/quickstart.md`](./specs/001-
 
 ### Distribución
 
-Los releases se publican como APK firmados en [GitHub Releases](../../releases). **No se publicará en Google Play.** El proyecto se mantiene compatible con [F-Droid](https://f-droid.org/) (toolchain 100% open source, sin dependencias propietarias) y los textos de tienda viven en [`fastlane/metadata/android/`](./fastlane/metadata/android/) en los dos idiomas. La receta para `fdroiddata` está en [`docs/fdroid.md`](./docs/fdroid.md).
+Los releases se publican como APK firmados en [GitHub Releases](../../releases) y en [F-Droid](https://f-droid.org/packages/com.mablanco.pricegrab/). **No se publicará en Google Play.** Los textos de tienda viven en [`fastlane/metadata/android/`](./fastlane/metadata/android/) en los dos idiomas. La receta histórica para `fdroiddata` y la cronología de la submission están en [`docs/fdroid.md`](./docs/fdroid.md).
 
 ### Cómo contribuir
 
@@ -83,12 +84,12 @@ Years ago I built a preliminary version of this application. This project is the
 
 ### Project status
 
-**`v0.1.0` is out** on [GitHub Releases](https://github.com/mablanco/pricegrab/releases/tag/v0.1.0). The signed APK weighs ~0.91 MB. The first feature is complete: two-offer comparison, absolute and percent savings, full TalkBack support, rotation and language preservation.
+**[`v0.1.5`](https://github.com/mablanco/pricegrab/releases/tag/v0.1.5) is out** on [GitHub Releases](https://github.com/mablanco/pricegrab/releases/latest) and on [F-Droid](https://f-droid.org/packages/com.mablanco.pricegrab/). Two-offer comparison, reset/undo, visual polish (feature 003), TalkBack, rotation and language preservation.
 
 - How the APK is signed and released: [`docs/release.md`](./docs/release.md).
 - Spec, plan and tasks: [`specs/001-unit-price-comparison/`](./specs/001-unit-price-comparison/).
 - Product principles: [`.specify/memory/constitution.md`](./.specify/memory/constitution.md) (version 1.0.1).
-- Pending for F-Droid submission: open the merge request against [`fdroiddata`](https://gitlab.com/fdroid/fdroiddata) using the recipe in [`docs/fdroid.md`](./docs/fdroid.md) and keep the signing chain stable across future tags.
+- F-Droid submission history (Mode B, reproducible builds): [`docs/fdroid.md`](./docs/fdroid.md).
 
 ### How to build
 
@@ -105,7 +106,7 @@ Full guide in [`specs/001-unit-price-comparison/quickstart.md`](./specs/001-unit
 
 ### Distribution
 
-Releases are published as signed APKs on [GitHub Releases](../../releases). **Google Play is not a target.** The project stays compatible with [F-Droid](https://f-droid.org/) (fully open-source toolchain, no proprietary dependencies) and the store metadata lives in [`fastlane/metadata/android/`](./fastlane/metadata/android/) in both languages. The `fdroiddata` recipe lives in [`docs/fdroid.md`](./docs/fdroid.md).
+Releases are published as signed APKs on [GitHub Releases](../../releases) and on [F-Droid](https://f-droid.org/packages/com.mablanco.pricegrab/). **Google Play is not a target.** Store metadata lives in [`fastlane/metadata/android/`](./fastlane/metadata/android/) in both languages. The historical `fdroiddata` recipe and submission chronology live in [`docs/fdroid.md`](./docs/fdroid.md).
 
 ### Contributing
 

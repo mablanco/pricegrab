@@ -266,11 +266,12 @@ running the local toolchain pays off.
 
 | Item | Value |
 |------|-------|
-| Merge Request | [`fdroid/fdroiddata!37136`](https://gitlab.com/fdroid/fdroiddata/-/merge_requests/37136) |
+| Merge Request | [`fdroid/fdroiddata!37136`](https://gitlab.com/fdroid/fdroiddata/-/merge_requests/37136) — **merged 2026-04-27** |
 | Submitting branch | `add-com.mablanco.pricegrab` on [`mabnavarrete/fdroiddata`](https://gitlab.com/mabnavarrete/fdroiddata) |
 | Distribution model | Mode B (reproducible builds, exclusive developer-signed APK) |
-| First buildable / publishable tag | `v0.1.5` (versionCode 6), pinned by full SHA `139697036839c8355ce098db035ed5349fca1fdc` |
-| Status | Reviewer cleared the v0.1.5 bump (2026-04-27); awaiting next `issuebot` CI pipeline + maintainer merge |
+| First published version | [`v0.1.5`](https://github.com/mablanco/pricegrab/releases/tag/v0.1.5) (versionCode 6), pinned by full SHA `139697036839c8355ce098db035ed5349fca1fdc` |
+| F-Droid package page | [`com.mablanco.pricegrab`](https://f-droid.org/packages/com.mablanco.pricegrab/) |
+| Status | **Live on F-Droid** since 2026-04-28. Future releases auto-picked via `AutoUpdateMode: Version` + `UpdateCheckMode: Tags`. |
 
 What it took to get to the current state, in chronological order:
 
@@ -337,14 +338,26 @@ What it took to get to the current state, in chronological order:
    v0.1.4 first. Recipe sync (this section, plus `Builds[0].commit /
    versionName / versionCode`, `CurrentVersion`, `CurrentVersionCode`)
    landed in [PR #25](https://github.com/mablanco/pricegrab/pull/25).
+10. **First publication on F-Droid** (2026-04-27 / 2026-04-28): maintainer
+    merged MR !37136 into `fdroiddata/master` on 2026-04-27. F-Droid's
+    build farm picked up v0.1.5 (versionCode 6), passed the Mode B
+    byte-for-byte reproducibility check against the upstream-signed
+    APK on GitHub Releases, and published the package to the main repo
+    on 2026-04-28. The app is live at
+    [`f-droid.org/packages/com.mablanco.pricegrab`](https://f-droid.org/packages/com.mablanco.pricegrab/).
+    Store metadata (descriptions, screenshots, changelogs, 512×512
+    icon) is auto-discovered from the upstream `fastlane/` tree at
+  commit `1396970`. Future tags are picked up automatically — no
+  manual `fdroiddata` MR per release unless the recipe shape changes.
 
-The actual byte-for-byte reproducibility verification happens *after*
-this MR merges, on F-Droid's main build farm via `fdroid publish`. If
-verification fails there, the iteration loop is: read the
-`diffoscope` output, fix the upstream code, ship `v0.1.3+`, and
-update the recipe's `Builds:` block with the new SHA. The
-`AllowedAPKSigningKeys` value does not need to change as long as the
-upstream signing key is the same.
+The byte-for-byte reproducibility verification for the **first**
+publication happened on F-Droid's main build farm via `fdroid publish`
+after step 10 above and succeeded for v0.1.5. If a **future** release
+fails verification, the iteration loop is: read the `diffoscope`
+output, fix the upstream code, ship `vX.Y.Z+`, and let
+`AutoUpdateMode` pick up the new tag (or bump `Builds[0]` manually
+if auto-update is disabled). The `AllowedAPKSigningKeys` value does
+not need to change as long as the upstream signing key is the same.
 
 ## 6. Ongoing release-time obligations
 
