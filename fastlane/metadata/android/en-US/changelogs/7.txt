@@ -1,0 +1,2 @@
+Launcher & store icon safe zone:
+• The rounded-square frame is inset ~14 % so the price-tag arrow and corner details no longer clip under circular launcher and F-Droid masks.
