@@ -6,7 +6,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 [![Platform: Android](https://img.shields.io/badge/platform-Android-3DDC84.svg)](https://developer.android.com/)
 [![Latest release](https://img.shields.io/github/v/release/mablanco/pricegrab?color=3DDC84&label=release)](https://github.com/mablanco/pricegrab/releases/latest)
-[![Get it on F-Droid](https://fdroid.gitlab.io/artwork/badge/get-it-on-en.svg)](https://f-droid.org/packages/com.mablanco.pricegrab/)
+<a href="https://f-droid.org/packages/com.mablanco.pricegrab/" target="_blank" rel="noopener noreferrer"><img src="https://img.shields.io/badge/F--Droid-available-8ab000?logo=fdroid&logoColor=white" alt="F-Droid" /></a>
 
 ---
 
