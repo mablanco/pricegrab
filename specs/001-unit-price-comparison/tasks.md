@@ -403,28 +403,24 @@ XML / icon asset change lands. See the detailed PR strategy inside
 for the cadence (PR R → PR S → PR T), which mirrors feature 003's
 PR O → PR P → PR Q.
 
-### PR S — `feat/020-quantity-units-impl`
+### PR S — `feat/020-quantity-units-impl` *(feature 004 — implementation — PR #30, merged)*
 
-Feature 004 implementation. Phases 1–3 (T001–T030) plus release-prep
-tasks (T031–T034, T037). Lands `QuantityUnit` / `Dimension`, normalized
-`Offer.unitPrice`, unit dropdowns on the Compare screen, cross-dimension
-rejection, per kg / per L / per piece savings copy, reset/undo unit
-snapshot integration, `ART_SCALE` 0.82 icon regeneration, and the app
-version bump 0.1.6 → 0.1.7 (`versionCode` 8). Branched off `main`
-*after* PR R merges, so the planning artefacts were on `main` before
-any code lands.
+Feature 004 implementation. Phases 1–3 (T001–T030). Lands `QuantityUnit` /
+`Dimension`, normalized `Offer.unitPrice`, unit dropdowns on the Compare
+screen, cross-dimension rejection, per kg / per L / per piece savings
+copy, and reset/undo unit snapshot integration. Release-prep T031–T034
+deferred to PR T. Merged to `main` at `4d94807` (2026-05-23).
 
 ### PR T — `chore/021-fdroid-doc-sync-v0.1.7` *(feature 004 — release cut)*
 
-Phase 4 doc-sync task (T038). Tag `v0.1.7` is pushed from `main`
-outside this PR; CI publishes the signed APK to GitHub Releases
-automatically. This PR is the pure-doc twin: it bumps `docs/fdroid.md`
-to point at v0.1.7's full SHA, updates `Builds:` /
-`CurrentVersion` / `CurrentVersionCode`, and extends the §5
-chronology with the v0.1.6 → v0.1.7 bump. Same cadence as PR Q for
-v0.1.5. Manual on-device verification of the 11-step walkthrough
+Phase 4 release prep (T031–T034) plus doc-sync (T038): version bump
+0.1.6 → 0.1.7 (`versionCode` 8), en/es changelogs, `ART_SCALE` 0.82
+icon regeneration, and `docs/fdroid.md` §3 / §5 sync. Tag `v0.1.7` is
+pushed from `main` outside this PR; CI publishes the signed APK to
+GitHub Releases automatically. Same cadence as PR Q for v0.1.5. Manual
+on-device verification of the 11-step walkthrough
 (`specs/004-quantity-units/plan.md` § Manual verification) gates the
-upstream MR edit, not this PR.
+tag push (T037), not this PR.
 
 ### Notes
 

@@ -114,14 +114,14 @@ quantity fields and shelf unit in savings; 200% font scale still fits.
 **Purpose**: Version bump, changelogs, icon padding, master ledger, manual
 verification gate before tag. Doc-only F-Droid sync lands in PR T.
 
-- [ ] T031 [P] Bump `android/app/build.gradle.kts`: `versionCode = 8`, `versionName = "0.1.7"`.
-- [ ] T032 [P] Create `fastlane/metadata/android/en-US/changelogs/8.txt` — quantity units, cross-dimension guard, per kg/L/piece savings, icon inset tweak.
-- [ ] T033 [P] Mirror T032 in `fastlane/metadata/android/es-ES/changelogs/8.txt`.
-- [ ] T034 [P] Set `ART_SCALE = 0.82` in `branding/regenerate-icons.py`; run `python3 branding/regenerate-icons.py`; commit regenerated `mipmap-*` and `fastlane/metadata/android/{en-US,es-ES}/images/icon.png`.
-- [ ] T035 Update master PR ledger in `specs/001-unit-price-comparison/tasks.md` with PR R / S / T entries (if not already done in planning PR O).
+- [x] T031 [P] Bump `android/app/build.gradle.kts`: `versionCode = 8`, `versionName = "0.1.7"`.
+- [x] T032 [P] Create `fastlane/metadata/android/en-US/changelogs/8.txt` — quantity units, cross-dimension guard, per kg/L/piece savings, icon inset tweak.
+- [x] T033 [P] Mirror T032 in `fastlane/metadata/android/es-ES/changelogs/8.txt`.
+- [x] T034 [P] Set `ART_SCALE = 0.82` in `branding/regenerate-icons.py`; run `python3 branding/regenerate-icons.py`; commit regenerated `mipmap-*` and `fastlane/metadata/android/{en-US,es-ES}/images/icon.png`.
+- [x] T035 Update master PR ledger in `specs/001-unit-price-comparison/tasks.md` with PR R / S / T entries (if not already done in planning PR O).
 - [ ] T036 Manual verification: 11-step walkthrough from [`plan.md`](./plan.md) § Manual verification on signed v0.1.7 APK.
 - [ ] T037 Tag `v0.1.7` from `main` after PR S merges and T036 passes; confirm GitHub Release APK attached.
-- [ ] T038 Update `docs/fdroid.md` §3 / §5 for v0.1.7 (PR T — `chore/021-fdroid-doc-sync-v0.1.7`).
+- [x] T038 Update `docs/fdroid.md` §3 / §5 for v0.1.7 (PR T — `chore/021-fdroid-doc-sync-v0.1.7`).
 
 **Checkpoint**: v0.1.7 tagged; F-Droid playbook synced in PR T.
 
@@ -153,17 +153,17 @@ Ships `specs/004-quantity-units/` (spec, plan, research, data-model,
 contracts, tasks) and `.specify/feature.json` pointer. **No source code.**
 Marco reviews FR-001..FR-009 and SC-001..SC-005 before implementation.
 
-### PR S — `feat/020-quantity-units-impl` *(implementation)*
+### PR S — `feat/020-quantity-units-impl` *(implementation — PR #30, merged)*
 
-Phases 1–3 (T001–T030) plus release-prep tasks T031–T034, T037 bundled
-in implementation PR (version + changelogs + icon regen land with feature
-code). Branched from `main` after PR R merges.
+Phases 1–3 (T001–T030). Release-prep T031–T034 deferred to PR T so the
+implementation PR stays reviewable without icon-byte churn. Merged to
+`main` at `4d94807`.
 
-### PR T — `chore/021-fdroid-doc-sync-v0.1.7` *(release doc sync)*
+### PR T — `chore/021-fdroid-doc-sync-v0.1.7` *(release prep + doc sync)*
 
-T038 only: `docs/fdroid.md` bump to v0.1.7 full SHA, `Builds:` /
-`CurrentVersion` / `CurrentVersionCode`. Tag push (T037) happens outside
-this PR; same cadence as PR N / PR Q.
+T031–T034 + T038: version bump to 0.1.7 / `versionCode` 8, en/es
+changelogs, `ART_SCALE` 0.82 icon regen, and `docs/fdroid.md` §3 / §5
+sync. Tag push (T037) happens outside this PR; same cadence as PR Q.
 
 ### Notes
 

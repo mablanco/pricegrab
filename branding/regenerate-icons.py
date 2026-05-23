@@ -64,7 +64,7 @@ BG_HEX = "#2F5C73"
 # elements (top-right arrow, bottom-right price tag) inside the circular
 # masks F-Droid and most launchers apply. v0.1.5 used 0.95 for adaptive
 # foreground only and full-bleed legacy / fastlane icons, which clipped.
-ART_SCALE = 0.86
+ART_SCALE = 0.82
 
 # Density buckets and their pixel-per-dp multipliers.
 DENSITIES: dict[str, float] = {
