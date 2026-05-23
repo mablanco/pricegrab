@@ -5,6 +5,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
+import org.junit.Rule
 import org.junit.Test
 
 /**
@@ -13,6 +14,9 @@ import org.junit.Test
  * trip that survives process death.
  */
 class CompareViewModelUndoTest {
+
+    @get:Rule
+    val localeRule = EnUsLocaleRule()
 
     @Test
     fun undoResetRestoresAllFourFieldsAndClearsUndoState() {

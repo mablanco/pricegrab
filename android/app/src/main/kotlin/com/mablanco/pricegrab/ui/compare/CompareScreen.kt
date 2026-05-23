@@ -17,7 +17,10 @@ import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -32,7 +35,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -55,6 +61,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mablanco.pricegrab.R
 import com.mablanco.pricegrab.core.model.ComparisonOutcome
+import com.mablanco.pricegrab.core.model.Dimension
+import com.mablanco.pricegrab.core.model.QuantityUnit
 import com.mablanco.pricegrab.ui.theme.PriceGrabTheme
 import com.mablanco.pricegrab.ui.theme.spacing
 import kotlinx.coroutines.withTimeoutOrNull
@@ -81,6 +89,8 @@ fun CompareScreen(
         onQuantityAChange = viewModel::onQuantityAChange,
         onPriceBChange = viewModel::onPriceBChange,
         onQuantityBChange = viewModel::onQuantityBChange,
+        onQuantityUnitAChange = viewModel::onQuantityUnitAChange,
+        onQuantityUnitBChange = viewModel::onQuantityUnitBChange,
         onResetClick = viewModel::resetComparison,
         onUndoClick = viewModel::undoReset,
         onUndoDismissed = viewModel::dismissUndo,
@@ -96,6 +106,8 @@ fun CompareScreen(
     onQuantityAChange: (String) -> Unit,
     onPriceBChange: (String) -> Unit,
     onQuantityBChange: (String) -> Unit,
+    onQuantityUnitAChange: (QuantityUnit) -> Unit,
+    onQuantityUnitBChange: (QuantityUnit) -> Unit,
     onResetClick: () -> Unit,
     onUndoClick: () -> Unit,
     onUndoDismissed: () -> Unit,
@@ -123,6 +135,8 @@ fun CompareScreen(
             onQuantityAChange = onQuantityAChange,
             onPriceBChange = onPriceBChange,
             onQuantityBChange = onQuantityBChange,
+            onQuantityUnitAChange = onQuantityUnitAChange,
+            onQuantityUnitBChange = onQuantityUnitBChange,
             priceAFocusRequester = priceAFocusRequester,
             modifier = Modifier.padding(innerPadding),
         )
@@ -251,6 +265,8 @@ private fun CompareContent(
     onQuantityAChange: (String) -> Unit,
     onPriceBChange: (String) -> Unit,
     onQuantityBChange: (String) -> Unit,
+    onQuantityUnitAChange: (QuantityUnit) -> Unit,
+    onQuantityUnitBChange: (QuantityUnit) -> Unit,
     priceAFocusRequester: FocusRequester,
     modifier: Modifier = Modifier,
 ) {
@@ -273,8 +289,10 @@ private fun CompareContent(
             priceError = state.priceAError,
             quantityRaw = state.quantityARaw,
             quantityError = state.quantityAError,
+            quantityUnit = state.quantityUnitA,
             onPriceChange = onPriceAChange,
             onQuantityChange = onQuantityAChange,
+            onQuantityUnitChange = onQuantityUnitAChange,
             testTagPrefix = TEST_TAG_OFFER_A,
             priceFocusRequester = priceAFocusRequester,
         )
@@ -285,16 +303,23 @@ private fun CompareContent(
             priceError = state.priceBError,
             quantityRaw = state.quantityBRaw,
             quantityError = state.quantityBError,
+            quantityUnit = state.quantityUnitB,
             onPriceChange = onPriceBChange,
             onQuantityChange = onQuantityBChange,
+            onQuantityUnitChange = onQuantityUnitBChange,
             testTagPrefix = TEST_TAG_OFFER_B,
             priceFocusRequester = null,
         )
 
-        ResultRegion(outcome = state.outcome)
+        ResultRegion(
+            outcome = state.outcome,
+            incompatibleUnits = state.incompatibleUnits,
+            dimension = state.outcome?.let { state.quantityUnitA.dimension },
+        )
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun OfferCard(
     title: String,
@@ -302,8 +327,10 @@ private fun OfferCard(
     priceError: InputError?,
     quantityRaw: String,
     quantityError: InputError?,
+    quantityUnit: QuantityUnit,
     onPriceChange: (String) -> Unit,
     onQuantityChange: (String) -> Unit,
+    onQuantityUnitChange: (QuantityUnit) -> Unit,
     testTagPrefix: String,
     priceFocusRequester: FocusRequester?,
 ) {
@@ -327,18 +354,80 @@ private fun OfferCard(
                 imeAction = ImeAction.Next,
                 testTag = "${testTagPrefix}_price",
                 focusRequester = priceFocusRequester,
+                modifier = Modifier.fillMaxWidth(),
             )
 
-            LabeledNumberField(
-                value = quantityRaw,
-                onValueChange = onQuantityChange,
-                labelRes = R.string.quantity_label,
-                contentDescription = stringResource(R.string.cd_quantity_field, title),
-                error = quantityError,
-                imeAction = ImeAction.Done,
-                testTag = "${testTagPrefix}_quantity",
-                focusRequester = null,
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(spacing.s),
+                verticalAlignment = Alignment.Top,
+            ) {
+                val unitName = stringResource(quantityUnit.nameRes())
+                LabeledNumberField(
+                    value = quantityRaw,
+                    onValueChange = onQuantityChange,
+                    labelRes = R.string.quantity_label,
+                    contentDescription = "${stringResource(R.string.cd_quantity_field, title)}, $unitName",
+                    error = quantityError,
+                    imeAction = ImeAction.Done,
+                    testTag = "${testTagPrefix}_quantity",
+                    focusRequester = null,
+                    modifier = Modifier.weight(1f),
+                )
+                QuantityUnitSelector(
+                    offerTitle = title,
+                    selectedUnit = quantityUnit,
+                    onUnitSelected = onQuantityUnitChange,
+                    testTag = "${testTagPrefix}_unit",
+                )
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun QuantityUnitSelector(
+    offerTitle: String,
+    selectedUnit: QuantityUnit,
+    onUnitSelected: (QuantityUnit) -> Unit,
+    testTag: String,
+) {
+    var expanded by remember { mutableStateOf(false) }
+    val unitDescription = stringResource(R.string.cd_quantity_unit, offerTitle)
+
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = { expanded = it },
+        modifier = Modifier.widthIn(min = UNIT_SELECTOR_MIN_WIDTH),
+    ) {
+        OutlinedTextField(
+            value = stringResource(selectedUnit.codeRes()),
+            onValueChange = {},
+            readOnly = true,
+            singleLine = true,
+            label = null,
+            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+            colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(),
+            modifier = Modifier
+                .menuAnchor()
+                .testTag(testTag)
+                .semantics { contentDescription = unitDescription },
+        )
+        ExposedDropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+        ) {
+            QuantityUnit.entries.forEach { unit ->
+                DropdownMenuItem(
+                    text = { Text(stringResource(unit.nameRes())) },
+                    onClick = {
+                        onUnitSelected(unit)
+                        expanded = false
+                    },
+                    contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
+                )
+            }
         }
     }
 }
@@ -353,9 +442,9 @@ private fun LabeledNumberField(
     imeAction: ImeAction,
     testTag: String,
     focusRequester: FocusRequester?,
+    modifier: Modifier = Modifier,
 ) {
-    val baseModifier = Modifier
-        .fillMaxWidth()
+    val baseModifier = modifier
         .testTag(testTag)
         .semantics { this.contentDescription = contentDescription }
 
@@ -393,17 +482,21 @@ private fun LabeledNumberField(
  * the wrapper, so TalkBack speaks one full thought per state change.
  */
 @Composable
-private fun ResultRegion(outcome: ComparisonOutcome?) {
+private fun ResultRegion(
+    outcome: ComparisonOutcome?,
+    incompatibleUnits: Boolean,
+    dimension: Dimension?,
+) {
     val configuration = LocalConfiguration.current
     val locale = ConfigurationCompat.getLocales(configuration).get(0) ?: Locale.getDefault()
 
     val placeholder = stringResource(R.string.result_placeholder)
+    val incompatibleMessage = stringResource(R.string.error_incompatible_units)
     val headline = outcome?.headlineRes()?.let { stringResource(it) }
-    val savings = ResultPresenter.present(outcome, locale)
-    val savingsLine: String? = savings?.let {
-        stringResource(R.string.result_savings, it.perUnitDelta)
-    }
+    val savings = ResultPresenter.present(outcome, dimension, locale)
+    val savingsLine: String? = savings?.let { formatSavingsLine(it.perUnitDelta, dimension) }
     val a11ySummary: String = when {
+        incompatibleUnits -> incompatibleMessage
         headline == null -> placeholder
         savingsLine != null -> "$headline. $savingsLine"
         else -> headline
@@ -418,20 +511,42 @@ private fun ResultRegion(outcome: ComparisonOutcome?) {
                 contentDescription = a11ySummary
             },
     ) {
-        if (outcome == null) {
-            Text(
-                text = placeholder,
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        } else {
-            HeroResultCard(
-                outcome = outcome,
-                headline = headline ?: "",
-                savingsLine = savingsLine,
-            )
+        when {
+            incompatibleUnits -> {
+                Text(
+                    text = incompatibleMessage,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.testTag(TEST_TAG_INCOMPATIBLE_UNITS),
+                )
+            }
+            outcome == null -> {
+                Text(
+                    text = placeholder,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+            else -> {
+                HeroResultCard(
+                    outcome = outcome,
+                    headline = headline ?: "",
+                    savingsLine = savingsLine,
+                )
+            }
         }
     }
+}
+
+@Composable
+private fun formatSavingsLine(perUnitDelta: String, dimension: Dimension?): String? {
+    if (dimension == null) return null
+    @StringRes val templateRes = when (dimension) {
+        Dimension.Mass -> R.string.result_savings_per_kg
+        Dimension.Volume -> R.string.result_savings_per_L
+        Dimension.Count -> R.string.result_savings_per_piece
+    }
+    return stringResource(templateRes, perUnitDelta)
 }
 
 /**
@@ -523,6 +638,24 @@ private fun ComparisonOutcome.headlineRes(): Int = when (this) {
     is ComparisonOutcome.BWins -> R.string.result_winner_b
 }
 
+@StringRes
+private fun QuantityUnit.codeRes(): Int = when (this) {
+    QuantityUnit.Gram -> R.string.unit_code_g
+    QuantityUnit.Kilogram -> R.string.unit_code_kg
+    QuantityUnit.Millilitre -> R.string.unit_code_ml
+    QuantityUnit.Litre -> R.string.unit_code_L
+    QuantityUnit.Piece -> R.string.unit_code_pcs
+}
+
+@StringRes
+private fun QuantityUnit.nameRes(): Int = when (this) {
+    QuantityUnit.Gram -> R.string.unit_name_gram
+    QuantityUnit.Kilogram -> R.string.unit_name_kilogram
+    QuantityUnit.Millilitre -> R.string.unit_name_millilitre
+    QuantityUnit.Litre -> R.string.unit_name_litre
+    QuantityUnit.Piece -> R.string.unit_name_piece
+}
+
 // ---- Test tags (constants so tests can reference them) ----------------------
 
 const val TEST_TAG_OFFER_A: String = "offerA"
@@ -536,6 +669,7 @@ const val TEST_TAG_HERO_RESULT: String = "heroResult"
 
 const val TEST_TAG_RESULT_TEXT: String = "result_text"
 const val TEST_TAG_RESULT_SAVINGS: String = "result_savings"
+const val TEST_TAG_INCOMPATIBLE_UNITS: String = "incompatible_units"
 const val TEST_TAG_RESET: String = "reset_action"
 const val TEST_TAG_BRANDMARK: String = "brandmark"
 
@@ -545,6 +679,7 @@ const val TEST_TAG_BRANDMARK: String = "brandmark"
 // brandmark at the same size so it visually aligns with the trailing reset
 // IconButton's 24dp glyph and stays inside the 64dp app-bar height.
 private val BRANDMARK_SIZE = 24.dp
+private val UNIT_SELECTOR_MIN_WIDTH = 72.dp
 
 // ---- Previews ---------------------------------------------------------------
 
@@ -558,6 +693,8 @@ private fun CompareScreenEmptyPreview() {
             onQuantityAChange = {},
             onPriceBChange = {},
             onQuantityBChange = {},
+            onQuantityUnitAChange = {},
+            onQuantityUnitBChange = {},
             onResetClick = {},
             onUndoClick = {},
             onUndoDismissed = {},
@@ -584,6 +721,8 @@ private fun CompareScreenAWinsPreview() {
             onQuantityAChange = {},
             onPriceBChange = {},
             onQuantityBChange = {},
+            onQuantityUnitAChange = {},
+            onQuantityUnitBChange = {},
             onResetClick = {},
             onUndoClick = {},
             onUndoDismissed = {},

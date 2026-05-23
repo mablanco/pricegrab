@@ -1,34 +1,24 @@
 package com.mablanco.pricegrab.ui.compare
 
 import androidx.lifecycle.SavedStateHandle
+import com.mablanco.pricegrab.core.model.QuantityUnit
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
+import org.junit.Rule
 import org.junit.Test
 
-/**
- * US1 (T007) — JVM unit tests for [CompareViewModel.resetComparison].
- *
- * Pinned behaviour:
- *  (a) reset on a non-empty form clears all four `*Raw` fields and
- *      the cached outcome;
- *  (b) reset on an already-empty form is a no-op (no `UndoState`,
- *      no state change);
- *  (c) reset on a non-empty form populates `undoState` with a
- *      [PreResetSnapshot] containing the *pre-reset* values, and the
- *      deadline is in the future.
- *  (d) reset followed by typing into any field clears `undoState`
- *      (FR-008.1) — the typing branch of "dismiss undo on input".
- */
 class CompareViewModelResetTest {
+
+    @get:Rule
+    val localeRule = EnUsLocaleRule()
 
     @Test
     fun resetOnNonEmptyFormClearsAllFieldsAndOutcome() {
         val viewModel = CompareViewModel(SavedStateHandle()).withFullExample()
 
-        // Sanity: the example produces a real outcome and reset is enabled.
         assertNotNull(viewModel.state.value.outcome)
         assertTrue(viewModel.state.value.isResetEnabled)
 
@@ -39,6 +29,8 @@ class CompareViewModelResetTest {
         assertEquals("", state.quantityARaw)
         assertEquals("", state.priceBRaw)
         assertEquals("", state.quantityBRaw)
+        assertEquals(QuantityUnit.Gram, state.quantityUnitA)
+        assertEquals(QuantityUnit.Gram, state.quantityUnitB)
         assertNull("Result is hidden after reset", state.outcome)
         assertFalse(
             "Reset becomes disabled again on an empty form",
@@ -49,7 +41,6 @@ class CompareViewModelResetTest {
     @Test
     fun resetOnAlreadyEmptyFormIsANoOpAndPublishesNoUndoState() {
         val viewModel = CompareViewModel(SavedStateHandle())
-        // Sanity: the form is empty and the button is disabled.
         assertFalse(viewModel.state.value.isResetEnabled)
         assertNull(viewModel.state.value.undoState)
 
@@ -63,6 +54,7 @@ class CompareViewModelResetTest {
     @Test
     fun resetOnNonEmptyFormCapturesPreResetSnapshotWithFutureDeadline() {
         val viewModel = CompareViewModel(SavedStateHandle()).withFullExample()
+        viewModel.onQuantityUnitAChange(QuantityUnit.Kilogram)
         val before = System.currentTimeMillis()
 
         viewModel.resetComparison()
@@ -74,10 +66,26 @@ class CompareViewModelResetTest {
         assertEquals("500", undo.snapshot.quantityARaw)
         assertEquals("4.00", undo.snapshot.priceBRaw)
         assertEquals("1000", undo.snapshot.quantityBRaw)
+        assertEquals(QuantityUnit.Kilogram, undo.snapshot.quantityUnitA)
+        assertEquals(QuantityUnit.Gram, undo.snapshot.quantityUnitB)
         assertTrue(
             "Undo deadline is strictly in the future",
             undo.expiresAtEpochMillis > before,
         )
+    }
+
+    @Test
+    fun undoResetRestoresQuantityUnits() {
+        val viewModel = CompareViewModel(SavedStateHandle()).withFullExample()
+        viewModel.onQuantityUnitAChange(QuantityUnit.Kilogram)
+        viewModel.onQuantityUnitBChange(QuantityUnit.Kilogram)
+
+        viewModel.resetComparison()
+        viewModel.undoReset()
+
+        val state = viewModel.state.value
+        assertEquals(QuantityUnit.Kilogram, state.quantityUnitA)
+        assertEquals(QuantityUnit.Kilogram, state.quantityUnitB)
     }
 
     @Test

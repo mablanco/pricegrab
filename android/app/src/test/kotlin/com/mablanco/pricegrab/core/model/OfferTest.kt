@@ -20,6 +20,17 @@ class OfferTest {
     }
 
     @Test
+    fun `kilogram normalizes quantity to grams before unit price`() {
+        val offer = Offer(
+            price = BigDecimal("4.00"),
+            quantity = BigDecimal("1"),
+            quantityUnit = QuantityUnit.Kilogram,
+        )
+        assertEquals(0, BigDecimal("1000").compareTo(offer.quantityInBaseUnits))
+        assertEquals(0, BigDecimal("0.004").compareTo(offer.unitPrice))
+    }
+
+    @Test
     fun `fractional quantity is supported`() {
         val offer = Offer(price = BigDecimal("1.00"), quantity = BigDecimal("0.5"))
         assertEquals(0, BigDecimal("2.00").compareTo(offer.unitPrice))

@@ -18,6 +18,7 @@ import java.math.MathContext
 data class Offer(
     val price: BigDecimal,
     val quantity: BigDecimal,
+    val quantityUnit: QuantityUnit = QuantityUnit.Gram,
 ) {
     init {
         require(price.signum() >= 0) {
@@ -28,9 +29,12 @@ data class Offer(
         }
     }
 
+    /** Shopper quantity normalized to base units (g, ml, or pcs). */
+    val quantityInBaseUnits: BigDecimal = quantity.multiply(quantityUnit.toBaseMultiplier)
+
     /**
-     * Price per unit, at `MathContext.DECIMAL64` precision (16 significant
+     * Price per base unit, at `MathContext.DECIMAL64` precision (16 significant
      * decimal digits). Deterministic and pure.
      */
-    val unitPrice: BigDecimal = price.divide(quantity, MathContext.DECIMAL64)
+    val unitPrice: BigDecimal = price.divide(quantityInBaseUnits, MathContext.DECIMAL64)
 }

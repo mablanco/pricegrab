@@ -49,6 +49,8 @@ class CompareScreenLargeFontTest {
                         onQuantityAChange = {},
                         onPriceBChange = {},
                         onQuantityBChange = {},
+                        onQuantityUnitAChange = {},
+                        onQuantityUnitBChange = {},
                         onResetClick = {},
                         onUndoClick = {},
                         onUndoDismissed = {},
@@ -63,6 +65,8 @@ class CompareScreenLargeFontTest {
         composeRule.onNodeWithTag("${TEST_TAG_OFFER_A}_quantity").assertIsDisplayed()
         composeRule.onNodeWithTag("${TEST_TAG_OFFER_B}_price").assertIsDisplayed()
         composeRule.onNodeWithTag("${TEST_TAG_OFFER_B}_quantity").assertIsDisplayed()
+        composeRule.onNodeWithTag("${TEST_TAG_OFFER_A}_unit").assertIsDisplayed()
+        composeRule.onNodeWithTag("${TEST_TAG_OFFER_B}_unit").assertIsDisplayed()
         composeRule.onNodeWithTag(TEST_TAG_RESULT).assertIsDisplayed()
     }
 

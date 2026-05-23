@@ -1,6 +1,7 @@
 package com.mablanco.pricegrab.ui.compare
 
 import com.mablanco.pricegrab.core.model.ComparisonOutcome
+import com.mablanco.pricegrab.core.model.QuantityUnit
 
 /**
  * Immutable snapshot of the Compare screen.
@@ -11,7 +12,8 @@ import com.mablanco.pricegrab.core.model.ComparisonOutcome
  * applicable to that field (or `null` when the field is blank or valid).
  *
  * [outcome] is non-null only when both offers parse into valid `Offer`
- * instances; otherwise the result pane shows a neutral placeholder.
+ * instances with matching dimensions; otherwise the result pane shows a
+ * neutral placeholder or an incompatible-units error.
  *
  * [undoState] is non-null only while a transient Material 3 Snackbar
  * with an Undo affordance is on screen, immediately after a non-empty
@@ -24,45 +26,50 @@ data class CompareUiState(
     val quantityARaw: String = "",
     val priceBRaw: String = "",
     val quantityBRaw: String = "",
+    val quantityUnitA: QuantityUnit = QuantityUnit.Gram,
+    val quantityUnitB: QuantityUnit = QuantityUnit.Gram,
     val priceAError: InputError? = null,
     val quantityAError: InputError? = null,
     val priceBError: InputError? = null,
     val quantityBError: InputError? = null,
     val outcome: ComparisonOutcome? = null,
+    val incompatibleUnits: Boolean = false,
     val undoState: UndoState? = null,
 )
 
 /**
- * True iff at least one of the four raw input fields is non-empty.
+ * True iff at least one of the four raw input fields is non-empty or either
+ * unit selector differs from the default [QuantityUnit.Gram].
  *
  * Drives feature 002 FR-004: the Reset control is `enabled` when this
- * is `true` and visibly disabled otherwise. Implemented as an extension
- * property (rather than a separate `StateFlow<Boolean>` on the
- * ViewModel as plan.md initially suggested) because the screen already
- * collects the full state, so an extra flow would only add ceremony.
+ * is `true` and visibly disabled otherwise.
  */
 val CompareUiState.isResetEnabled: Boolean
     get() = priceARaw.isNotBlank() ||
         quantityARaw.isNotBlank() ||
         priceBRaw.isNotBlank() ||
-        quantityBRaw.isNotBlank()
+        quantityBRaw.isNotBlank() ||
+        quantityUnitA != QuantityUnit.Gram ||
+        quantityUnitB != QuantityUnit.Gram
 
 /**
- * The four raw strings as they were *immediately before* a Reset, kept
- * for as long as the Undo affordance is offered. Holds raw strings only;
- * the cached comparison outcome is intentionally absent because the
- * ViewModel rebuilds it deterministically from the four raw strings on
- * `undoReset()` (single source of truth, no risk of drift).
+ * The four raw strings and both unit selections as they were *immediately
+ * before* a Reset, kept for as long as the Undo affordance is offered.
+ * Holds raw strings only; the cached comparison outcome is intentionally
+ * absent because the ViewModel rebuilds it deterministically from the
+ * snapshot on `undoReset()` (single source of truth, no risk of drift).
  */
 data class PreResetSnapshot(
     val priceARaw: String,
     val quantityARaw: String,
     val priceBRaw: String,
     val quantityBRaw: String,
+    val quantityUnitA: QuantityUnit,
+    val quantityUnitB: QuantityUnit,
 )
 
 /**
- * Live undo affordance: the snapshot to restore plus the wall-clock
+ * Undo affordance: the snapshot to restore plus the wall-clock
  * deadline at which the Snackbar should auto-dismiss.
  *
  * Storing a deadline (rather than a remaining duration) is what makes

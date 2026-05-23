@@ -30,6 +30,9 @@ object PriceComparator {
     private val HUNDRED: BigDecimal = BigDecimal.valueOf(100)
 
     fun compare(a: Offer, b: Offer): ComparisonOutcome {
+        require(a.quantityUnit.dimension == b.quantityUnit.dimension) {
+            "Incompatible dimensions: ${a.quantityUnit.dimension} vs ${b.quantityUnit.dimension}"
+        }
         val unitA = a.unitPrice
         val unitB = b.unitPrice
 

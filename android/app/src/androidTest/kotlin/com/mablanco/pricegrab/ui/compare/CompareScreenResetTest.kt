@@ -83,6 +83,40 @@ class CompareScreenResetTest {
         composeRule.onNodeWithTag("offerA_price").assert(isFocusedMatcher())
     }
 
+    @Test
+    fun resetClearsUnitSelectorsToGram() {
+        composeRule.onNodeWithTag("offerA_price").performTextInput("2.50")
+        selectUnit("${TEST_TAG_OFFER_A}_unit", R.string.unit_name_kilogram)
+
+        composeRule.onNodeWithTag(TEST_TAG_RESET).performClick()
+        composeRule.waitForIdle()
+
+        val gramCode = composeRule.activity.getString(R.string.unit_code_g)
+        composeRule.onNodeWithTag("${TEST_TAG_OFFER_A}_unit").assertIsDisplayed()
+        composeRule.onNodeWithText(gramCode).assertIsDisplayed()
+    }
+
+    @Test
+    fun undoRestoresPriorUnitSelections() {
+        composeRule.onNodeWithTag("offerA_price").performTextInput("2.50")
+        selectUnit("${TEST_TAG_OFFER_A}_unit", R.string.unit_name_kilogram)
+
+        composeRule.onNodeWithTag(TEST_TAG_RESET).performClick()
+        composeRule.waitForIdle()
+
+        val ctx = composeRule.activity
+        composeRule.onNodeWithText(ctx.getString(R.string.undo_action)).performClick()
+        composeRule.waitForIdle()
+
+        composeRule.onNodeWithText(ctx.getString(R.string.unit_code_kg)).assertIsDisplayed()
+    }
+
+    private fun selectUnit(testTag: String, @androidx.annotation.StringRes menuItemRes: Int) {
+        composeRule.onNodeWithTag(testTag).performClick()
+        composeRule.onNodeWithText(composeRule.activity.getString(menuItemRes)).performClick()
+        composeRule.waitForIdle()
+    }
+
     private fun isFocusedMatcher(): SemanticsMatcher =
         SemanticsMatcher.expectValue(SemanticsProperties.Focused, true)
 

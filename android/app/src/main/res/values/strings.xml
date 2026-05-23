@@ -2,48 +2,46 @@
 <resources>
     <string name="app_name">PriceGrab</string>
 
-    <!-- Compare screen (US1) -->
     <string name="compare_heading">Compare two offers</string>
     <string name="offer_a_title">Offer A</string>
     <string name="offer_b_title">Offer B</string>
     <string name="price_label">Price</string>
     <string name="quantity_label">Quantity</string>
 
-    <!-- Content descriptions. The placeholder is replaced with the offer
-         title (e.g. "Offer A"), so TalkBack announces "Price for Offer A". -->
     <string name="cd_price_field">Price for %1$s</string>
     <string name="cd_quantity_field">Quantity for %1$s</string>
+    <string name="cd_quantity_unit">Quantity unit for %1$s</string>
 
-    <!-- Inline input errors -->
     <string name="error_not_a_number">Enter a valid number</string>
     <string name="error_negative_price">Price must be zero or higher</string>
     <string name="error_non_positive_quantity">Quantity must be greater than zero</string>
 
-    <!-- Result region — outcome-absent placeholder (rendered as a soft Text,
-         no Card frame). The hero card below replaces this Text whenever a
-         valid comparison exists. -->
     <string name="result_placeholder">Enter both offers to see which is cheaper</string>
 
-    <!-- Hero result card (feature 003 / US2). Headlines: short, declarative,
-         fit on one line at 200% font scale. -->
     <string name="result_winner_a">Offer A is cheaper</string>
     <string name="result_winner_b">Offer B is cheaper</string>
     <string name="result_tied">Same price per unit</string>
-    <!-- Body line below the headline. %1$s = absolute per-unit delta. The
-         tighter wording (vs. the v0.1.4 "Saves X per unit (Y% less)") is
-         deliberate: at headlineSmall + bodyLarge the hero card already
-         carries the visual emphasis, so the text trims redundancies. -->
     <string name="result_savings">Save %1$s per unit</string>
+    <string name="result_savings_per_kg">Save %1$s per kg</string>
+    <string name="result_savings_per_L">Save %1$s per L</string>
+    <string name="result_savings_per_piece">Save %1$s per piece</string>
 
-    <!-- Reset / undo (US002) -->
-    <!-- Visible label is the icon itself; this string is the spoken label
-         surfaced via contentDescription. -->
+    <string name="error_incompatible_units">Both offers must use the same kind of measure (weight, volume, or count).</string>
+
+    <string name="unit_code_g">g</string>
+    <string name="unit_code_kg">kg</string>
+    <string name="unit_code_ml">ml</string>
+    <string name="unit_code_L">L</string>
+    <string name="unit_code_pcs">pcs</string>
+    <string name="unit_name_gram">grams</string>
+    <string name="unit_name_kilogram">kilograms</string>
+    <string name="unit_name_millilitre">millilitres</string>
+    <string name="unit_name_litre">litres</string>
+    <string name="unit_name_piece">pieces</string>
+
     <string name="reset_action">Reset</string>
     <string name="reset_action_description">Clear all fields and start a new comparison</string>
-    <!-- Snackbar shown after a non-empty reset; carries the Undo action. -->
     <string name="comparison_cleared">Comparison cleared</string>
     <string name="undo_action">Undo</string>
-    <!-- Reserved for the future no-Snackbar branch (e.g., reset triggered by
-         a hardware shortcut). Currently unused; see research.md §5. -->
     <string name="reset_announcement">Comparison reset</string>
 </resources>

@@ -11,6 +11,7 @@ import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.mablanco.pricegrab.MainActivity
@@ -41,6 +42,8 @@ class CompareScreenAccessibilityTest {
             .assert(hasContentDescriptionContaining(ctx.getString(R.string.cd_price_field, offerAName)))
         composeRule.onNodeWithTag("offerA_quantity")
             .assert(hasContentDescriptionContaining(ctx.getString(R.string.cd_quantity_field, offerAName)))
+        composeRule.onNodeWithTag("offerA_quantity")
+            .assert(hasContentDescriptionContaining(ctx.getString(R.string.unit_name_gram)))
         composeRule.onNodeWithTag("offerB_price")
             .assert(hasContentDescriptionContaining(ctx.getString(R.string.cd_price_field, offerBName)))
         composeRule.onNodeWithTag("offerB_quantity")
@@ -60,11 +63,14 @@ class CompareScreenAccessibilityTest {
         composeRule.onNodeWithTag("offerA_price").performTextInput("2.50")
         composeRule.onNodeWithTag("offerA_quantity").performTextInput("500")
         composeRule.onNodeWithTag("offerB_price").performTextInput("4.00")
-        composeRule.onNodeWithTag("offerB_quantity").performTextInput("1000")
-
+        composeRule.onNodeWithTag("offerB_quantity").performTextInput("1")
+        composeRule.onNodeWithTag("${TEST_TAG_OFFER_B}_unit").performClick()
         val ctx = composeRule.activity
+        composeRule.onNodeWithText(ctx.getString(R.string.unit_name_kilogram)).performClick()
+        composeRule.waitForIdle()
+
         val headline = ctx.getString(R.string.result_winner_b)
-        val savings = ctx.getString(R.string.result_savings, "0.001")
+        val savings = ctx.getString(R.string.result_savings_per_kg, "1")
 
         composeRule.onNodeWithTag("result").assert(hasContentDescriptionContaining(headline))
         composeRule.onNodeWithTag("result").assert(hasContentDescriptionContaining(savings))
