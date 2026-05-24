@@ -119,8 +119,8 @@ verification gate before tag. Doc-only F-Droid sync lands in PR T.
 - [x] T033 [P] Mirror T032 in `fastlane/metadata/android/es-ES/changelogs/8.txt`.
 - [x] T034 [P] Set `ART_SCALE = 0.82` in `branding/regenerate-icons.py`; run `python3 branding/regenerate-icons.py`; commit regenerated `mipmap-*` and `fastlane/metadata/android/{en-US,es-ES}/images/icon.png`.
 - [x] T035 Update master PR ledger in `specs/001-unit-price-comparison/tasks.md` with PR R / S / T entries (if not already done in planning PR O).
-- [ ] T036 Manual verification: 11-step walkthrough from [`plan.md`](./plan.md) § Manual verification on signed v0.1.7 APK.
-- [ ] T037 Tag `v0.1.7` from `main` after PR S merges and T036 passes; confirm GitHub Release APK attached.
+- [ ] T036 Manual verification: 11-step walkthrough from [`plan.md`](./plan.md) § Manual verification on signed v0.1.7 APK (re-cut APK at `88e627b`, SHA-256 `2a3fd2703bfc08c9ce6cfba2ba9956a07b74b30338169faba50e0db87d9cbb52`).
+- [x] T037 Tag `v0.1.7` from `main` after PR S merges and T036 passes; confirm GitHub Release APK attached. First cut at `fa52399` (2026-05-23) **withdrawn** — quantity row layout bug ([PR #32](https://github.com/mablanco/pricegrab/pull/32)). Re-cut 2026-05-24 at `88e627b` per [`docs/release.md`](../docs/release.md) §4 (same `versionCode` 8). Bad APK SHA-256 `aba05ba4446b2efd1991b136d0a0401cc257b4f260eb4a22dd4da45d7977b980`; good APK `2a3fd2703bfc08c9ce6cfba2ba9956a07b74b30338169faba50e0db87d9cbb52` — https://github.com/mablanco/pricegrab/releases/tag/v0.1.7
 - [x] T038 Update `docs/fdroid.md` §3 / §5 for v0.1.7 (PR T — `chore/021-fdroid-doc-sync-v0.1.7`).
 
 **Checkpoint**: v0.1.7 tagged; F-Droid playbook synced in PR T.
