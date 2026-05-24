@@ -18,10 +18,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
@@ -31,7 +29,7 @@ import com.mablanco.pricegrab.core.model.QuantityUnit
 // Room for three-letter codes (uds) plus trailing chevron with inset padding.
 internal val UNIT_SELECTOR_WIDTH = 100.dp
 
-private val UNIT_FIELD_TRAILING_ICON_PADDING = 8.dp
+private val UNIT_FIELD_TRAILING_ICON_PADDING = 12.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -55,19 +53,15 @@ internal fun QuantityUnitSelector(
             onValueChange = {},
             readOnly = true,
             singleLine = true,
-            // Invisible twin of the quantity label so both OutlinedTextFields share
-            // the same vertical structure and their boxes line up in the Row.
-            label = {
-                Text(
-                    text = stringResource(R.string.quantity_label),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = Color.Transparent,
-                    modifier = Modifier.clearAndSetSemantics { },
-                )
-            },
+            label = null,
             textStyle = MaterialTheme.typography.bodyLarge,
             trailingIcon = {
-                Box(Modifier.padding(end = UNIT_FIELD_TRAILING_ICON_PADDING)) {
+                Box(
+                    Modifier.padding(
+                        start = 4.dp,
+                        end = UNIT_FIELD_TRAILING_ICON_PADDING,
+                    ),
+                ) {
                     ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
                 }
             },

@@ -353,7 +353,7 @@ private fun OfferCard(
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(spacing.s),
-                verticalAlignment = Alignment.Top,
+                verticalAlignment = Alignment.Bottom,
             ) {
                 val unitName = stringResource(quantityUnit.nameRes())
                 LabeledNumberField(
