@@ -25,7 +25,7 @@ class CompareScreenIncompatibleUnitsTest {
         composeRule.onNodeWithTag("offerA_quantity").performTextInput("500")
         composeRule.onNodeWithTag("offerB_price").performTextInput("4.00")
         composeRule.onNodeWithTag("offerB_quantity").performTextInput("500")
-        selectUnit("${TEST_TAG_OFFER_B}_unit", R.string.unit_name_millilitre)
+        selectUnit("${TEST_TAG_OFFER_B}_unit", R.string.unit_code_ml)
 
         val ctx = composeRule.activity
         val error = ctx.getString(R.string.error_incompatible_units)
@@ -42,13 +42,13 @@ class CompareScreenIncompatibleUnitsTest {
         composeRule.onNodeWithTag("offerA_quantity").performTextInput("500")
         composeRule.onNodeWithTag("offerB_price").performTextInput("4.00")
         composeRule.onNodeWithTag("offerB_quantity").performTextInput("500")
-        selectUnit("${TEST_TAG_OFFER_B}_unit", R.string.unit_name_millilitre)
+        selectUnit("${TEST_TAG_OFFER_B}_unit", R.string.unit_code_ml)
 
         val ctx = composeRule.activity
         val error = ctx.getString(R.string.error_incompatible_units)
         composeRule.onNodeWithText(error).assertIsDisplayed()
 
-        selectUnit("${TEST_TAG_OFFER_B}_unit", R.string.unit_name_kilogram)
+        selectUnit("${TEST_TAG_OFFER_B}_unit", R.string.unit_code_kg)
 
         val winner = ctx.getString(R.string.result_winner_b)
         composeRule.onNodeWithText(error).assertDoesNotExist()

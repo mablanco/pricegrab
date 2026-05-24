@@ -87,7 +87,7 @@ class CompareScreenResetTest {
     @Test
     fun resetClearsUnitSelectorsToGram() {
         composeRule.onNodeWithTag("offerA_price").performTextInput("2.50")
-        selectUnit("${TEST_TAG_OFFER_A}_unit", R.string.unit_name_kilogram)
+        selectUnit("${TEST_TAG_OFFER_A}_unit", R.string.unit_code_kg)
 
         composeRule.onNodeWithTag(TEST_TAG_RESET).performClick()
         composeRule.waitForIdle()
@@ -101,7 +101,7 @@ class CompareScreenResetTest {
     @Test
     fun undoRestoresPriorUnitSelections() {
         composeRule.onNodeWithTag("offerA_price").performTextInput("2.50")
-        selectUnit("${TEST_TAG_OFFER_A}_unit", R.string.unit_name_kilogram)
+        selectUnit("${TEST_TAG_OFFER_A}_unit", R.string.unit_code_kg)
 
         composeRule.onNodeWithTag(TEST_TAG_RESET).performClick()
         composeRule.waitForIdle()

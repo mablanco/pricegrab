@@ -67,7 +67,7 @@ class CompareScreenAccessibilityTest {
         composeRule.onNodeWithTag("offerB_quantity").performTextInput("1")
         composeRule.onNodeWithTag("${TEST_TAG_OFFER_B}_unit").performClick()
         val ctx = composeRule.activity
-        composeRule.onNodeWithText(ctx.getString(R.string.unit_name_kilogram)).performClick()
+        composeRule.onNodeWithText(ctx.getString(R.string.unit_code_kg)).performClick()
         composeRule.waitForIdle()
 
         val headline = ctx.getString(R.string.result_winner_b)
