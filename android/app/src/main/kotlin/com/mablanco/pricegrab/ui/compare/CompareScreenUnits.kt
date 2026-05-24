@@ -24,9 +24,9 @@ import androidx.compose.ui.unit.dp
 import com.mablanco.pricegrab.R
 import com.mablanco.pricegrab.core.model.QuantityUnit
 
-// Short unit codes (g, kg, ml, L, pcs) fit in a fixed slot so the quantity
+// Short unit codes (gr, kg, ml, l, uds) fit in a fixed slot so the quantity
 // field keeps the majority of the row width on narrow phones.
-internal val UNIT_SELECTOR_WIDTH = 72.dp
+internal val UNIT_SELECTOR_WIDTH = 88.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -65,11 +65,15 @@ internal fun QuantityUnitSelector(
             onDismissRequest = { expanded = false },
         ) {
             QuantityUnit.entries.forEach { unit ->
+                val unitLabel = stringResource(unit.nameRes())
                 DropdownMenuItem(
-                    text = { Text(stringResource(unit.nameRes())) },
+                    text = { Text(stringResource(unit.codeRes())) },
                     onClick = {
                         onUnitSelected(unit)
                         expanded = false
+                    },
+                    modifier = Modifier.semantics {
+                        contentDescription = unitLabel
                     },
                     contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
                 )

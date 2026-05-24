@@ -28,10 +28,10 @@
 
     <string name="error_incompatible_units">Ambas ofertas deben usar el mismo tipo de medida (peso, volumen o unidades).</string>
 
-    <string name="unit_code_g">g</string>
+    <string name="unit_code_g">gr</string>
     <string name="unit_code_kg">kg</string>
     <string name="unit_code_ml">ml</string>
-    <string name="unit_code_L">L</string>
+    <string name="unit_code_L">l</string>
     <string name="unit_code_pcs">uds</string>
     <string name="unit_name_gram">gramos</string>
     <string name="unit_name_kilogram">kilogramos</string>
