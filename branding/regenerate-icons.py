@@ -62,9 +62,9 @@ BG_HEX = "#2F5C73"
 # or left transparent (adaptive foreground only). 0.86 leaves ~7 % margin
 # per side — enough to keep the rounded-square frame and its outermost
 # elements (top-right arrow, bottom-right price tag) inside the circular
-# masks F-Droid and most launchers apply. v0.1.5 used 0.95 for adaptive
-# foreground only and full-bleed legacy / fastlane icons, which clipped.
-ART_SCALE = 0.82
+# masks F-Droid and most launchers apply. v0.1.7 started at 0.82; 0.76
+# adds more safe-zone inset after on-device review of circular masks.
+ART_SCALE = 0.76
 
 # Density buckets and their pixel-per-dp multipliers.
 DENSITIES: dict[str, float] = {
