@@ -64,7 +64,13 @@ BG_HEX = "#2F5C73"
 # elements (top-right arrow, bottom-right price tag) inside the circular
 # masks F-Droid and most launchers apply. v0.1.7 started at 0.82; 0.76
 # adds more safe-zone inset after on-device review of circular masks.
-# v0.1.7 device review (May 2026): 0.76 still slightly tight → 0.72.
+# Optical centering: the illustration's weighted centroid in the 1162 px
+# square frame sits ~17 px right and ~74 px low of geometric centre.
+# Negative values shift art left/up on the output canvas. Re-measure if
+# FRAME_BOX changes.
+ART_OFFSET_X_PX = -17
+ART_OFFSET_Y_PX = -74
+
 ART_SCALE = 0.72
 
 # Density buckets and their pixel-per-dp multipliers.
@@ -134,14 +140,19 @@ def render_padded_square(
     """Centre the frame at ``ART_SCALE`` inside a square canvas."""
     art_side = int(round(canvas_px * ART_SCALE))
     art = square.resize((art_side, art_side), Image.LANCZOS)
-    offset = (canvas_px - art_side) // 2
+    offset_x = (canvas_px - art_side) // 2 + int(
+        round(ART_OFFSET_X_PX * art_side / square.width),
+    )
+    offset_y = (canvas_px - art_side) // 2 + int(
+        round(ART_OFFSET_Y_PX * art_side / square.height),
+    )
     if transparent:
         art = art.convert("RGBA")
         canvas = Image.new("RGBA", (canvas_px, canvas_px), (0, 0, 0, 0))
     else:
         art = art.convert("RGB")
         canvas = Image.new("RGB", (canvas_px, canvas_px), _bg_rgb())
-    canvas.paste(art, (offset, offset))
+    canvas.paste(art, (offset_x, offset_y))
     return canvas
 
 
