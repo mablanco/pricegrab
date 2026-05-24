@@ -2,4 +2,4 @@ Quantity units & fair comparison:
 • Label each quantity as g, kg, ml, L, or pieces so 500 g vs 1 kg compares correctly.
 • The app blocks mixed dimensions (e.g. grams vs millilitres) with a clear error instead of a bogus winner.
 • Savings now read per kg, per L, or per piece — not a vague "per unit".
-• Launcher & store icon safe zone: frame inset ~18 % so price-tag details no longer clip under circular masks.
+• Launcher & store icon safe zone: more inset (~12 % margin per side) so artwork no longer clips under circular masks.
