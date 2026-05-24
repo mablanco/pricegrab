@@ -24,7 +24,7 @@
     <string name="result_savings">Ahorras %1$s por unidad</string>
     <string name="result_savings_per_kg">Ahorras %1$s por kg</string>
     <string name="result_savings_per_L">Ahorras %1$s por L</string>
-    <string name="result_savings_per_piece">Ahorras %1$s por pieza</string>
+    <string name="result_savings_per_piece">Ahorras %1$s por unidad</string>
 
     <string name="error_incompatible_units">Ambas ofertas deben usar el mismo tipo de medida (peso, volumen o unidades).</string>
 
@@ -37,7 +37,7 @@
     <string name="unit_name_kilogram">kilogramos</string>
     <string name="unit_name_millilitre">mililitros</string>
     <string name="unit_name_litre">litros</string>
-    <string name="unit_name_piece">piezas</string>
+    <string name="unit_name_piece">unidades</string>
 
     <string name="reset_action">Reiniciar</string>
     <string name="reset_action_description">Borrar todos los campos y empezar una nueva comparación</string>
