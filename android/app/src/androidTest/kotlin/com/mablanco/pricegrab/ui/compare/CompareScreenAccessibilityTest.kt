@@ -11,7 +11,7 @@ import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -67,7 +67,7 @@ class CompareScreenAccessibilityTest {
         composeRule.onNodeWithTag("offerB_quantity").performTextInput("1")
         composeRule.onNodeWithTag("${TEST_TAG_OFFER_B}_unit").performClick()
         val ctx = composeRule.activity
-        composeRule.onNodeWithText(ctx.getString(R.string.unit_code_kg)).performClick()
+        composeRule.onNodeWithContentDescription(ctx.getString(R.string.unit_name_kilogram)).performClick()
         composeRule.waitForIdle()
 
         val headline = ctx.getString(R.string.result_winner_b)

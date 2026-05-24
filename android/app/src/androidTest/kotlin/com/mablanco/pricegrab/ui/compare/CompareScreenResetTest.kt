@@ -87,7 +87,7 @@ class CompareScreenResetTest {
     @Test
     fun resetClearsUnitSelectorsToGram() {
         composeRule.onNodeWithTag("offerA_price").performTextInput("2.50")
-        selectUnit("${TEST_TAG_OFFER_A}_unit", R.string.unit_code_kg)
+        composeRule.selectUnit("${TEST_TAG_OFFER_A}_unit", R.string.unit_name_kilogram)
 
         composeRule.onNodeWithTag(TEST_TAG_RESET).performClick()
         composeRule.waitForIdle()
@@ -101,7 +101,7 @@ class CompareScreenResetTest {
     @Test
     fun undoRestoresPriorUnitSelections() {
         composeRule.onNodeWithTag("offerA_price").performTextInput("2.50")
-        selectUnit("${TEST_TAG_OFFER_A}_unit", R.string.unit_code_kg)
+        composeRule.selectUnit("${TEST_TAG_OFFER_A}_unit", R.string.unit_name_kilogram)
 
         composeRule.onNodeWithTag(TEST_TAG_RESET).performClick()
         composeRule.waitForIdle()
@@ -112,12 +112,6 @@ class CompareScreenResetTest {
 
         composeRule.onNodeWithTag("${TEST_TAG_OFFER_A}_unit")
             .assert(hasText(ctx.getString(R.string.unit_code_kg)))
-    }
-
-    private fun selectUnit(testTag: String, @androidx.annotation.StringRes menuItemRes: Int) {
-        composeRule.onNodeWithTag(testTag).performClick()
-        composeRule.onNodeWithText(composeRule.activity.getString(menuItemRes)).performClick()
-        composeRule.waitForIdle()
     }
 
     private fun isFocusedMatcher(): SemanticsMatcher =
