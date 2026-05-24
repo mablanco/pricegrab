@@ -365,7 +365,9 @@ private fun OfferCard(
                     imeAction = ImeAction.Done,
                     testTag = "${testTagPrefix}_quantity",
                     focusRequester = null,
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth(),
                 )
                 QuantityUnitSelector(
                     offerTitle = title,

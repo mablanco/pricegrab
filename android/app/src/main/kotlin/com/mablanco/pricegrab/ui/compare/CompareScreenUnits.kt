@@ -1,11 +1,13 @@
 package com.mablanco.pricegrab.ui.compare
 
 import androidx.annotation.StringRes
-import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,7 +24,9 @@ import androidx.compose.ui.unit.dp
 import com.mablanco.pricegrab.R
 import com.mablanco.pricegrab.core.model.QuantityUnit
 
-internal val UNIT_SELECTOR_MIN_WIDTH = 72.dp
+// Short unit codes (g, kg, ml, L, pcs) fit in a fixed slot so the quantity
+// field keeps the majority of the row width on narrow phones.
+internal val UNIT_SELECTOR_WIDTH = 72.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -31,6 +35,7 @@ internal fun QuantityUnitSelector(
     selectedUnit: QuantityUnit,
     onUnitSelected: (QuantityUnit) -> Unit,
     testTag: String,
+    modifier: Modifier = Modifier,
 ) {
     var expanded by remember { mutableStateOf(false) }
     val unitDescription = stringResource(R.string.cd_quantity_unit, offerTitle)
@@ -38,7 +43,7 @@ internal fun QuantityUnitSelector(
     ExposedDropdownMenuBox(
         expanded = expanded,
         onExpandedChange = { expanded = it },
-        modifier = Modifier.widthIn(min = UNIT_SELECTOR_MIN_WIDTH),
+        modifier = modifier.requiredWidth(UNIT_SELECTOR_WIDTH),
     ) {
         OutlinedTextField(
             value = stringResource(selectedUnit.codeRes()),
@@ -46,9 +51,11 @@ internal fun QuantityUnitSelector(
             readOnly = true,
             singleLine = true,
             label = null,
+            textStyle = MaterialTheme.typography.bodyLarge,
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
             colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(),
             modifier = Modifier
+                .fillMaxWidth()
                 .menuAnchor()
                 .testTag(testTag)
                 .semantics { contentDescription = unitDescription },
