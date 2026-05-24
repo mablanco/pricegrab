@@ -64,7 +64,8 @@ BG_HEX = "#2F5C73"
 # elements (top-right arrow, bottom-right price tag) inside the circular
 # masks F-Droid and most launchers apply. v0.1.7 started at 0.82; 0.76
 # adds more safe-zone inset after on-device review of circular masks.
-ART_SCALE = 0.76
+# v0.1.7 device review (May 2026): 0.76 still slightly tight → 0.72.
+ART_SCALE = 0.72
 
 # Density buckets and their pixel-per-dp multipliers.
 DENSITIES: dict[str, float] = {

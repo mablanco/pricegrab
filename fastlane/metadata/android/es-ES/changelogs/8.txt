@@ -2,4 +2,4 @@ Unidades de cantidad y comparación justa:
 • Etiqueta cada cantidad en g, kg, ml, L o unidades para que 500 g frente a 1 kg se comparen bien.
 • La app bloquea dimensiones mezcladas (p. ej. gramos frente a mililitros) con un error claro en lugar de un ganador falso.
 • El ahorro se muestra por kg, por L o por unidad — ya no un vago "por unidad".
-• Zona segura del icono: marco más pequeño (~12 % de margen por lado) para que el gráfico no se corte bajo máscaras circulares.
+• Zona segura del icono: marco más pequeño (~14 % de margen por lado) para que el gráfico no se corte bajo máscaras circulares.
