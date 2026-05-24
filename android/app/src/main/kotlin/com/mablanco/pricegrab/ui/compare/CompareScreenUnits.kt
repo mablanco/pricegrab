@@ -1,7 +1,9 @@
 package com.mablanco.pricegrab.ui.compare
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -16,17 +18,20 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.mablanco.pricegrab.R
 import com.mablanco.pricegrab.core.model.QuantityUnit
 
-// Short unit codes (gr, kg, ml, l, uds) fit in a fixed slot so the quantity
-// field keeps the majority of the row width on narrow phones.
-internal val UNIT_SELECTOR_WIDTH = 88.dp
+// Room for three-letter codes (uds) plus trailing chevron with inset padding.
+internal val UNIT_SELECTOR_WIDTH = 100.dp
+
+private val UNIT_FIELD_TRAILING_ICON_PADDING = 8.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -50,9 +55,22 @@ internal fun QuantityUnitSelector(
             onValueChange = {},
             readOnly = true,
             singleLine = true,
-            label = null,
+            // Invisible twin of the quantity label so both OutlinedTextFields share
+            // the same vertical structure and their boxes line up in the Row.
+            label = {
+                Text(
+                    text = stringResource(R.string.quantity_label),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color.Transparent,
+                    modifier = Modifier.clearAndSetSemantics { },
+                )
+            },
             textStyle = MaterialTheme.typography.bodyLarge,
-            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+            trailingIcon = {
+                Box(Modifier.padding(end = UNIT_FIELD_TRAILING_ICON_PADDING)) {
+                    ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+                }
+            },
             colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(),
             modifier = Modifier
                 .fillMaxWidth()
