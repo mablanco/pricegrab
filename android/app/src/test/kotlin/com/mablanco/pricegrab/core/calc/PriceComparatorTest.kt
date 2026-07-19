@@ -21,7 +21,7 @@ class PriceComparatorTest {
             a = offer("2.50", "500", QuantityUnit.Gram),
             b = offer("4.00", "1000", QuantityUnit.Gram),
         )
-        assertWinner(outcome, index = 1, expectedDelta = "0.001", expectedPercent = "20")
+        assertWinner(outcome, index = 1, secondIndex = 0, expectedDelta = "0.001", expectedPercent = "20")
     }
 
     @Test
@@ -33,6 +33,7 @@ class PriceComparatorTest {
         assertTrue(outcome is ComparisonOutcome.Winner)
         val w = outcome as ComparisonOutcome.Winner
         assertEquals(1, w.slotIndex)
+        assertEquals(0, w.secondSlotIndex)
         assertEquals(0, BigDecimal("0.5").compareTo(w.perUnitDelta))
         assertApprox("16.666666666", w.percentDelta, tolerance = "0.00001")
     }
@@ -52,7 +53,7 @@ class PriceComparatorTest {
             a = offer("0", "5", QuantityUnit.Gram),
             b = offer("1", "5", QuantityUnit.Gram),
         )
-        assertWinner(outcome, index = 0, expectedDelta = "0.2", expectedPercent = "100")
+        assertWinner(outcome, index = 0, secondIndex = 1, expectedDelta = "0.2", expectedPercent = "100")
     }
 
     @Test
@@ -70,7 +71,7 @@ class PriceComparatorTest {
             a = offer("1.00", "0.5", QuantityUnit.Gram),
             b = offer("1.00", "0.25", QuantityUnit.Gram),
         )
-        assertWinner(outcome, index = 0, expectedDelta = "2.0", expectedPercent = "50")
+        assertWinner(outcome, index = 0, secondIndex = 1, expectedDelta = "2.0", expectedPercent = "50")
     }
 
     @Test
@@ -91,6 +92,7 @@ class PriceComparatorTest {
         assertTrue("Expected Winner(0), got $outcome", outcome is ComparisonOutcome.Winner)
         val w = outcome as ComparisonOutcome.Winner
         assertEquals(0, w.slotIndex)
+        assertEquals(1, w.secondSlotIndex)
         assertTrue("perUnitDelta must be positive", w.perUnitDelta.signum() > 0)
         assertTrue("percentDelta must be positive", w.percentDelta.signum() > 0)
     }
@@ -104,6 +106,7 @@ class PriceComparatorTest {
         assertTrue(outcome is ComparisonOutcome.Winner)
         val w = outcome as ComparisonOutcome.Winner
         assertEquals(0, w.slotIndex)
+        assertEquals(1, w.secondSlotIndex)
         assertEquals(0, BigDecimal("1").compareTo(w.perUnitDelta))
         assertApprox("0.0000001", w.percentDelta, tolerance = "0.0000000001")
     }
@@ -124,7 +127,7 @@ class PriceComparatorTest {
             a = offer("2.50", "500", QuantityUnit.Gram),
             b = offer("4.00", "1", QuantityUnit.Kilogram),
         )
-        assertWinner(outcome, index = 1, expectedDelta = "0.001", expectedPercent = "20")
+        assertWinner(outcome, index = 1, secondIndex = 0, expectedDelta = "0.001", expectedPercent = "20")
     }
 
     @Test
@@ -142,7 +145,7 @@ class PriceComparatorTest {
             a = offer("0", "5", QuantityUnit.Gram),
             b = offer("1", "5", QuantityUnit.Gram),
         )
-        assertWinner(outcome, index = 0, expectedDelta = "0.2", expectedPercent = "100")
+        assertWinner(outcome, index = 0, secondIndex = 1, expectedDelta = "0.2", expectedPercent = "100")
     }
 
     @Test(expected = IllegalArgumentException::class)
@@ -162,7 +165,9 @@ class PriceComparatorTest {
         val backward = PriceComparator.compare(b, a) as ComparisonOutcome.Winner
 
         assertEquals(1, forward.slotIndex)
+        assertEquals(0, forward.secondSlotIndex)
         assertEquals(0, backward.slotIndex)
+        assertEquals(1, backward.secondSlotIndex)
         assertEquals(0, forward.perUnitDelta.compareTo(backward.perUnitDelta))
         assertApprox(forward.percentDelta.toPlainString(), backward.percentDelta, tolerance = "0.00000001")
     }
@@ -179,7 +184,7 @@ class PriceComparatorTest {
                 2 to offer("3.00", "500", QuantityUnit.Gram),
             ),
         )
-        assertWinner(outcome, index = 1, expectedDelta = "0.001", expectedPercent = "20")
+        assertWinner(outcome, index = 1, secondIndex = 0, expectedDelta = "0.001", expectedPercent = "20")
     }
 
     @Test
@@ -203,12 +208,12 @@ class PriceComparatorTest {
                 2 to offer("2", "5", QuantityUnit.Gram),
             ),
         )
-        assertWinner(outcome, index = 1, expectedDelta = "0.2", expectedPercent = "100")
+        assertWinner(outcome, index = 1, secondIndex = 0, expectedDelta = "0.2", expectedPercent = "100")
     }
 
     @Test
     fun `three offers - unique min wins even when others tie for second`() {
-        // A=0.003, B=0.005, C=0.005 → A wins vs second (0.002 / 40%)
+        // A=0.003, B=0.005, C=0.005 → A wins vs second (0.002 / 40%); B picked as second
         val outcome = PriceComparator.compareMany(
             listOf(
                 0 to offer("3.00", "1000", QuantityUnit.Gram),
@@ -216,7 +221,7 @@ class PriceComparatorTest {
                 2 to offer("2.50", "500", QuantityUnit.Gram),
             ),
         )
-        assertWinner(outcome, index = 0, expectedDelta = "0.002", expectedPercent = "40")
+        assertWinner(outcome, index = 0, secondIndex = 1, expectedDelta = "0.002", expectedPercent = "40")
     }
 
     @Test
@@ -228,7 +233,7 @@ class PriceComparatorTest {
                 2 to offer("4.00", "1000", QuantityUnit.Gram),
             ),
         )
-        assertWinner(outcome, index = 2, expectedDelta = "0.001", expectedPercent = "20")
+        assertWinner(outcome, index = 2, secondIndex = 0, expectedDelta = "0.001", expectedPercent = "20")
     }
 
     // ---- Helpers -------------------------------------------------------------
@@ -239,12 +244,14 @@ class PriceComparatorTest {
     private fun assertWinner(
         outcome: ComparisonOutcome,
         index: Int,
+        secondIndex: Int,
         expectedDelta: String,
         expectedPercent: String,
     ) {
         assertTrue("Expected Winner($index), got $outcome", outcome is ComparisonOutcome.Winner)
         val w = outcome as ComparisonOutcome.Winner
         assertEquals(index, w.slotIndex)
+        assertEquals(secondIndex, w.secondSlotIndex)
         assertEquals(0, BigDecimal(expectedDelta).compareTo(w.perUnitDelta))
         assertEquals(0, BigDecimal(expectedPercent).compareTo(w.percentDelta))
     }

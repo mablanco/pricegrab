@@ -45,13 +45,13 @@ object PriceComparator {
         if (atMinimum.size >= 2) return ComparisonOutcome.Tie
 
         val (winnerIndex, _) = atMinimum.single()
-        val secondUnitPrice = offers
+        val (secondIndex, secondOffer) = offers
             .asSequence()
             .filter { it.first != winnerIndex }
-            .minOf { it.second.unitPrice }
+            .minBy { it.second.unitPrice }
 
-        return winner(loser = secondUnitPrice, winner = minUnitPrice) { d, p ->
-            ComparisonOutcome.Winner(winnerIndex, d, p)
+        return winner(loser = secondOffer.unitPrice, winner = minUnitPrice) { d, p ->
+            ComparisonOutcome.Winner(winnerIndex, secondIndex, d, p)
         }
     }
 

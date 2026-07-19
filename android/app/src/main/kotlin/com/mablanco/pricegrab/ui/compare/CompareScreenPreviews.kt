@@ -36,6 +36,7 @@ private fun CompareScreenWinnerPreview() {
                 ),
                 outcome = ComparisonOutcome.Winner(
                     slotIndex = 0,
+                    secondSlotIndex = 1,
                     perUnitDelta = BigDecimal("0.001"),
                     percentDelta = BigDecimal("20"),
                 ),
@@ -65,6 +66,7 @@ private fun CompareScreenThreeOffersPreview() {
                 ),
                 outcome = ComparisonOutcome.Winner(
                     slotIndex = 1,
+                    secondSlotIndex = 0,
                     perUnitDelta = BigDecimal("0.001"),
                     percentDelta = BigDecimal("20"),
                 ),

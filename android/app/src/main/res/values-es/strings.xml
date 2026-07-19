@@ -14,7 +14,7 @@
     <string name="cd_quantity_unit">Unidad de cantidad de %1$s</string>
     <string name="cd_add_offer">Añadir otra oferta</string>
     <string name="cd_remove_offer">Quitar la última oferta</string>
-    <string name="add_offer">Añadir</string>
+    <string name="add_offer">Añadir oferta</string>
     <string name="remove_offer">Quitar</string>
 
     <string name="error_not_a_number">Introduce un número válido</string>
@@ -25,10 +25,10 @@
 
     <string name="result_winner">%1$s es más barata</string>
     <string name="result_tied">Mismo precio por unidad</string>
-    <string name="result_savings">Ahorras %1$s por unidad</string>
-    <string name="result_savings_per_kg">Ahorras %1$s por kg</string>
-    <string name="result_savings_per_L">Ahorras %1$s por L</string>
-    <string name="result_savings_per_piece">Ahorras %1$s por unidad</string>
+    <string name="result_savings">Ahorras %1$s por unidad frente a %2$s</string>
+    <string name="result_savings_per_kg">Ahorras %1$s por kg frente a %2$s</string>
+    <string name="result_savings_per_L">Ahorras %1$s por L frente a %2$s</string>
+    <string name="result_savings_per_piece">Ahorras %1$s por unidad frente a %2$s</string>
 
     <string name="error_incompatible_units">Ambas ofertas deben usar el mismo tipo de medida (peso, volumen o unidades).</string>
 

@@ -67,7 +67,11 @@ class CompareScreenMultiOfferTest {
 
         val ctx = composeRule.activity
         val headline = ctx.winnerHeadline(R.string.offer_b_title)
-        val savings = ctx.getString(R.string.result_savings_per_kg, "1")
+        val savings = ctx.getString(
+            R.string.result_savings_per_kg,
+            "1",
+            ctx.getString(R.string.offer_a_title),
+        )
 
         composeRule.onNodeWithText(headline).assertIsDisplayed()
         composeRule.onNodeWithText(savings).assertIsDisplayed()

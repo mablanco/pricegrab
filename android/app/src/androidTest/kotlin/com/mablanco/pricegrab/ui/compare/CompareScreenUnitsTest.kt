@@ -37,7 +37,11 @@ class CompareScreenUnitsTest {
 
         val ctx = composeRule.activity
         val winner = ctx.winnerHeadline(R.string.offer_b_title)
-        val savings = ctx.getString(R.string.result_savings_per_kg, "1")
+        val savings = ctx.getString(
+            R.string.result_savings_per_kg,
+            "1",
+            ctx.getString(R.string.offer_a_title),
+        )
 
         composeRule.onNodeWithText(winner).assertIsDisplayed()
         composeRule.onNodeWithText(savings).assertIsDisplayed()
@@ -52,7 +56,12 @@ class CompareScreenUnitsTest {
         composeRule.onNodeWithTag("offerB_quantity").performTextInput("1")
         composeRule.selectUnit("${TEST_TAG_OFFER_B}_unit", R.string.unit_name_litre)
 
-        val savings = composeRule.activity.getString(R.string.result_savings_per_L, "0.4")
+        val ctx = composeRule.activity
+        val savings = ctx.getString(
+            R.string.result_savings_per_L,
+            "0.4",
+            ctx.getString(R.string.offer_a_title),
+        )
         composeRule.onNodeWithText(savings).assertIsDisplayed()
     }
 
@@ -65,7 +74,12 @@ class CompareScreenUnitsTest {
         composeRule.onNodeWithTag("offerB_quantity").performTextInput("12")
         composeRule.selectUnit("${TEST_TAG_OFFER_B}_unit", R.string.unit_name_piece)
 
-        val savings = composeRule.activity.getString(R.string.result_savings_per_piece, "0.083333")
+        val ctx = composeRule.activity
+        val savings = ctx.getString(
+            R.string.result_savings_per_piece,
+            "0.083333",
+            ctx.getString(R.string.offer_a_title),
+        )
         composeRule.onNodeWithText(savings).assertIsDisplayed()
     }
 
