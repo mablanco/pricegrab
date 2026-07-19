@@ -4,11 +4,13 @@ alwaysApply: true
 
 <!-- SPECKIT START -->
 For additional context about the active feature, technologies, project
-structure, shell commands, and other important information, read the
-current implementation plan at:
+structure, shell commands, and other important information:
 
-- [`specs/001-unit-price-comparison/plan.md`](../../specs/001-unit-price-comparison/plan.md)
+1. Read the active feature pointer: [`.specify/feature.json`](../../.specify/feature.json)
+2. Open that feature’s `plan.md` (and sibling `spec.md`, `research.md`, `tasks.md`).
+3. For shipped state and the product backlog, read
+   [`docs/project-status.md`](../../docs/project-status.md).
 
-Related artifacts live next to it: `spec.md`, `research.md`, `data-model.md`,
-`contracts/price-comparator.md`, `quickstart.md`, `checklists/requirements.md`.
+When `feature.json` is missing or stale after a release, default to the latest
+`specs/<nnn-*>/` directory and confirm with Marco before starting new work.
 <!-- SPECKIT END -->
