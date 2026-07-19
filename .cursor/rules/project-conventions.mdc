@@ -60,3 +60,10 @@ not addressed here continues to follow the user's global preferences.
   Spanish and English.
 - Internal engineering documentation (ADRs, specs, plans, task lists, commit
   messages, code comments) is written in English.
+
+## Project status memory
+
+- Keep [`docs/project-status.md`](../../docs/project-status.md) current when
+  shipping a release or deferring a product idea (backlog).
+- Agents should read that file (and the `project-status` Cursor rule) before
+  proposing the next feature.
