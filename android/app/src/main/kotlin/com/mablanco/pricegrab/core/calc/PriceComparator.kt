@@ -6,44 +6,52 @@ import java.math.BigDecimal
 import java.math.MathContext
 
 /**
- * Compares two [Offer]s by their per-unit price and describes the outcome.
+ * Compares [Offer]s by their per-unit price and describes the outcome.
  *
  * Pure function: no I/O, no clock, no RNG, no mutation. Thread-safe; may be
  * invoked from any thread.
  *
- * Preconditions (also enforced by [Offer]'s constructor):
- * - `a.price >= 0 && a.quantity > 0`
- * - `b.price >= 0 && b.quantity > 0`
- *
- * Postconditions:
- * - Returns [ComparisonOutcome.Tie] iff `a.unitPrice == b.unitPrice`
- *   (value-based, via [BigDecimal.compareTo]).
- * - Returns [ComparisonOutcome.AWins] iff `a.unitPrice < b.unitPrice`.
- * - Returns [ComparisonOutcome.BWins] iff `a.unitPrice > b.unitPrice`.
- * - `perUnitDelta = |a.unitPrice - b.unitPrice|`, always `>= 0`.
- * - `percentDelta = perUnitDelta / max(a.unitPrice, b.unitPrice) * 100`.
- *   When exactly one `unitPrice` is zero, the zero side wins with
- *   `percentDelta == 100`.
+ * Postconditions for [compareMany]:
+ * - Returns [ComparisonOutcome.Tie] when two or more offers share the
+ *   absolute minimum `unitPrice`.
+ * - Otherwise returns [ComparisonOutcome.Winner] for the unique cheapest
+ *   offer, with deltas versus the second-cheapest `unitPrice`.
+ * - `perUnitDelta = second.unitPrice - winner.unitPrice`, always `>= 0`.
+ * - `percentDelta = perUnitDelta / second.unitPrice * 100`.
+ *   When the winner is free and the second is not, `percentDelta == 100`.
  */
 object PriceComparator {
 
     private val HUNDRED: BigDecimal = BigDecimal.valueOf(100)
 
-    fun compare(a: Offer, b: Offer): ComparisonOutcome {
-        require(a.quantityUnit.dimension == b.quantityUnit.dimension) {
-            "Incompatible dimensions: ${a.quantityUnit.dimension} vs ${b.quantityUnit.dimension}"
-        }
-        val unitA = a.unitPrice
-        val unitB = b.unitPrice
+    fun compare(a: Offer, b: Offer): ComparisonOutcome =
+        compareMany(listOf(0 to a, 1 to b))
 
-        return when {
-            unitA.compareTo(unitB) == 0 -> ComparisonOutcome.Tie
-            unitA < unitB -> winner(loser = unitB, winner = unitA) { d, p ->
-                ComparisonOutcome.AWins(d, p)
+    /**
+     * @param offers pairs of `(uiIndex, offer)`; size ≥ 2; all same [Dimension].
+     */
+    fun compareMany(offers: List<Pair<Int, Offer>>): ComparisonOutcome {
+        require(offers.size >= 2) { "Need at least two offers to compare" }
+        val dimension = offers.first().second.quantityUnit.dimension
+        require(offers.all { it.second.quantityUnit.dimension == dimension }) {
+            val mismatch = offers.first {
+                it.second.quantityUnit.dimension != dimension
             }
-            else -> winner(loser = unitA, winner = unitB) { d, p ->
-                ComparisonOutcome.BWins(d, p)
-            }
+            "Incompatible dimensions: $dimension vs ${mismatch.second.quantityUnit.dimension}"
+        }
+
+        val minUnitPrice = offers.minOf { it.second.unitPrice }
+        val atMinimum = offers.filter { it.second.unitPrice.compareTo(minUnitPrice) == 0 }
+        if (atMinimum.size >= 2) return ComparisonOutcome.Tie
+
+        val (winnerIndex, _) = atMinimum.single()
+        val secondUnitPrice = offers
+            .asSequence()
+            .filter { it.first != winnerIndex }
+            .minOf { it.second.unitPrice }
+
+        return winner(loser = secondUnitPrice, winner = minUnitPrice) { d, p ->
+            ComparisonOutcome.Winner(winnerIndex, d, p)
         }
     }
 

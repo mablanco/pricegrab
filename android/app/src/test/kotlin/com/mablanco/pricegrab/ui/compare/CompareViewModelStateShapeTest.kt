@@ -1,6 +1,7 @@
 package com.mablanco.pricegrab.ui.compare
 
 import androidx.lifecycle.SavedStateHandle
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
@@ -8,13 +9,7 @@ import org.junit.Rule
 import org.junit.Test
 
 /**
- * Foundational shape tests for the additions feature 002 makes to
- * [CompareUiState] and the derived [isResetEnabled] property.
- *
- * Behaviour proper (the `resetComparison`/`undoReset`/`dismissUndo`
- * methods on the ViewModel) is covered by `CompareViewModelResetTest`
- * once the US1/US2 tasks land. This file pins down only the data shape
- * so the foundational phase has its own green test signal.
+ * Foundational shape tests for [CompareUiState] and [isResetEnabled].
  */
 class CompareViewModelStateShapeTest {
 
@@ -26,9 +21,10 @@ class CompareViewModelStateShapeTest {
         val viewModel = CompareViewModel(SavedStateHandle())
 
         val state = viewModel.state.value
+        assertEquals(2, state.offers.size)
         assertNull("undoState is null on a brand-new screen", state.undoState)
         assertFalse(
-            "Reset is disabled when all four fields are empty",
+            "Reset is disabled when all fields are empty",
             state.isResetEnabled,
         )
     }
@@ -37,7 +33,7 @@ class CompareViewModelStateShapeTest {
     fun typingIntoAnyFieldEnablesResetButton() {
         val viewModel = CompareViewModel(SavedStateHandle())
 
-        viewModel.onPriceAChange("2.50")
+        viewModel.onPriceChange(0, "2.50")
 
         assertTrue(
             "Reset becomes enabled after typing into Price A",
@@ -49,10 +45,7 @@ class CompareViewModelStateShapeTest {
     fun pureWhitespaceInputDoesNotEnableResetButton() {
         val viewModel = CompareViewModel(SavedStateHandle())
 
-        // sanitize() in CompareViewModel strips whitespace, so a "   "
-        // input round-trips to "". The ResetEnabled derivation looks
-        // at the post-sanitize state.
-        viewModel.onPriceAChange("   ")
+        viewModel.onPriceChange(0, "   ")
 
         assertFalse(
             "Reset stays disabled when only whitespace was typed",
@@ -64,10 +57,10 @@ class CompareViewModelStateShapeTest {
     fun typingIntoQuantityBAlsoEnablesResetButton() {
         val viewModel = CompareViewModel(SavedStateHandle())
 
-        viewModel.onQuantityBChange("100")
+        viewModel.onQuantityChange(1, "100")
 
         assertTrue(
-            "Reset becomes enabled when *any* of the four fields is non-empty",
+            "Reset becomes enabled when *any* of the fields is non-empty",
             viewModel.state.value.isResetEnabled,
         )
     }

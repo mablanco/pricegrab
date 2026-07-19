@@ -5,31 +5,36 @@ import com.mablanco.pricegrab.core.model.ComparisonOutcome
 import com.mablanco.pricegrab.core.model.OfferParseResult
 
 /**
- * Explicit gate before invoking [PriceComparator.compare]. Keeps cross-dimension
- * rejection out of the pure calculator and gives tests a named concept.
+ * Explicit gate before invoking [PriceComparator.compareMany]. Keeps
+ * cross-dimension rejection out of the pure calculator and gives tests a
+ * named concept.
  */
 sealed interface ComparisonGate {
-    /** Both offers parsed; dimensions match — comparator has run. */
+    /** At least two offers parsed; dimensions match — comparator has run. */
     data class Ready(val outcome: ComparisonOutcome) : ComparisonGate
 
-    /** Both offers parsed; dimensions differ — show error, no winner. */
+    /** At least two offers parsed; dimensions differ — show error, no winner. */
     data object IncompatibleUnits : ComparisonGate
 
-    /** One or both offers invalid or incomplete — neutral placeholder. */
+    /** Fewer than two offers valid — neutral placeholder. */
     data object Incomplete : ComparisonGate
 }
 
-fun evaluateComparison(
-    aResult: OfferParseResult,
-    bResult: OfferParseResult,
-): ComparisonGate {
-    if (aResult !is OfferParseResult.Success || bResult !is OfferParseResult.Success) {
-        return ComparisonGate.Incomplete
+/**
+ * Evaluates parse results parallel to UI slot indices.
+ *
+ * Blank / failed slots are ignored when ≥2 others succeed. Any dimension
+ * mismatch among successes yields [ComparisonGate.IncompatibleUnits].
+ */
+fun evaluateComparison(results: List<OfferParseResult>): ComparisonGate {
+    val successes = results.mapIndexedNotNull { index, result ->
+        (result as? OfferParseResult.Success)?.let { index to it.offer }
     }
-    val a = aResult.offer
-    val b = bResult.offer
-    if (a.quantityUnit.dimension != b.quantityUnit.dimension) {
+    if (successes.size < 2) return ComparisonGate.Incomplete
+
+    val dimension = successes.first().second.quantityUnit.dimension
+    if (successes.any { it.second.quantityUnit.dimension != dimension }) {
         return ComparisonGate.IncompatibleUnits
     }
-    return ComparisonGate.Ready(PriceComparator.compare(a, b))
+    return ComparisonGate.Ready(PriceComparator.compareMany(successes))
 }

@@ -46,12 +46,11 @@ class CompareScreenLargeFontTest {
                 PriceGrabTheme {
                     CompareScreen(
                         state = CompareUiState(),
-                        onPriceAChange = {},
-                        onQuantityAChange = {},
-                        onPriceBChange = {},
-                        onQuantityBChange = {},
-                        onQuantityUnitAChange = {},
-                        onQuantityUnitBChange = {},
+                        onPriceChange = { _, _ -> },
+                        onQuantityChange = { _, _ -> },
+                        onUnitChange = { _, _ -> },
+                        onAddOffer = {},
+                        onRemoveOffer = {},
                         onResetClick = {},
                         onUndoClick = {},
                         onUndoDismissed = {},

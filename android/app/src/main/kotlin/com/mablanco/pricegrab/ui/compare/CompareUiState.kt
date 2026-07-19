@@ -3,6 +3,20 @@ package com.mablanco.pricegrab.ui.compare
 import com.mablanco.pricegrab.core.model.ComparisonOutcome
 import com.mablanco.pricegrab.core.model.QuantityUnit
 
+const val MIN_OFFERS: Int = 2
+const val MAX_OFFERS: Int = 3
+
+/**
+ * One offer slot on the Compare screen (raw strings + unit + field errors).
+ */
+data class OfferSlotState(
+    val priceRaw: String = "",
+    val quantityRaw: String = "",
+    val quantityUnit: QuantityUnit = QuantityUnit.Gram,
+    val priceError: InputError? = null,
+    val quantityError: InputError? = null,
+)
+
 /**
  * Immutable snapshot of the Compare screen.
  *
@@ -11,72 +25,53 @@ import com.mablanco.pricegrab.core.model.QuantityUnit
  * position. The per-field [InputError] nullables describe the first error
  * applicable to that field (or `null` when the field is blank or valid).
  *
- * [outcome] is non-null only when both offers parse into valid `Offer`
- * instances with matching dimensions; otherwise the result pane shows a
- * neutral placeholder or an incompatible-units error.
+ * [outcome] is non-null only when at least two offers parse into valid
+ * `Offer` instances with matching dimensions; otherwise the result pane
+ * shows a neutral placeholder or an incompatible-units error.
  *
  * [undoState] is non-null only while a transient Material 3 Snackbar
  * with an Undo affordance is on screen, immediately after a non-empty
  * Reset. Cleared on undo, on Snackbar timeout, on the user typing into
- * any of the four fields, or on the host activity reaching `ON_STOP`.
- * See feature 002 spec FR-006/FR-008.
+ * any field, or on the host activity reaching `ON_STOP`.
  */
 data class CompareUiState(
-    val priceARaw: String = "",
-    val quantityARaw: String = "",
-    val priceBRaw: String = "",
-    val quantityBRaw: String = "",
-    val quantityUnitA: QuantityUnit = QuantityUnit.Gram,
-    val quantityUnitB: QuantityUnit = QuantityUnit.Gram,
-    val priceAError: InputError? = null,
-    val quantityAError: InputError? = null,
-    val priceBError: InputError? = null,
-    val quantityBError: InputError? = null,
+    val offers: List<OfferSlotState> = listOf(OfferSlotState(), OfferSlotState()),
     val outcome: ComparisonOutcome? = null,
     val incompatibleUnits: Boolean = false,
     val undoState: UndoState? = null,
 )
 
 /**
- * True iff at least one of the four raw input fields is non-empty or either
- * unit selector differs from the default [QuantityUnit.Gram].
- *
- * Drives feature 002 FR-004: the Reset control is `enabled` when this
- * is `true` and visibly disabled otherwise.
+ * True iff there are more than [MIN_OFFERS] slots, or at least one slot has
+ * a non-empty raw field or a unit other than [QuantityUnit.Gram].
  */
 val CompareUiState.isResetEnabled: Boolean
-    get() = priceARaw.isNotBlank() ||
-        quantityARaw.isNotBlank() ||
-        priceBRaw.isNotBlank() ||
-        quantityBRaw.isNotBlank() ||
-        quantityUnitA != QuantityUnit.Gram ||
-        quantityUnitB != QuantityUnit.Gram
+    get() = offers.size > MIN_OFFERS ||
+        offers.any { slot ->
+            slot.priceRaw.isNotBlank() ||
+                slot.quantityRaw.isNotBlank() ||
+                slot.quantityUnit != QuantityUnit.Gram
+        }
 
 /**
- * The four raw strings and both unit selections as they were *immediately
- * before* a Reset, kept for as long as the Undo affordance is offered.
- * Holds raw strings only; the cached comparison outcome is intentionally
- * absent because the ViewModel rebuilds it deterministically from the
- * snapshot on `undoReset()` (single source of truth, no risk of drift).
+ * Slot values as they were *immediately before* a Reset, kept for as long
+ * as the Undo affordance is offered. Holds raw strings only; the cached
+ * comparison outcome is intentionally absent because the ViewModel rebuilds
+ * it deterministically from the snapshot on `undoReset()`.
  */
+data class OfferSlotSnapshot(
+    val priceRaw: String,
+    val quantityRaw: String,
+    val quantityUnit: QuantityUnit,
+)
+
 data class PreResetSnapshot(
-    val priceARaw: String,
-    val quantityARaw: String,
-    val priceBRaw: String,
-    val quantityBRaw: String,
-    val quantityUnitA: QuantityUnit,
-    val quantityUnitB: QuantityUnit,
+    val slots: List<OfferSlotSnapshot>,
 )
 
 /**
  * Undo affordance: the snapshot to restore plus the wall-clock
  * deadline at which the Snackbar should auto-dismiss.
- *
- * Storing a deadline (rather than a remaining duration) is what makes
- * AS-2.4 ("survives rotation with remaining lifetime intact") cheap:
- * the Composable computes `remaining = max(0, expiresAtEpochMillis -
- * System.currentTimeMillis())` whenever the state arrives and shows
- * the Snackbar for that long.
  */
 data class UndoState(
     val snapshot: PreResetSnapshot,

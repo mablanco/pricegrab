@@ -33,8 +33,12 @@ object ResultPresenter {
         if (dimension == null) return null
         return when (outcome) {
             null, ComparisonOutcome.Tie -> null
-            is ComparisonOutcome.AWins -> format(outcome.perUnitDelta, outcome.percentDelta, dimension, locale)
-            is ComparisonOutcome.BWins -> format(outcome.perUnitDelta, outcome.percentDelta, dimension, locale)
+            is ComparisonOutcome.Winner -> format(
+                outcome.perUnitDelta,
+                outcome.percentDelta,
+                dimension,
+                locale,
+            )
         }
     }
 

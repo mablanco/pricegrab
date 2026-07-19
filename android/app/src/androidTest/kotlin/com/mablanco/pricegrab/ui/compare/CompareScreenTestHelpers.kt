@@ -1,11 +1,13 @@
 package com.mablanco.pricegrab.ui.compare
 
+import android.content.Context
 import androidx.annotation.StringRes
 import androidx.compose.ui.test.junit4.AndroidComposeTestRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import com.mablanco.pricegrab.MainActivity
+import com.mablanco.pricegrab.R
 
 /**
  * Opens [testTag] and picks a unit from the dropdown by its accessibility
@@ -21,3 +23,7 @@ internal fun AndroidComposeTestRule<*, MainActivity>.selectUnit(
     onNodeWithContentDescription(activity.getString(unitNameRes)).performClick()
     waitForIdle()
 }
+
+/** Localized winner headline for the given offer title resource. */
+internal fun Context.winnerHeadline(@StringRes offerTitleRes: Int): String =
+    getString(R.string.result_winner, getString(offerTitleRes))

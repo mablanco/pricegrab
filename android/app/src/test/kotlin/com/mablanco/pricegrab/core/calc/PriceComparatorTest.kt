@@ -10,13 +10,10 @@ import java.math.BigDecimal
 
 /**
  * Canonical test suite for the contract documented at
- * `specs/001-unit-price-comparison/contracts/price-comparator.md`.
- *
- * Each numbered case below maps 1:1 with the numbered row in that contract.
+ * `specs/001-unit-price-comparison/contracts/price-comparator.md`,
+ * extended by feature 005 multi-offer ranking.
  */
 class PriceComparatorTest {
-
-    // ---- Canonical case 1: B is cheaper, round percent ----------------------
 
     @Test
     fun `case 1 - supermarket sizes, B wins with 20 percent savings`() {
@@ -24,10 +21,8 @@ class PriceComparatorTest {
             a = offer("2.50", "500", QuantityUnit.Gram),
             b = offer("4.00", "1000", QuantityUnit.Gram),
         )
-        assertBWins(outcome, expectedDelta = "0.001", expectedPercent = "20")
+        assertWinner(outcome, index = 1, expectedDelta = "0.001", expectedPercent = "20")
     }
-
-    // ---- Canonical case 2: non-round percent, DECIMAL64 precision -----------
 
     @Test
     fun `case 2 - B wins with non-terminating percent`() {
@@ -35,13 +30,12 @@ class PriceComparatorTest {
             a = offer("3.00", "1", QuantityUnit.Gram),
             b = offer("5.00", "2", QuantityUnit.Gram),
         )
-        assertTrue(outcome is ComparisonOutcome.BWins)
-        val b = outcome as ComparisonOutcome.BWins
-        assertEquals(0, BigDecimal("0.5").compareTo(b.perUnitDelta))
-        assertApprox("16.666666666", b.percentDelta, tolerance = "0.00001")
+        assertTrue(outcome is ComparisonOutcome.Winner)
+        val w = outcome as ComparisonOutcome.Winner
+        assertEquals(1, w.slotIndex)
+        assertEquals(0, BigDecimal("0.5").compareTo(w.perUnitDelta))
+        assertApprox("16.666666666", w.percentDelta, tolerance = "0.00001")
     }
-
-    // ---- Canonical case 3: tie at different absolute scales -----------------
 
     @Test
     fun `case 3 - tie with different scales`() {
@@ -52,18 +46,14 @@ class PriceComparatorTest {
         assertEquals(ComparisonOutcome.Tie, outcome)
     }
 
-    // ---- Canonical case 4: A is free -----------------------------------------
-
     @Test
     fun `case 4 - A is free, A wins with 100 percent savings`() {
         val outcome = PriceComparator.compare(
             a = offer("0", "5", QuantityUnit.Gram),
             b = offer("1", "5", QuantityUnit.Gram),
         )
-        assertAWins(outcome, expectedDelta = "0.2", expectedPercent = "100")
+        assertWinner(outcome, index = 0, expectedDelta = "0.2", expectedPercent = "100")
     }
-
-    // ---- Canonical case 5: both offers free ----------------------------------
 
     @Test
     fun `case 5 - both offers free is a tie`() {
@@ -74,18 +64,14 @@ class PriceComparatorTest {
         assertEquals(ComparisonOutcome.Tie, outcome)
     }
 
-    // ---- Canonical case 6: fractional quantities -----------------------------
-
     @Test
     fun `case 6 - fractional quantities, A wins`() {
         val outcome = PriceComparator.compare(
             a = offer("1.00", "0.5", QuantityUnit.Gram),
             b = offer("1.00", "0.25", QuantityUnit.Gram),
         )
-        assertAWins(outcome, expectedDelta = "2.0", expectedPercent = "50")
+        assertWinner(outcome, index = 0, expectedDelta = "2.0", expectedPercent = "50")
     }
-
-    // ---- Canonical case 7: identical inputs ----------------------------------
 
     @Test
     fun `case 7 - identical inputs are a tie`() {
@@ -96,21 +82,18 @@ class PriceComparatorTest {
         assertEquals(ComparisonOutcome.Tie, outcome)
     }
 
-    // ---- Canonical case 8: underflow-resistant very small values -------------
-
     @Test
     fun `case 8 - very small values still produce a deterministic winner`() {
         val outcome = PriceComparator.compare(
             a = offer("0.01", "1000000", QuantityUnit.Gram),
             b = offer("0.01", "999999", QuantityUnit.Gram),
         )
-        assertTrue("Expected AWins, got $outcome", outcome is ComparisonOutcome.AWins)
-        val a = outcome as ComparisonOutcome.AWins
-        assertTrue("perUnitDelta must be positive", a.perUnitDelta.signum() > 0)
-        assertTrue("percentDelta must be positive", a.percentDelta.signum() > 0)
+        assertTrue("Expected Winner(0), got $outcome", outcome is ComparisonOutcome.Winner)
+        val w = outcome as ComparisonOutcome.Winner
+        assertEquals(0, w.slotIndex)
+        assertTrue("perUnitDelta must be positive", w.perUnitDelta.signum() > 0)
+        assertTrue("percentDelta must be positive", w.percentDelta.signum() > 0)
     }
-
-    // ---- Canonical case 9: overflow-resistant very large values --------------
 
     @Test
     fun `case 9 - very large values, A wins with tiny percent`() {
@@ -118,13 +101,12 @@ class PriceComparatorTest {
             a = offer("999999999", "1", QuantityUnit.Gram),
             b = offer("1000000000", "1", QuantityUnit.Gram),
         )
-        assertTrue(outcome is ComparisonOutcome.AWins)
-        val a = outcome as ComparisonOutcome.AWins
-        assertEquals(0, BigDecimal("1").compareTo(a.perUnitDelta))
-        assertApprox("0.0000001", a.percentDelta, tolerance = "0.0000000001")
+        assertTrue(outcome is ComparisonOutcome.Winner)
+        val w = outcome as ComparisonOutcome.Winner
+        assertEquals(0, w.slotIndex)
+        assertEquals(0, BigDecimal("1").compareTo(w.perUnitDelta))
+        assertApprox("0.0000001", w.percentDelta, tolerance = "0.0000000001")
     }
-
-    // ---- Canonical cases 10-11: invariant violations -------------------------
 
     @Test(expected = IllegalArgumentException::class)
     fun `case 10 - negative price is rejected upstream by Offer`() {
@@ -136,15 +118,13 @@ class PriceComparatorTest {
         Offer(price = BigDecimal("1"), quantity = BigDecimal.ZERO)
     }
 
-    // ---- Feature 004 unit conversion cases -----------------------------------
-
     @Test
     fun `U1 - 500 g vs 1 kg, B wins with base delta one thousandth`() {
         val outcome = PriceComparator.compare(
             a = offer("2.50", "500", QuantityUnit.Gram),
             b = offer("4.00", "1", QuantityUnit.Kilogram),
         )
-        assertBWins(outcome, expectedDelta = "0.001", expectedPercent = "20")
+        assertWinner(outcome, index = 1, expectedDelta = "0.001", expectedPercent = "20")
     }
 
     @Test
@@ -162,7 +142,7 @@ class PriceComparatorTest {
             a = offer("0", "5", QuantityUnit.Gram),
             b = offer("1", "5", QuantityUnit.Gram),
         )
-        assertAWins(outcome, expectedDelta = "0.2", expectedPercent = "100")
+        assertWinner(outcome, index = 0, expectedDelta = "0.2", expectedPercent = "100")
     }
 
     @Test(expected = IllegalArgumentException::class)
@@ -173,18 +153,82 @@ class PriceComparatorTest {
         )
     }
 
-    // ---- Extra: symmetry -----------------------------------------------------
-
     @Test
     fun `swapping A and B flips the winner and preserves magnitudes`() {
         val a = offer("2.50", "500", QuantityUnit.Gram)
         val b = offer("4.00", "1000", QuantityUnit.Gram)
 
-        val forward = PriceComparator.compare(a, b) as ComparisonOutcome.BWins
-        val backward = PriceComparator.compare(b, a) as ComparisonOutcome.AWins
+        val forward = PriceComparator.compare(a, b) as ComparisonOutcome.Winner
+        val backward = PriceComparator.compare(b, a) as ComparisonOutcome.Winner
 
+        assertEquals(1, forward.slotIndex)
+        assertEquals(0, backward.slotIndex)
         assertEquals(0, forward.perUnitDelta.compareTo(backward.perUnitDelta))
         assertApprox(forward.percentDelta.toPlainString(), backward.percentDelta, tolerance = "0.00000001")
+    }
+
+    // ---- Feature 005: three-offer ranking ------------------------------------
+
+    @Test
+    fun `three offers - unique cheapest wins vs second cheapest`() {
+        // unit prices: A=0.005, B=0.004, C=0.006 → B wins vs A (0.001 / 20%)
+        val outcome = PriceComparator.compareMany(
+            listOf(
+                0 to offer("2.50", "500", QuantityUnit.Gram),
+                1 to offer("4.00", "1000", QuantityUnit.Gram),
+                2 to offer("3.00", "500", QuantityUnit.Gram),
+            ),
+        )
+        assertWinner(outcome, index = 1, expectedDelta = "0.001", expectedPercent = "20")
+    }
+
+    @Test
+    fun `three offers - top two tie yields Tie`() {
+        val outcome = PriceComparator.compareMany(
+            listOf(
+                0 to offer("2.00", "100", QuantityUnit.Gram),
+                1 to offer("4.00", "200", QuantityUnit.Gram),
+                2 to offer("5.00", "100", QuantityUnit.Gram),
+            ),
+        )
+        assertEquals(ComparisonOutcome.Tie, outcome)
+    }
+
+    @Test
+    fun `three offers - free offer wins with 100 percent vs second`() {
+        val outcome = PriceComparator.compareMany(
+            listOf(
+                0 to offer("1", "5", QuantityUnit.Gram),
+                1 to offer("0", "5", QuantityUnit.Gram),
+                2 to offer("2", "5", QuantityUnit.Gram),
+            ),
+        )
+        assertWinner(outcome, index = 1, expectedDelta = "0.2", expectedPercent = "100")
+    }
+
+    @Test
+    fun `three offers - unique min wins even when others tie for second`() {
+        // A=0.003, B=0.005, C=0.005 → A wins vs second (0.002 / 40%)
+        val outcome = PriceComparator.compareMany(
+            listOf(
+                0 to offer("3.00", "1000", QuantityUnit.Gram),
+                1 to offer("5.00", "1000", QuantityUnit.Gram),
+                2 to offer("2.50", "500", QuantityUnit.Gram),
+            ),
+        )
+        assertWinner(outcome, index = 0, expectedDelta = "0.002", expectedPercent = "40")
+    }
+
+    @Test
+    fun `compareMany preserves UI indices when slots are sparse`() {
+        // UI indices 0 and 2 (slot 1 blank / omitted)
+        val outcome = PriceComparator.compareMany(
+            listOf(
+                0 to offer("2.50", "500", QuantityUnit.Gram),
+                2 to offer("4.00", "1000", QuantityUnit.Gram),
+            ),
+        )
+        assertWinner(outcome, index = 2, expectedDelta = "0.001", expectedPercent = "20")
     }
 
     // ---- Helpers -------------------------------------------------------------
@@ -192,18 +236,17 @@ class PriceComparatorTest {
     private fun offer(price: String, quantity: String, unit: QuantityUnit): Offer =
         Offer(price = BigDecimal(price), quantity = BigDecimal(quantity), quantityUnit = unit)
 
-    private fun assertAWins(outcome: ComparisonOutcome, expectedDelta: String, expectedPercent: String) {
-        assertTrue("Expected AWins, got $outcome", outcome is ComparisonOutcome.AWins)
-        val a = outcome as ComparisonOutcome.AWins
-        assertEquals(0, BigDecimal(expectedDelta).compareTo(a.perUnitDelta))
-        assertEquals(0, BigDecimal(expectedPercent).compareTo(a.percentDelta))
-    }
-
-    private fun assertBWins(outcome: ComparisonOutcome, expectedDelta: String, expectedPercent: String) {
-        assertTrue("Expected BWins, got $outcome", outcome is ComparisonOutcome.BWins)
-        val b = outcome as ComparisonOutcome.BWins
-        assertEquals(0, BigDecimal(expectedDelta).compareTo(b.perUnitDelta))
-        assertEquals(0, BigDecimal(expectedPercent).compareTo(b.percentDelta))
+    private fun assertWinner(
+        outcome: ComparisonOutcome,
+        index: Int,
+        expectedDelta: String,
+        expectedPercent: String,
+    ) {
+        assertTrue("Expected Winner($index), got $outcome", outcome is ComparisonOutcome.Winner)
+        val w = outcome as ComparisonOutcome.Winner
+        assertEquals(index, w.slotIndex)
+        assertEquals(0, BigDecimal(expectedDelta).compareTo(w.perUnitDelta))
+        assertEquals(0, BigDecimal(expectedPercent).compareTo(w.percentDelta))
     }
 
     private fun assertApprox(expected: String, actual: BigDecimal, tolerance: String) {

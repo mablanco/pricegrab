@@ -36,7 +36,7 @@ class CompareScreenUnitsTest {
         composeRule.selectUnit("${TEST_TAG_OFFER_B}_unit", R.string.unit_name_kilogram)
 
         val ctx = composeRule.activity
-        val winner = ctx.getString(R.string.result_winner_b)
+        val winner = ctx.winnerHeadline(R.string.offer_b_title)
         val savings = ctx.getString(R.string.result_savings_per_kg, "1")
 
         composeRule.onNodeWithText(winner).assertIsDisplayed()
@@ -76,7 +76,7 @@ class CompareScreenUnitsTest {
         composeRule.onNodeWithTag("offerB_price").performTextInput("4.00")
         composeRule.onNodeWithTag("offerB_quantity").performTextInput("1")
 
-        val winner = composeRule.activity.getString(R.string.result_winner_b)
+        val winner = composeRule.activity.winnerHeadline(R.string.offer_b_title)
         composeRule.onNodeWithText(winner).assertDoesNotExist()
 
         composeRule.selectUnit("${TEST_TAG_OFFER_B}_unit", R.string.unit_name_kilogram)
