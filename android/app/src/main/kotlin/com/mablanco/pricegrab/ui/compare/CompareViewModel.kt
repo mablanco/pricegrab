@@ -11,9 +11,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import java.util.Locale
 
 /**
- * Owns the state for the Compare screen. Keeps the four raw strings and both
- * quantity units in the [SavedStateHandle] so process death and configuration
- * changes do not wipe them out.
+ * Owns the state for the Compare screen. Keeps 2..3 offer slots in the
+ * [SavedStateHandle] so process death and configuration changes do not wipe
+ * them out.
  */
 class CompareViewModel(
     private val savedStateHandle: SavedStateHandle,
@@ -21,12 +21,7 @@ class CompareViewModel(
 
     private val _state: MutableStateFlow<CompareUiState> = MutableStateFlow(
         CompareUiState(
-            priceARaw = savedStateHandle[CompareViewModelKeys.PRICE_A] ?: "",
-            quantityARaw = savedStateHandle[CompareViewModelKeys.QUANTITY_A] ?: "",
-            priceBRaw = savedStateHandle[CompareViewModelKeys.PRICE_B] ?: "",
-            quantityBRaw = savedStateHandle[CompareViewModelKeys.QUANTITY_B] ?: "",
-            quantityUnitA = readQuantityUnit(savedStateHandle, CompareViewModelKeys.QUANTITY_UNIT_A),
-            quantityUnitB = readQuantityUnit(savedStateHandle, CompareViewModelKeys.QUANTITY_UNIT_B),
+            offers = readOffersFromSavedState(savedStateHandle),
             undoState = restoreUndoStateFromSavedState(savedStateHandle),
         ),
     )
@@ -37,44 +32,53 @@ class CompareViewModel(
         _state.value = recomputeOutcome(_state.value)
     }
 
-    fun onPriceAChange(value: String) = update { it.copy(priceARaw = sanitize(value)) }
-    fun onQuantityAChange(value: String) = update { it.copy(quantityARaw = sanitize(value)) }
-    fun onPriceBChange(value: String) = update { it.copy(priceBRaw = sanitize(value)) }
-    fun onQuantityBChange(value: String) = update { it.copy(quantityBRaw = sanitize(value)) }
+    fun onPriceChange(index: Int, value: String) = updateSlot(index) {
+        it.copy(priceRaw = sanitize(value))
+    }
 
-    fun onQuantityUnitAChange(unit: QuantityUnit) = update { it.copy(quantityUnitA = unit) }
+    fun onQuantityChange(index: Int, value: String) = updateSlot(index) {
+        it.copy(quantityRaw = sanitize(value))
+    }
 
-    fun onQuantityUnitBChange(unit: QuantityUnit) = update { it.copy(quantityUnitB = unit) }
+    fun onUnitChange(index: Int, unit: QuantityUnit) = updateSlot(index) {
+        it.copy(quantityUnit = unit)
+    }
+
+    fun addOffer() {
+        val current = _state.value
+        if (current.offers.size >= MAX_OFFERS) return
+        update { it.copy(offers = it.offers + OfferSlotState()) }
+    }
+
+    fun removeOffer() {
+        val current = _state.value
+        if (current.offers.size <= MIN_OFFERS) return
+        update { it.copy(offers = it.offers.dropLast(1)) }
+    }
 
     fun resetComparison() {
         val current = _state.value
         if (!current.isResetEnabled) return
 
         val snapshot = PreResetSnapshot(
-            priceARaw = current.priceARaw,
-            quantityARaw = current.quantityARaw,
-            priceBRaw = current.priceBRaw,
-            quantityBRaw = current.quantityBRaw,
-            quantityUnitA = current.quantityUnitA,
-            quantityUnitB = current.quantityUnitB,
+            slots = current.offers.map { slot ->
+                OfferSlotSnapshot(
+                    priceRaw = slot.priceRaw,
+                    quantityRaw = slot.quantityRaw,
+                    quantityUnit = slot.quantityUnit,
+                )
+            },
         )
         val deadline = System.currentTimeMillis() + UNDO_LIFETIME_MS
 
-        savedStateHandle[CompareViewModelKeys.PRICE_A] = ""
-        savedStateHandle[CompareViewModelKeys.QUANTITY_A] = ""
-        savedStateHandle[CompareViewModelKeys.PRICE_B] = ""
-        savedStateHandle[CompareViewModelKeys.QUANTITY_B] = ""
-        savedStateHandle[CompareViewModelKeys.QUANTITY_UNIT_A] = QuantityUnit.Gram.name
-        savedStateHandle[CompareViewModelKeys.QUANTITY_UNIT_B] = QuantityUnit.Gram.name
-        savedStateHandle[CompareViewModelKeys.UNDO_PRICE_A] = snapshot.priceARaw
-        savedStateHandle[CompareViewModelKeys.UNDO_QUANTITY_A] = snapshot.quantityARaw
-        savedStateHandle[CompareViewModelKeys.UNDO_PRICE_B] = snapshot.priceBRaw
-        savedStateHandle[CompareViewModelKeys.UNDO_QUANTITY_B] = snapshot.quantityBRaw
-        savedStateHandle[CompareViewModelKeys.UNDO_QUANTITY_UNIT_A] = snapshot.quantityUnitA.name
-        savedStateHandle[CompareViewModelKeys.UNDO_QUANTITY_UNIT_B] = snapshot.quantityUnitB.name
-        savedStateHandle[CompareViewModelKeys.UNDO_DEADLINE] = deadline
+        persistOffersToSavedState(
+            savedStateHandle,
+            listOf(OfferSlotState(), OfferSlotState()),
+        )
+        persistUndoToSavedState(savedStateHandle, snapshot, deadline)
 
         val cleared = CompareUiState(
+            offers = listOf(OfferSlotState(), OfferSlotState()),
             undoState = UndoState(snapshot, deadline),
         )
         _state.value = recomputeOutcome(cleared)
@@ -83,23 +87,18 @@ class CompareViewModel(
     fun undoReset() {
         val undo = _state.value.undoState ?: return
         val snap = undo.snapshot
+        val restoredOffers = snap.slots.map { slot ->
+            OfferSlotState(
+                priceRaw = slot.priceRaw,
+                quantityRaw = slot.quantityRaw,
+                quantityUnit = slot.quantityUnit,
+            )
+        }
 
-        savedStateHandle[CompareViewModelKeys.PRICE_A] = snap.priceARaw
-        savedStateHandle[CompareViewModelKeys.QUANTITY_A] = snap.quantityARaw
-        savedStateHandle[CompareViewModelKeys.PRICE_B] = snap.priceBRaw
-        savedStateHandle[CompareViewModelKeys.QUANTITY_B] = snap.quantityBRaw
-        savedStateHandle[CompareViewModelKeys.QUANTITY_UNIT_A] = snap.quantityUnitA.name
-        savedStateHandle[CompareViewModelKeys.QUANTITY_UNIT_B] = snap.quantityUnitB.name
+        persistOffersToSavedState(savedStateHandle, restoredOffers)
         clearUndoFromSavedState(savedStateHandle)
 
-        val restored = CompareUiState(
-            priceARaw = snap.priceARaw,
-            quantityARaw = snap.quantityARaw,
-            priceBRaw = snap.priceBRaw,
-            quantityBRaw = snap.quantityBRaw,
-            quantityUnitA = snap.quantityUnitA,
-            quantityUnitB = snap.quantityUnitB,
-        )
+        val restored = CompareUiState(offers = restoredOffers)
         _state.value = recomputeOutcome(restored)
     }
 
@@ -109,47 +108,49 @@ class CompareViewModel(
         _state.value = _state.value.copy(undoState = null)
     }
 
+    private fun updateSlot(index: Int, transform: (OfferSlotState) -> OfferSlotState) {
+        update { state ->
+            require(index in state.offers.indices) { "Offer index out of range: $index" }
+            state.copy(
+                offers = state.offers.mapIndexed { i, slot ->
+                    if (i == index) transform(slot) else slot
+                },
+            )
+        }
+    }
+
     private fun update(transform: (CompareUiState) -> CompareUiState) {
         var next = transform(_state.value)
         if (next.undoState != null) {
             clearUndoFromSavedState(savedStateHandle)
             next = next.copy(undoState = null)
         }
-        savedStateHandle[CompareViewModelKeys.PRICE_A] = next.priceARaw
-        savedStateHandle[CompareViewModelKeys.QUANTITY_A] = next.quantityARaw
-        savedStateHandle[CompareViewModelKeys.PRICE_B] = next.priceBRaw
-        savedStateHandle[CompareViewModelKeys.QUANTITY_B] = next.quantityBRaw
-        savedStateHandle[CompareViewModelKeys.QUANTITY_UNIT_A] = next.quantityUnitA.name
-        savedStateHandle[CompareViewModelKeys.QUANTITY_UNIT_B] = next.quantityUnitB.name
+        persistOffersToSavedState(savedStateHandle, next.offers)
         _state.value = recomputeOutcome(next)
     }
 
     private fun recomputeOutcome(state: CompareUiState): CompareUiState {
         val locale = Locale.getDefault()
-        val aResult = OfferParser.parse(
-            state.priceARaw,
-            state.quantityARaw,
-            state.quantityUnitA,
-            locale,
-        )
-        val bResult = OfferParser.parse(
-            state.priceBRaw,
-            state.quantityBRaw,
-            state.quantityUnitB,
-            locale,
-        )
+        val parseResults = state.offers.map { slot ->
+            OfferParser.parse(slot.priceRaw, slot.quantityRaw, slot.quantityUnit, locale)
+        }
 
-        val gate = evaluateComparison(aResult, bResult)
+        val gate = evaluateComparison(parseResults)
         val outcome = when (gate) {
             is ComparisonGate.Ready -> gate.outcome
             ComparisonGate.Incomplete, ComparisonGate.IncompatibleUnits -> null
         }
 
+        val offersWithErrors = state.offers.mapIndexed { index, slot ->
+            val result = parseResults[index]
+            slot.copy(
+                priceError = priceErrorFor(result, slot.priceRaw),
+                quantityError = quantityErrorFor(result, slot.quantityRaw),
+            )
+        }
+
         return state.copy(
-            priceAError = priceErrorFor(aResult, state.priceARaw),
-            quantityAError = quantityErrorFor(aResult, state.quantityARaw),
-            priceBError = priceErrorFor(bResult, state.priceBRaw),
-            quantityBError = quantityErrorFor(bResult, state.quantityBRaw),
+            offers = offersWithErrors,
             outcome = outcome,
             incompatibleUnits = gate is ComparisonGate.IncompatibleUnits,
         )

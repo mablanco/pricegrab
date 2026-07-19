@@ -2,15 +2,20 @@
 <resources>
     <string name="app_name">PriceGrab</string>
 
-    <string name="compare_heading">Compare two offers</string>
+    <string name="compare_heading">Compare offers</string>
     <string name="offer_a_title">Offer A</string>
     <string name="offer_b_title">Offer B</string>
+    <string name="offer_c_title">Offer C</string>
     <string name="price_label">Price</string>
     <string name="quantity_label">Quantity</string>
 
     <string name="cd_price_field">Price for %1$s</string>
     <string name="cd_quantity_field">Quantity for %1$s</string>
     <string name="cd_quantity_unit">Quantity unit for %1$s</string>
+    <string name="cd_add_offer">Add another offer</string>
+    <string name="cd_remove_offer">Remove last offer</string>
+    <string name="add_offer">Add</string>
+    <string name="remove_offer">Remove</string>
 
     <string name="error_not_a_number">Enter a valid number</string>
     <string name="error_negative_price">Price must be zero or higher</string>
@@ -18,8 +23,7 @@
 
     <string name="result_placeholder">Enter both offers to see which is cheaper</string>
 
-    <string name="result_winner_a">Offer A is cheaper</string>
-    <string name="result_winner_b">Offer B is cheaper</string>
+    <string name="result_winner">%1$s is cheaper</string>
     <string name="result_tied">Same price per unit</string>
     <string name="result_savings">Save %1$s per unit</string>
     <string name="result_savings_per_kg">Save %1$s per kg</string>

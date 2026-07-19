@@ -3,27 +3,26 @@ package com.mablanco.pricegrab.core.model
 import java.math.BigDecimal
 
 /**
- * Result of comparing two [Offer]s by unit price.
+ * Result of comparing two or more [Offer]s by unit price.
  *
- * - [Tie] — both offers have the same unit price (value-based comparison).
- * - [AWins] — offer A is strictly cheaper per unit than offer B.
- * - [BWins] — offer B is strictly cheaper per unit than offer A.
+ * - [Tie] — two or more offers share the absolute minimum unit price.
+ * - [Winner] — a unique cheapest offer; deltas are versus the second-cheapest.
  *
- * `perUnitDelta` is always `>= 0` and equals `|a.unitPrice - b.unitPrice|`.
- * `percentDelta` is the savings expressed against the more expensive offer
- * (the loser), so `B is 20% cheaper` means a 20% reduction relative to A's
- * unit price when A is the loser. `percentDelta` is in the range `[0, 100]`.
+ * `perUnitDelta` is always `>= 0` and equals
+ * `secondCheapest.unitPrice - winner.unitPrice`.
+ * `percentDelta` is the savings against the second-cheapest offer, in the
+ * range `[0, 100]`. When the winner is free and the second is not,
+ * `percentDelta == 100`.
+ *
+ * [Winner.slotIndex] is the UI index of the winning offer in the full
+ * compare list (not the index among only-parsed offers).
  */
 sealed interface ComparisonOutcome {
 
     data object Tie : ComparisonOutcome
 
-    data class AWins(
-        val perUnitDelta: BigDecimal,
-        val percentDelta: BigDecimal,
-    ) : ComparisonOutcome
-
-    data class BWins(
+    data class Winner(
+        val slotIndex: Int,
         val perUnitDelta: BigDecimal,
         val percentDelta: BigDecimal,
     ) : ComparisonOutcome

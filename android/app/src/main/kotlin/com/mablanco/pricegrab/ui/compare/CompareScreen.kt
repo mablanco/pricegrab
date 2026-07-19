@@ -12,12 +12,10 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -29,6 +27,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -37,38 +36,25 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.heading
-import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.core.os.ConfigurationCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mablanco.pricegrab.R
-import com.mablanco.pricegrab.core.model.ComparisonOutcome
-import com.mablanco.pricegrab.core.model.Dimension
 import com.mablanco.pricegrab.core.model.QuantityUnit
-import com.mablanco.pricegrab.ui.theme.PriceGrabTheme
 import com.mablanco.pricegrab.ui.theme.spacing
 import kotlinx.coroutines.withTimeoutOrNull
-import java.util.Locale
 
 /**
  * Stateful entry point: reads a [CompareViewModel] from the current
  * [androidx.lifecycle.ViewModelStore] and delegates to the stateless
  * [CompareScreen] overload.
- *
- * The Compare screen owns its own [Scaffold] (with a top app bar and a
- * snackbar host) so the activity-level `PriceGrabApp` stays a thin
- * theme + screen wrapper.
  */
 @Composable
 fun CompareScreen(
@@ -78,12 +64,11 @@ fun CompareScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
     CompareScreen(
         state = state,
-        onPriceAChange = viewModel::onPriceAChange,
-        onQuantityAChange = viewModel::onQuantityAChange,
-        onPriceBChange = viewModel::onPriceBChange,
-        onQuantityBChange = viewModel::onQuantityBChange,
-        onQuantityUnitAChange = viewModel::onQuantityUnitAChange,
-        onQuantityUnitBChange = viewModel::onQuantityUnitBChange,
+        onPriceChange = viewModel::onPriceChange,
+        onQuantityChange = viewModel::onQuantityChange,
+        onUnitChange = viewModel::onUnitChange,
+        onAddOffer = viewModel::addOffer,
+        onRemoveOffer = viewModel::removeOffer,
         onResetClick = viewModel::resetComparison,
         onUndoClick = viewModel::undoReset,
         onUndoDismissed = viewModel::dismissUndo,
@@ -95,12 +80,11 @@ fun CompareScreen(
 @Composable
 fun CompareScreen(
     state: CompareUiState,
-    onPriceAChange: (String) -> Unit,
-    onQuantityAChange: (String) -> Unit,
-    onPriceBChange: (String) -> Unit,
-    onQuantityBChange: (String) -> Unit,
-    onQuantityUnitAChange: (QuantityUnit) -> Unit,
-    onQuantityUnitBChange: (QuantityUnit) -> Unit,
+    onPriceChange: (Int, String) -> Unit,
+    onQuantityChange: (Int, String) -> Unit,
+    onUnitChange: (Int, QuantityUnit) -> Unit,
+    onAddOffer: () -> Unit,
+    onRemoveOffer: () -> Unit,
     onResetClick: () -> Unit,
     onUndoClick: () -> Unit,
     onUndoDismissed: () -> Unit,
@@ -124,24 +108,17 @@ fun CompareScreen(
     ) { innerPadding ->
         CompareContent(
             state = state,
-            onPriceAChange = onPriceAChange,
-            onQuantityAChange = onQuantityAChange,
-            onPriceBChange = onPriceBChange,
-            onQuantityBChange = onQuantityBChange,
-            onQuantityUnitAChange = onQuantityUnitAChange,
-            onQuantityUnitBChange = onQuantityUnitBChange,
+            onPriceChange = onPriceChange,
+            onQuantityChange = onQuantityChange,
+            onUnitChange = onUnitChange,
+            onAddOffer = onAddOffer,
+            onRemoveOffer = onRemoveOffer,
             priceAFocusRequester = priceAFocusRequester,
             modifier = Modifier.padding(innerPadding),
         )
     }
 }
 
-/**
- * FR-005.3: move keyboard focus to Price A whenever a *fresh* reset
- * starts a new UndoState. Keyed on the deadline so the effect refires
- * for each new reset (each has a unique deadline) but does not steal
- * focus on rotation (rotation preserves the deadline).
- */
 @Composable
 private fun FocusOnFreshResetEffect(
     undoState: UndoState?,
@@ -154,16 +131,6 @@ private fun FocusOnFreshResetEffect(
     }
 }
 
-/**
- * Drive the undo Snackbar from the active [UndoState]
- * (research.md §3 + §4). Always shown with
- * `SnackbarDuration.Indefinite` and bounded by `withTimeoutOrNull
- * (remaining)`, where `remaining = deadline - now()`. The wrapper
- * uses the coroutine clock, so the lifetime is honoured verbatim
- * across configuration changes (after rotation, a smaller `remaining`
- * is computed and the Snackbar shows for exactly that long instead
- * of restarting from a full 10 s).
- */
 @Composable
 private fun UndoSnackbarEffect(
     undoState: UndoState?,
@@ -175,15 +142,11 @@ private fun UndoSnackbarEffect(
     val undoActionLabel = stringResource(R.string.undo_action)
     LaunchedEffect(undoState) {
         if (undoState == null) {
-            // No active Undo: hide any Snackbar still on screen so the
-            // typing-dismisses-undo path closes the surface immediately.
             snackbarHostState.currentSnackbarData?.dismiss()
             return@LaunchedEffect
         }
         val remaining = undoState.expiresAtEpochMillis - System.currentTimeMillis()
         if (remaining <= 0L) {
-            // Stale state (e.g. process death survived the lifetime).
-            // Mirror dismissUndo() upstream so observers stay in sync.
             onUndoDismissed()
             return@LaunchedEffect
         }
@@ -208,11 +171,6 @@ private fun CompareTopBar(enabled: Boolean, onResetClick: () -> Unit) {
     val resetDescription = stringResource(R.string.reset_action_description)
     CenterAlignedTopAppBar(
         title = {
-            // Brandmark glyph + plain-text title rendered as a single Row so
-            // they read as one composite "PriceGrab" mark to TalkBack (the
-            // Icon is decorative — `contentDescription = null` keeps it out
-            // of the merged semantics tree, the Text carries the
-            // announcement).
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.s),
@@ -241,9 +199,6 @@ private fun CompareTopBar(enabled: Boolean, onResetClick: () -> Unit) {
             ) {
                 Icon(
                     imageVector = Icons.Filled.Refresh,
-                    // contentDescription set on the IconButton's
-                    // semantics so TalkBack reads
-                    // "Clear all fields and start a new comparison".
                     contentDescription = null,
                 )
             }
@@ -254,12 +209,11 @@ private fun CompareTopBar(enabled: Boolean, onResetClick: () -> Unit) {
 @Composable
 private fun CompareContent(
     state: CompareUiState,
-    onPriceAChange: (String) -> Unit,
-    onQuantityAChange: (String) -> Unit,
-    onPriceBChange: (String) -> Unit,
-    onQuantityBChange: (String) -> Unit,
-    onQuantityUnitAChange: (QuantityUnit) -> Unit,
-    onQuantityUnitBChange: (QuantityUnit) -> Unit,
+    onPriceChange: (Int, String) -> Unit,
+    onQuantityChange: (Int, String) -> Unit,
+    onUnitChange: (Int, QuantityUnit) -> Unit,
+    onAddOffer: () -> Unit,
+    onRemoveOffer: () -> Unit,
     priceAFocusRequester: FocusRequester,
     modifier: Modifier = Modifier,
 ) {
@@ -276,39 +230,68 @@ private fun CompareContent(
             style = MaterialTheme.typography.titleLarge,
         )
 
-        OfferCard(
-            title = stringResource(R.string.offer_a_title),
-            priceRaw = state.priceARaw,
-            priceError = state.priceAError,
-            quantityRaw = state.quantityARaw,
-            quantityError = state.quantityAError,
-            quantityUnit = state.quantityUnitA,
-            onPriceChange = onPriceAChange,
-            onQuantityChange = onQuantityAChange,
-            onQuantityUnitChange = onQuantityUnitAChange,
-            testTagPrefix = TEST_TAG_OFFER_A,
-            priceFocusRequester = priceAFocusRequester,
-        )
+        state.offers.forEachIndexed { index, slot ->
+            OfferCard(
+                title = stringResource(offerTitleRes(index)),
+                priceRaw = slot.priceRaw,
+                priceError = slot.priceError,
+                quantityRaw = slot.quantityRaw,
+                quantityError = slot.quantityError,
+                quantityUnit = slot.quantityUnit,
+                onPriceChange = { onPriceChange(index, it) },
+                onQuantityChange = { onQuantityChange(index, it) },
+                onQuantityUnitChange = { onUnitChange(index, it) },
+                testTagPrefix = offerTestTag(index),
+                priceFocusRequester = if (index == 0) priceAFocusRequester else null,
+            )
+        }
 
-        OfferCard(
-            title = stringResource(R.string.offer_b_title),
-            priceRaw = state.priceBRaw,
-            priceError = state.priceBError,
-            quantityRaw = state.quantityBRaw,
-            quantityError = state.quantityBError,
-            quantityUnit = state.quantityUnitB,
-            onPriceChange = onPriceBChange,
-            onQuantityChange = onQuantityBChange,
-            onQuantityUnitChange = onQuantityUnitBChange,
-            testTagPrefix = TEST_TAG_OFFER_B,
-            priceFocusRequester = null,
+        OfferCountControls(
+            offerCount = state.offers.size,
+            onAddOffer = onAddOffer,
+            onRemoveOffer = onRemoveOffer,
         )
 
         ResultRegion(
             outcome = state.outcome,
             incompatibleUnits = state.incompatibleUnits,
-            dimension = state.outcome?.let { state.quantityUnitA.dimension },
+            dimension = resultDimension(state),
         )
+    }
+}
+
+@Composable
+private fun OfferCountControls(
+    offerCount: Int,
+    onAddOffer: () -> Unit,
+    onRemoveOffer: () -> Unit,
+) {
+    val addDescription = stringResource(R.string.cd_add_offer)
+    val removeDescription = stringResource(R.string.cd_remove_offer)
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.s),
+    ) {
+        if (offerCount < MAX_OFFERS) {
+            TextButton(
+                onClick = onAddOffer,
+                modifier = Modifier
+                    .testTag(TEST_TAG_ADD_OFFER)
+                    .semantics { contentDescription = addDescription },
+            ) {
+                Text(stringResource(R.string.add_offer))
+            }
+        }
+        if (offerCount > MIN_OFFERS) {
+            TextButton(
+                onClick = onRemoveOffer,
+                modifier = Modifier
+                    .testTag(TEST_TAG_REMOVE_OFFER)
+                    .semantics { contentDescription = removeDescription },
+            ) {
+                Text(stringResource(R.string.remove_offer))
+            }
+        }
     }
 }
 
@@ -417,161 +400,6 @@ private fun LabeledNumberField(
     )
 }
 
-/**
- * Outer wrapper for the result region. Always emitted so the polite live
- * region (and its `result` test tag) stays in the merged tree across
- * cold launch → typing → reset transitions, even when the inner content
- * switches between the placeholder hint and the elevated hero card.
- *
- * - When `outcome == null`: render a soft placeholder Text (no Card frame).
- * - When `outcome != null`: render the [HeroResultCard].
- *
- * Either branch announces its content via the same content description on
- * the wrapper, so TalkBack speaks one full thought per state change.
- */
-@Composable
-private fun ResultRegion(
-    outcome: ComparisonOutcome?,
-    incompatibleUnits: Boolean,
-    dimension: Dimension?,
-) {
-    val configuration = LocalConfiguration.current
-    val locale = ConfigurationCompat.getLocales(configuration).get(0) ?: Locale.getDefault()
-
-    val placeholder = stringResource(R.string.result_placeholder)
-    val incompatibleMessage = stringResource(R.string.error_incompatible_units)
-    val headline = outcome?.headlineRes()?.let { stringResource(it) }
-    val savings = ResultPresenter.present(outcome, dimension, locale)
-    val savingsLine: String? = savings?.let { formatSavingsLine(it.perUnitDelta, dimension) }
-    val a11ySummary: String = when {
-        incompatibleUnits -> incompatibleMessage
-        headline == null -> placeholder
-        savingsLine != null -> "$headline. $savingsLine"
-        else -> headline
-    }
-
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .testTag(TEST_TAG_RESULT)
-            .semantics {
-                liveRegion = LiveRegionMode.Polite
-                contentDescription = a11ySummary
-            },
-    ) {
-        when {
-            incompatibleUnits -> {
-                Text(
-                    text = incompatibleMessage,
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.testTag(TEST_TAG_INCOMPATIBLE_UNITS),
-                )
-            }
-            outcome == null -> {
-                Text(
-                    text = placeholder,
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
-            else -> {
-                HeroResultCard(
-                    outcome = outcome,
-                    headline = headline ?: "",
-                    savingsLine = savingsLine,
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun formatSavingsLine(perUnitDelta: String, dimension: Dimension?): String? {
-    if (dimension == null) return null
-    @StringRes val templateRes = when (dimension) {
-        Dimension.Mass -> R.string.result_savings_per_kg
-        Dimension.Volume -> R.string.result_savings_per_L
-        Dimension.Count -> R.string.result_savings_per_piece
-    }
-    return stringResource(templateRes, perUnitDelta)
-}
-
-/**
- * The polished, elevated result card introduced by feature 003 / US2.
- *
- * Visual treatment:
- * - [ElevatedCard] surface (a tonal lift over the offer cards' standard
- *   [Card], so the result reads as the hero of the screen).
- * - Leading icon: `Icons.Filled.Check` for a winner, the custom
- *   `ic_tie_glyph` (= sign) for a tie. Both are decorative — the
- *   announcement comes from the headline + savings text on the
- *   wrapper's content description.
- * - Headline in `headlineSmall` (Bold via [PriceGrabTypography]) with
- *   `Modifier.semantics { heading() }` so TalkBack reads it as a
- *   heading.
- * - Body in `bodyLarge` for the per-unit savings line; collapsed when
- *   savings are not applicable (i.e., a tie).
- */
-@Composable
-private fun HeroResultCard(
-    outcome: ComparisonOutcome,
-    headline: String,
-    savingsLine: String?,
-) {
-    val spacing = MaterialTheme.spacing
-    ElevatedCard(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = spacing.s)
-            .testTag(TEST_TAG_HERO_RESULT),
-        elevation = CardDefaults.elevatedCardElevation(),
-    ) {
-        Row(
-            modifier = Modifier.padding(spacing.l),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(spacing.m),
-        ) {
-            HeroResultIcon(outcome)
-            Column(verticalArrangement = Arrangement.spacedBy(spacing.s)) {
-                Text(
-                    text = headline,
-                    style = MaterialTheme.typography.headlineSmall,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    modifier = Modifier
-                        .testTag(TEST_TAG_RESULT_TEXT)
-                        .semantics { heading() },
-                )
-                if (savingsLine != null) {
-                    Text(
-                        text = savingsLine,
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.testTag(TEST_TAG_RESULT_SAVINGS),
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun HeroResultIcon(outcome: ComparisonOutcome) {
-    val tint = MaterialTheme.colorScheme.primary
-    when (outcome) {
-        is ComparisonOutcome.AWins, is ComparisonOutcome.BWins -> Icon(
-            imageVector = Icons.Filled.Check,
-            contentDescription = null,
-            tint = tint,
-        )
-        ComparisonOutcome.Tie -> Icon(
-            painter = painterResource(R.drawable.ic_tie_glyph),
-            contentDescription = null,
-            tint = tint,
-        )
-    }
-}
-
 @StringRes
 private fun InputError.messageRes(): Int = when (this) {
     InputError.NotANumber -> R.string.error_not_a_number
@@ -579,33 +407,20 @@ private fun InputError.messageRes(): Int = when (this) {
     InputError.NonPositiveQuantity -> R.string.error_non_positive_quantity
 }
 
-@StringRes
-private fun ComparisonOutcome.headlineRes(): Int = when (this) {
-    ComparisonOutcome.Tie -> R.string.result_tied
-    is ComparisonOutcome.AWins -> R.string.result_winner_a
-    is ComparisonOutcome.BWins -> R.string.result_winner_b
-}
-
-// ---- Test tags (constants so tests can reference them) ----------------------
+// ---- Test tags --------------------------------------------------------------
 
 const val TEST_TAG_OFFER_A: String = "offerA"
 const val TEST_TAG_OFFER_B: String = "offerB"
+const val TEST_TAG_OFFER_C: String = "offerC"
+const val TEST_TAG_ADD_OFFER: String = "add_offer"
+const val TEST_TAG_REMOVE_OFFER: String = "remove_offer"
 
-// The outer result region (always emitted, hosts the polite live region).
 const val TEST_TAG_RESULT: String = "result"
-
-// The elevated hero card (only emitted when a comparison result exists).
 const val TEST_TAG_HERO_RESULT: String = "heroResult"
-
 const val TEST_TAG_RESULT_TEXT: String = "result_text"
 const val TEST_TAG_RESULT_SAVINGS: String = "result_savings"
 const val TEST_TAG_INCOMPATIBLE_UNITS: String = "incompatible_units"
 const val TEST_TAG_RESET: String = "reset_action"
 const val TEST_TAG_BRANDMARK: String = "brandmark"
 
-// ---- Layout constants -------------------------------------------------------
-
-// Material 3's default top-app-bar leading icon slot is 24dp; we keep the
-// brandmark at the same size so it visually aligns with the trailing reset
-// IconButton's 24dp glyph and stays inside the 64dp app-bar height.
 private val BRANDMARK_SIZE = 24.dp

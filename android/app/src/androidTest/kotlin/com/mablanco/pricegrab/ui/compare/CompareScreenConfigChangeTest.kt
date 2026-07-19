@@ -31,7 +31,7 @@ class CompareScreenConfigChangeTest {
         composeRule.onNodeWithTag("offerB_price").performTextInput("4.00")
         composeRule.onNodeWithTag("offerB_quantity").performTextInput("1000")
 
-        val expectedResult = composeRule.activity.getString(R.string.result_winner_b)
+        val expectedResult = composeRule.activity.winnerHeadline(R.string.offer_b_title)
         composeRule.onNodeWithText(expectedResult).assertIsDisplayed()
 
         composeRule.activityRule.scenario.recreate()

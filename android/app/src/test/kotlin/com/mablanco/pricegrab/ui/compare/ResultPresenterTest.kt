@@ -20,7 +20,8 @@ class ResultPresenterTest {
 
     @Test
     fun `null dimension has no savings to display`() {
-        val outcome = ComparisonOutcome.BWins(
+        val outcome = ComparisonOutcome.Winner(
+            slotIndex = 1,
             perUnitDelta = BigDecimal("0.001"),
             percentDelta = BigDecimal("20"),
         )
@@ -34,7 +35,8 @@ class ResultPresenterTest {
 
     @Test
     fun `mass delta one thousandth displays as 1 per kg`() {
-        val outcome = ComparisonOutcome.BWins(
+        val outcome = ComparisonOutcome.Winner(
+            slotIndex = 1,
             perUnitDelta = BigDecimal("0.001"),
             percentDelta = BigDecimal("20"),
         )
@@ -45,7 +47,8 @@ class ResultPresenterTest {
 
     @Test
     fun `volume delta four ten-thousandths displays as 0_4 per L`() {
-        val outcome = ComparisonOutcome.BWins(
+        val outcome = ComparisonOutcome.Winner(
+            slotIndex = 1,
             perUnitDelta = BigDecimal("0.0004"),
             percentDelta = BigDecimal("20"),
         )
@@ -55,7 +58,8 @@ class ResultPresenterTest {
 
     @Test
     fun `count delta displays without mass scaling`() {
-        val outcome = ComparisonOutcome.BWins(
+        val outcome = ComparisonOutcome.Winner(
+            slotIndex = 1,
             perUnitDelta = BigDecimal("0.083333"),
             percentDelta = BigDecimal("16.7"),
         )
@@ -64,8 +68,9 @@ class ResultPresenterTest {
     }
 
     @Test
-    fun `B wins with round percent renders without trailing zero`() {
-        val outcome = ComparisonOutcome.BWins(
+    fun `winner with round percent renders without trailing zero`() {
+        val outcome = ComparisonOutcome.Winner(
+            slotIndex = 1,
             perUnitDelta = BigDecimal("0.001"),
             percentDelta = BigDecimal("20"),
         )
@@ -75,8 +80,9 @@ class ResultPresenterTest {
     }
 
     @Test
-    fun `A wins with one-hundred percent (free offer) renders cleanly`() {
-        val outcome = ComparisonOutcome.AWins(
+    fun `winner with one-hundred percent (free offer) renders cleanly`() {
+        val outcome = ComparisonOutcome.Winner(
+            slotIndex = 0,
             perUnitDelta = BigDecimal("0.2"),
             percentDelta = BigDecimal("100"),
         )
@@ -87,7 +93,8 @@ class ResultPresenterTest {
 
     @Test
     fun `non-round percent rounds half up to one decimal`() {
-        val outcome = ComparisonOutcome.BWins(
+        val outcome = ComparisonOutcome.Winner(
+            slotIndex = 1,
             perUnitDelta = BigDecimal("0.5"),
             percentDelta = BigDecimal("16.666666666"),
         )
@@ -98,7 +105,8 @@ class ResultPresenterTest {
 
     @Test
     fun `tiny percent rounds down to zero (acceptable for v1)`() {
-        val outcome = ComparisonOutcome.AWins(
+        val outcome = ComparisonOutcome.Winner(
+            slotIndex = 0,
             perUnitDelta = BigDecimal("1"),
             percentDelta = BigDecimal("0.0000001"),
         )
@@ -109,7 +117,8 @@ class ResultPresenterTest {
 
     @Test
     fun `es-ES uses comma decimal separator for both numbers`() {
-        val outcome = ComparisonOutcome.BWins(
+        val outcome = ComparisonOutcome.Winner(
+            slotIndex = 1,
             perUnitDelta = BigDecimal("0.001"),
             percentDelta = BigDecimal("16.7"),
         )
@@ -120,7 +129,8 @@ class ResultPresenterTest {
 
     @Test
     fun `large per-unit delta is formatted with grouping when relevant`() {
-        val outcome = ComparisonOutcome.AWins(
+        val outcome = ComparisonOutcome.Winner(
+            slotIndex = 0,
             perUnitDelta = BigDecimal("1.2345"),
             percentDelta = BigDecimal("12.5"),
         )

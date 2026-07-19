@@ -28,7 +28,7 @@ class CompareScreenIncompatibleUnitsTest {
 
         val ctx = composeRule.activity
         val error = ctx.getString(R.string.error_incompatible_units)
-        val winner = ctx.getString(R.string.result_winner_b)
+        val winner = ctx.winnerHeadline(R.string.offer_b_title)
 
         composeRule.onNodeWithText(error).assertIsDisplayed()
         composeRule.onNodeWithTag(TEST_TAG_INCOMPATIBLE_UNITS).assertIsDisplayed()
@@ -49,7 +49,7 @@ class CompareScreenIncompatibleUnitsTest {
 
         composeRule.selectUnit("${TEST_TAG_OFFER_B}_unit", R.string.unit_name_kilogram)
 
-        val winner = ctx.getString(R.string.result_winner_b)
+        val winner = ctx.winnerHeadline(R.string.offer_b_title)
         composeRule.onNodeWithText(error).assertDoesNotExist()
         composeRule.onNodeWithText(winner).assertIsDisplayed()
     }
