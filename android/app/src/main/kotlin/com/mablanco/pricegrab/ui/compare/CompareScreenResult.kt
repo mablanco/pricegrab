@@ -45,7 +45,15 @@ internal fun ResultRegion(
     val incompatibleMessage = stringResource(R.string.error_incompatible_units)
     val headline = outcome?.let { outcomeHeadline(it) }
     val savings = ResultPresenter.present(outcome, dimension, locale)
-    val savingsLine: String? = savings?.let { formatSavingsLine(it.perUnitDelta, dimension) }
+    val savingsLine: String? = when {
+        savings == null -> null
+        outcome is ComparisonOutcome.Winner -> formatSavingsLine(
+            perUnitDelta = savings.perUnitDelta,
+            dimension = dimension,
+            versusOfferTitle = stringResource(offerTitleRes(outcome.secondSlotIndex)),
+        )
+        else -> null
+    }
     val a11ySummary: String = when {
         incompatibleUnits -> incompatibleMessage
         headline == null -> placeholder
@@ -99,14 +107,18 @@ private fun outcomeHeadline(outcome: ComparisonOutcome): String = when (outcome)
 }
 
 @Composable
-private fun formatSavingsLine(perUnitDelta: String, dimension: Dimension?): String? {
+private fun formatSavingsLine(
+    perUnitDelta: String,
+    dimension: Dimension?,
+    versusOfferTitle: String,
+): String? {
     if (dimension == null) return null
     @StringRes val templateRes = when (dimension) {
         Dimension.Mass -> R.string.result_savings_per_kg
         Dimension.Volume -> R.string.result_savings_per_L
         Dimension.Count -> R.string.result_savings_per_piece
     }
-    return stringResource(templateRes, perUnitDelta)
+    return stringResource(templateRes, perUnitDelta, versusOfferTitle)
 }
 
 @Composable

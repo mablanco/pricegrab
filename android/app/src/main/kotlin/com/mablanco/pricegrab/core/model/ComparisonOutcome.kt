@@ -23,6 +23,8 @@ sealed interface ComparisonOutcome {
 
     data class Winner(
         val slotIndex: Int,
+        /** UI index of the second-cheapest offer (runner-up for savings copy). */
+        val secondSlotIndex: Int,
         val perUnitDelta: BigDecimal,
         val percentDelta: BigDecimal,
     ) : ComparisonOutcome

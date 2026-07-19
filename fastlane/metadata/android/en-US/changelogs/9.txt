@@ -1,5 +1,5 @@
 Compare up to three offers:
 • Tap + to add a third offer (Offer C); tap − to remove it. Still starts with two.
-• Winner is the cheapest per kg / L / piece; savings are versus the second-cheapest.
+• Winner is the cheapest per kg / L / piece; savings name the second-cheapest offer.
 • Blank third card is ignored until you fill it in.
-• Launcher icon artwork shifted up slightly for more even padding under circular masks.
+• Launcher icon artwork recentered vertically (corrected downward vs earlier cut).

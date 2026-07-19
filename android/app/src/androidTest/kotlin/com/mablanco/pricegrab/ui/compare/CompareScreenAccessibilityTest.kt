@@ -71,7 +71,11 @@ class CompareScreenAccessibilityTest {
         composeRule.waitForIdle()
 
         val headline = ctx.winnerHeadline(R.string.offer_b_title)
-        val savings = ctx.getString(R.string.result_savings_per_kg, "1")
+        val savings = ctx.getString(
+            R.string.result_savings_per_kg,
+            "1",
+            ctx.getString(R.string.offer_a_title),
+        )
 
         composeRule.onNodeWithTag("result").assert(hasContentDescriptionContaining(headline))
         composeRule.onNodeWithTag("result").assert(hasContentDescriptionContaining(savings))

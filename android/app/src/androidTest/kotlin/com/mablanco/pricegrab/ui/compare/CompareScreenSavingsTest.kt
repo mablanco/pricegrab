@@ -31,7 +31,11 @@ class CompareScreenSavingsTest {
         composeRule.onNodeWithTag("offerB_quantity").performTextInput("1000")
 
         val ctx = composeRule.activity
-        val expected = ctx.getString(R.string.result_savings_per_kg, "1")
+        val expected = ctx.getString(
+            R.string.result_savings_per_kg,
+            "1",
+            ctx.getString(R.string.offer_a_title),
+        )
 
         composeRule.onNodeWithTag("result_savings").assertIsDisplayed()
         composeRule.onNodeWithText(expected).assertIsDisplayed()
@@ -49,7 +53,11 @@ class CompareScreenSavingsTest {
         composeRule.onNodeWithTag("offerB_quantity").performTextInput("100")
 
         val ctx = composeRule.activity
-        val expected = ctx.getString(R.string.result_savings_per_kg, "50")
+        val expected = ctx.getString(
+            R.string.result_savings_per_kg,
+            "50",
+            ctx.getString(R.string.offer_b_title),
+        )
 
         composeRule.onNodeWithTag("result_savings").assertIsDisplayed()
         composeRule.onNodeWithText(expected).assertIsDisplayed()
