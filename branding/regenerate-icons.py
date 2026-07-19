@@ -69,7 +69,8 @@ BG_HEX = "#2F5C73"
 # Negative values shift art left/up on the output canvas. Re-measure if
 # FRAME_BOX changes.
 ART_OFFSET_X_PX = -17
-ART_OFFSET_Y_PX = -74
+# v0.1.8: nudge further up so circular masks show even top/bottom air.
+ART_OFFSET_Y_PX = -95
 
 ART_SCALE = 0.72
 

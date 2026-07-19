@@ -39,10 +39,10 @@
 
 ## Phase 4: Release
 
-- [ ] T021 Bump versionCode 9 / versionName 0.1.8.
-- [ ] T022 Changelogs en/es for code 9.
-- [ ] T023 `ART_OFFSET_Y_PX` nudge (~−90..−100); regenerate icons.
-- [ ] T024 Update `docs/fdroid.md`; ledger PR U/V/W.
+- [x] T021 Bump versionCode 9 / versionName 0.1.8.
+- [x] T022 Changelogs en/es for code 9.
+- [x] T023 `ART_OFFSET_Y_PX` nudge (~−95); regenerate icons.
+- [x] T024 Update `docs/fdroid.md`; ledger PR U/V/W.
 - [ ] T025 Tag v0.1.8 after manual verification (Marco).
 
 ## PR strategy
