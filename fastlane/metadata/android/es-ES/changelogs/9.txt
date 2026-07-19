@@ -1,0 +1,5 @@
+Compara hasta tres ofertas:
+• Pulsa + para añadir una tercera oferta (Oferta C); pulsa − para quitarla. Sigue empezando con dos.
+• Gana la más barata por kg / L / unidad; el ahorro es frente a la segunda más barata.
+• La tercera tarjeta en blanco se ignora hasta que la rellenes.
+• Icono del launcher un poco más arriba para un margen más uniforme en máscaras circulares.

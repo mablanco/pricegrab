@@ -83,9 +83,9 @@ Repo: https://github.com/mablanco/pricegrab.git
 Binaries: https://github.com/mablanco/pricegrab/releases/download/v%v/app-release.apk
 
 Builds:
-  - versionName: 0.1.7
-    versionCode: 8
-    commit: 80c11dc4b8dd622be2d3082fd9ec0acc672fde4c
+  - versionName: 0.1.8
+    versionCode: 9
+    commit: PLACEHOLDER_V018_COMMIT
     subdir: android/app
     gradle:
       - yes
@@ -94,8 +94,8 @@ AllowedAPKSigningKeys: 70a9709ce5a4829668d9d50411b959bb90ad2e19d02e2069ad0ff3528
 
 AutoUpdateMode: Version
 UpdateCheckMode: Tags
-CurrentVersion: 0.1.7
-CurrentVersionCode: 8
+CurrentVersion: 0.1.8
+CurrentVersionCode: 9
 ```
 
 **Why these fields.**
@@ -121,7 +121,7 @@ CurrentVersionCode: 8
   the recipe Mode B: F-Droid will never publish an F-Droid-signed
   fallback for this package.
 - `Builds[0].commit:` uses the **full 40-character SHA-1** of the
-  v0.1.7 commit, not the tag name. F-Droid prefers immutable commit
+  v0.1.8 commit, not the tag name. F-Droid prefers immutable commit
   hashes over mutable tags; this convention is also what
   `AutoUpdateMode` itself writes when it auto-generates entries for
   future tags, so the style stays consistent across manual and
@@ -361,6 +361,12 @@ What it took to get to the current state, in chronological order:
     `UpdateCheckMode: Tags` picks up the `v0.1.7` tag once Marco ships
     it after manual verification (T036); the `Builds[0].commit` in §3
     points at the tagged release commit on `main`.
+12. **Upstream playbook sync for v0.1.8** (2026-07-19): feature 005
+    (compare up to three offers) lands via PR U/V; this PR W bumps to
+    `0.1.8` / `versionCode` 9, changelogs for code 9, and
+    `ART_OFFSET_Y_PX` icon vertical nudge. F-Droid still has v0.1.7
+    marked `disable: not repro` in fdroiddata — a clean `v0.1.8` tag
+    is the intended auto-update target. Same Mode B contract.
 
 The byte-for-byte reproducibility verification for the **first**
 publication happened on F-Droid's main build farm via `fdroid publish`
