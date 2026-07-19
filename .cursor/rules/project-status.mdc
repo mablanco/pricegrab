@@ -27,12 +27,11 @@ file when shipping or parking work. Summary below (as of **2026-07-19**).
 
 ## Backlog (deferred — pick via new Spec Kit feature)
 
-- 4+ offers; density g↔ml; US units (oz/lb); currency/FX; buy-N framing
-- History / persistence / accounts
-- Splash branding; settings / Material You toggle; custom font; motion;
-  landscape/tablet redesign
-- Reset OS confirm; per-field clear; multi-level / durable Undo
-- F-Droid 0.1.7 repro root-cause (optional once 0.1.8 lands on the farm)
+- Spec Out of Scope: 4+ offers; density g↔ml; US units; currency/FX; buy-N;
+  history; splash; settings/Material You; custom font; motion; tablet;
+  Reset confirm; deeper Undo; F-Droid 0.1.7 repro (if 0.1.8 also fails)
+- Ideas (not specified yet): favorites/templates; copy result; widget/shortcut;
+  pack-vs-loose; free-text offer labels; richer % + €/kg hero; export/share
 
 ## Conventions (pointers)
 

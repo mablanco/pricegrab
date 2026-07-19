@@ -1,7 +1,7 @@
 # PriceGrab
 
-> Compara dos precios con cantidades distintas y descubre, al instante, cuál sale más barato por unidad.
-> Compare two prices with different quantities and instantly see which one is cheaper per unit.
+> Compara hasta tres ofertas con distintas cantidades y unidades, y descubre al instante cuál sale más barata por kg, L o unidad.
+> Compare up to three offers with different quantities and units, and instantly see which is cheaper per kg, L, or piece.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 [![Platform: Android](https://img.shields.io/badge/platform-Android-3DDC84.svg)](https://developer.android.com/)
@@ -14,7 +14,7 @@
 
 ### ¿Qué es?
 
-**PriceGrab** es una aplicación Android que resuelve una pregunta muy concreta del supermercado: *"¿cuál de estos dos productos me sale más barato por unidad?"*. Introduces precio y cantidad del producto A y del producto B, y la app te dice cuál es la mejor oferta comparando su precio por unidad.
+**PriceGrab** es una aplicación Android que resuelve una pregunta muy concreta del supermercado: *"¿cuál de estas ofertas me sale más barata por unidad?"*. Introduces precio, cantidad y unidad de hasta tres ofertas, y la app te dice cuál es la mejor comparando el precio por kg, por L o por pieza, con el ahorro frente a la segunda más barata.
 
 ### Antecedentes
 
@@ -30,12 +30,15 @@ Hace años desarrollé una versión preliminar de esta aplicación. Este proyect
 
 ### Estado del proyecto
 
-**[`v0.1.6`](https://github.com/mablanco/pricegrab/releases/tag/v0.1.6) publicada** en [GitHub Releases](https://github.com/mablanco/pricegrab/releases/latest) y disponible en [F-Droid](https://f-droid.org/packages/com.mablanco.pricegrab/). Comparas dos ofertas, puedes borrar o deshacer, la app luce mejor, funciona con TalkBack, y mantiene el idioma al girar la pantalla.
+**[`v0.1.8`](https://github.com/mablanco/pricegrab/releases/tag/v0.1.8) publicada** en [GitHub Releases](https://github.com/mablanco/pricegrab/releases/latest). En F-Droid el catálogo puede ir un poco por detrás (Mode B / builds reproducibles); el APK firmado de GitHub es la referencia.
 
+Incluye: hasta **tres ofertas** (`+` / `−`), unidades **g / kg / ml / L / uds**, Reset con Undo, branding Material 3, TalkBack, y ES/EN.
+
+- Estado y backlog: [`docs/project-status.md`](./docs/project-status.md).
 - Cómo se firma y se libera el APK: [`docs/release.md`](./docs/release.md).
-- Especificación, plan y tareas: [`specs/001-unit-price-comparison/`](./specs/001-unit-price-comparison/).
+- Specs por feature: [`specs/`](./specs/) (001–005).
 - Principios del producto: [`.specify/memory/constitution.md`](./.specify/memory/constitution.md) (versión 1.0.1).
-- Cómo llegó a F-Droid (builds reproducibles): [`docs/fdroid.md`](./docs/fdroid.md).
+- F-Droid (Mode B): [`docs/fdroid.md`](./docs/fdroid.md).
 
 ### Cómo construirla
 
@@ -68,7 +71,7 @@ El proyecto sigue un flujo **Spec-Driven Development**: cada mejora nueva pasa p
 
 ### What is it?
 
-**PriceGrab** is an Android app that answers one very specific supermarket question: *"which of these two products is cheaper per unit?"*. You enter the price and quantity for product A and product B, and the app tells you which is the better deal by comparing their unit prices.
+**PriceGrab** is an Android app that answers one very specific supermarket question: *"which of these offers is cheaper per unit?"*. You enter price, quantity, and unit for up to three offers, and the app picks the best deal by comparing price per kg, per L, or per piece, with savings versus the second-cheapest.
 
 ### Background
 
@@ -84,12 +87,15 @@ Years ago I built a preliminary version of this application. This project is the
 
 ### Project status
 
-**[`v0.1.6`](https://github.com/mablanco/pricegrab/releases/tag/v0.1.6) is out** on [GitHub Releases](https://github.com/mablanco/pricegrab/releases/latest) and on [F-Droid](https://f-droid.org/packages/com.mablanco.pricegrab/). Compare two offers, clear or undo your entries, enjoy a cleaner look, TalkBack support, and your language stays put when you rotate the screen.
+**[`v0.1.8`](https://github.com/mablanco/pricegrab/releases/tag/v0.1.8) is out** on [GitHub Releases](https://github.com/mablanco/pricegrab/releases/latest). The F-Droid catalog may lag slightly (Mode B / reproducible builds); the signed GitHub APK is the source of truth.
 
+Includes: up to **three offers** (`+` / `−`), units **g / kg / ml / L / pcs**, Reset with Undo, Material 3 branding, TalkBack, and ES/EN.
+
+- Status and backlog: [`docs/project-status.md`](./docs/project-status.md).
 - How the APK is signed and released: [`docs/release.md`](./docs/release.md).
-- Spec, plan and tasks: [`specs/001-unit-price-comparison/`](./specs/001-unit-price-comparison/).
+- Per-feature specs: [`specs/`](./specs/) (001–005).
 - Product principles: [`.specify/memory/constitution.md`](./.specify/memory/constitution.md) (version 1.0.1).
-- How it landed on F-Droid (reproducible builds): [`docs/fdroid.md`](./docs/fdroid.md).
+- F-Droid (Mode B): [`docs/fdroid.md`](./docs/fdroid.md).
 
 ### How to build
 

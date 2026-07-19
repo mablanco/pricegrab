@@ -66,9 +66,8 @@ History (short): 0.86 → 0.82 → 0.76 → 0.72 scale; Y nudge planned ~−95 s
 ## Open / operational
 
 1. **F-Droid v0.1.7 `not repro`** — fdroiddata marks build disabled. **Do not re-tag 0.1.7.** Recovery path is clean **v0.1.8** auto-update (`UpdateCheckMode: Tags`). If 0.1.8 also fails Mode B, investigate with `diffoscope` (see `docs/fdroid.md`).
-2. **Stale README badge** — `README.md` may still mention an older version; refresh when touching docs.
-3. **Constitution header** still has obsolete `TODO(PROJECT_SCAFFOLD)` (Android + GHA already shipped) — housekeeping only; do not invent new scaffold work.
-4. **GitHub Issues** — empty as of 2026-07-19; backlog lives here + Out of Scope sections in specs.
+2. **Constitution header** still has obsolete `TODO(PROJECT_SCAFFOLD)` (Android + GHA already shipped) — housekeeping only; do not invent new scaffold work.
+3. **GitHub Issues** — empty as of 2026-07-19; backlog lives here + Out of Scope sections in specs.
 
 ## Product backlog (deferred)
 
@@ -103,6 +102,22 @@ Captured from `specs/*/spec.md` and `research.md` Out of Scope / deferred notes.
 - **Google Play** — out unless constitution amended.
 - **Network / analytics / trackers** — forbidden without constitution amendment.
 - Signing key rotation requires coordinating `AllowedAPKSigningKeys` with F-Droid first.
+
+### Ideas (discussed, not yet Spec Kit features)
+
+Parked from post-v0.1.8 planning chat. Still need `/speckit.specify` before
+implementation; none are scheduled.
+
+- **Favorites / templates** — saved presets (e.g. “milk 1 L”, “rice 1 kg”) that
+  prefill price + quantity + unit.
+- **Copy result to clipboard** — shareable plain-text summary (e.g. WhatsApp).
+- **Home-screen widget or shortcut** — open straight into an empty comparison.
+- **Pack vs loose mode** — pack price / N pieces vs unit price (buy-N variant).
+- **Free-text offer labels** — shopper names (“Mercadona”, “Carrefour”) instead
+  of only Offer A/B/C.
+- **Richer result card** — make both absolute savings and percent more visible
+  in the hero (percent is partly a11y-only today).
+- **Export / share** — share sheet for text or a result screenshot.
 
 ## Authoritative sources (priority)
 
