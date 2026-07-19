@@ -422,6 +422,24 @@ on-device verification of the 11-step walkthrough
 (`specs/004-quantity-units/plan.md` § Manual verification) gates the
 tag push (T037), not this PR.
 
+### PR U — `005-multi-offer-compare` *(feature 005 — planning only)*
+
+Spec + plan + research + data-model + contracts + tasks for comparing up
+to three offers (`+`/`−`), winner vs second-cheapest, and icon vertical
+nudge in release prep. No source code. Cadence: PR U → PR V → PR W
+(mirrors 004’s R → S → T). See
+[`specs/005-multi-offer-compare/tasks.md`](../../specs/005-multi-offer-compare/tasks.md).
+
+### PR V — `feat/023-multi-offer-impl` *(feature 005 — implementation)*
+
+Phases 1–3 (T001–T020): list-based `ComparisonOutcome.Winner`,
+`compareMany`, Compare UI with up to three cards, reset/undo, tests.
+
+### PR W — `chore/024-fdroid-doc-sync-v0.1.8` *(feature 005 — release cut)*
+
+versionCode 9 / 0.1.8, changelogs, `ART_OFFSET_Y` icon regen, `docs/fdroid.md`.
+Tag `v0.1.8` from `main` after manual QA (do not re-tag 0.1.7).
+
 ### Notes
 
 - Each PR must keep the main branch green (lint, detekt, unit tests, JaCoCo
