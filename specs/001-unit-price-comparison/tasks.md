@@ -453,11 +453,11 @@ source. Cadence: PR X → PR Y → PR Z (mirrors 005’s U → V → W). See
 Phases 2–6 (T003–T024): `OfferInputArrangement`, `OfferCard` compact /
 adaptive layouts, geometry + large-font + a11y tests. No version bump.
 
-### PR Z — `chore/0xx-…` *(feature 006 — release cut)*
+### PR Z — `chore/026-fdroid-doc-sync-v0.1.9` *(feature 006 — release cut)*
 
-versionName/versionCode bump (likely 0.1.9), fastlane changelogs,
-`docs/project-status.md` + `docs/fdroid.md` as needed. Tag from `main`
-after manual QA (`specs/006-compact-offer-row/quickstart.md`).
+versionCode 10 / 0.1.9, changelogs en/es for code 10, `docs/fdroid.md` +
+`docs/project-status.md`. No icon regen. Tag `v0.1.9` from `main` after
+manual QA (`specs/006-compact-offer-row/quickstart.md`).
 
 ### Notes
 

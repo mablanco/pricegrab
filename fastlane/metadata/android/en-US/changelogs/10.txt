@@ -1,0 +1,4 @@
+More compact offer entry:
+• Price, quantity, and unit sit on one row at normal font size — less scrolling with two or three offers.
+• At large system font (including 200%) the layout switches to two rows so nothing is clipped.
+• Comparison math, units, and add/remove third offer are unchanged.
