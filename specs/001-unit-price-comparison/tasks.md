@@ -440,6 +440,25 @@ Phases 1–3 (T001–T020): list-based `ComparisonOutcome.Winner`,
 versionCode 9 / 0.1.8, changelogs, `ART_OFFSET_Y` icon regen, `docs/fdroid.md`.
 Tag `v0.1.8` from `main` after manual QA (do not re-tag 0.1.7).
 
+### PR X — `006-compact-offer-row` *(feature 006 — planning only)*
+
+Spec + plan + research + data-model + contracts + quickstart + tasks for
+compact single-row offer inputs (price | quantity | unit) at default font
+scale, with adaptive two-row layout at large font (incl. 200%). No Android
+source. Cadence: PR X → PR Y → PR Z (mirrors 005’s U → V → W). See
+[`specs/006-compact-offer-row/tasks.md`](../../specs/006-compact-offer-row/tasks.md).
+
+### PR Y — `feat/0xx-compact-offer-row-impl` *(feature 006 — implementation)*
+
+Phases 2–6 (T003–T024): `OfferInputArrangement`, `OfferCard` compact /
+adaptive layouts, geometry + large-font + a11y tests. No version bump.
+
+### PR Z — `chore/0xx-…` *(feature 006 — release cut)*
+
+versionName/versionCode bump (likely 0.1.9), fastlane changelogs,
+`docs/project-status.md` + `docs/fdroid.md` as needed. Tag from `main`
+after manual QA (`specs/006-compact-offer-row/quickstart.md`).
+
 ### Notes
 
 - Each PR must keep the main branch green (lint, detekt, unit tests, JaCoCo
