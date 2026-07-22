@@ -15,7 +15,7 @@
     <string name="cd_add_offer">Añadir otra oferta</string>
     <string name="cd_remove_offer">Quitar la última oferta</string>
     <string name="add_offer">Añadir oferta</string>
-    <string name="remove_offer">Quitar</string>
+    <string name="remove_offer">Quitar oferta</string>
 
     <string name="error_not_a_number">Introduce un número válido</string>
     <string name="error_negative_price">El precio no puede ser negativo</string>

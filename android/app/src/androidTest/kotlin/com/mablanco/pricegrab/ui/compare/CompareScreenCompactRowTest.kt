@@ -139,15 +139,16 @@ class CompareScreenCompactRowTest {
         val quantity = bounds("${prefix}_quantity")
         val unit = bounds("${prefix}_unit")
 
-        // Tops align in CompactSingleRow (Alignment.Top). Prefer top delta over
-        // centerY because the unit selector has no floating label and is shorter.
+        // Bottoms align in CompactSingleRow (Alignment.Bottom). Prefer bottom
+        // delta over top/center: the unit selector has no floating label and
+        // is shorter than the labeled quantity field.
         assertTrue(
-            "price and quantity tops should align (within ${ROW_Y_TOLERANCE_PX}px)",
-            abs(price.top - quantity.top) < ROW_Y_TOLERANCE_PX,
+            "price and quantity bottoms should align (within ${ROW_Y_TOLERANCE_PX}px)",
+            abs(price.bottom - quantity.bottom) < ROW_Y_TOLERANCE_PX,
         )
         assertTrue(
-            "quantity and unit tops should align (within ${ROW_Y_TOLERANCE_PX}px)",
-            abs(quantity.top - unit.top) < ROW_Y_TOLERANCE_PX,
+            "quantity and unit bottoms should align (within ${ROW_Y_TOLERANCE_PX}px)",
+            abs(quantity.bottom - unit.bottom) < ROW_Y_TOLERANCE_PX,
         )
         assertTrue("price should be left of quantity", price.left < quantity.left)
         assertTrue("quantity should be left of unit", quantity.left < unit.left)

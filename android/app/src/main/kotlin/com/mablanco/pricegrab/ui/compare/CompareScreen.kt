@@ -384,7 +384,7 @@ private fun CompactOfferFieldsRow(
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(spacing.s),
-        verticalAlignment = Alignment.Top,
+        verticalAlignment = Alignment.Bottom,
     ) {
         LabeledNumberField(
             value = priceRaw,
@@ -448,7 +448,7 @@ private fun AdaptiveOfferFields(
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(spacing.s),
-        verticalAlignment = Alignment.Top,
+        verticalAlignment = Alignment.Bottom,
     ) {
         LabeledNumberField(
             value = quantityRaw,
