@@ -93,7 +93,7 @@ one row → enter short values → comparison still correct; Offer C same layout
       temporarily reuse today’s two-row Column for non-compact until US2).
 - [x] T009 [US1] Verify IME order Next (price) → Done (quantity) and decimal
       keyboard unchanged in `CompareScreen.kt` / `LabeledNumberField`.
-- [ ] T010 [US1] Run
+- [x] T010 [US1] Run
       `./gradlew :app:connectedDebugAndroidTest --tests '*CompareScreenCompactRowTest*'`
       (and unit test T003) until green.
 
@@ -130,7 +130,7 @@ arrangement → complete a comparison → no clipped controls.
       fields in
       `android/app/src/main/kotlin/com/mablanco/pricegrab/ui/compare/CompareScreenUnits.kt`
       (adjust padding/width only if large-font test or manual QA fails).
-- [ ] T015 [US2] Run large-font + compact-row instrumented tests green.
+- [x] T015 [US2] Run large-font + compact-row instrumented tests green.
 
 **Checkpoint**: Default = compact; ≥1.3 fontScale = adaptive two-row.
 
@@ -174,7 +174,7 @@ names offer on price/quantity/unit in compact and adaptive modes.
 
 **Purpose**: Full regression and docs; release bump stays on PR **Z**.
 
-- [ ] T021 [P] Run full
+- [x] T021 [P] Run full
       `./gradlew :app:testDebugUnitTest :app:connectedDebugAndroidTest`
       and fix any regressions in existing compare suites (tags must stay
       stable).
@@ -184,7 +184,7 @@ names offer on price/quantity/unit in compact and adaptive modes.
 - [x] T024 [P] Update `@Preview`s in
       `android/app/src/main/kotlin/com/mablanco/pricegrab/ui/compare/CompareScreenPreviews.kt`
       if the compact row is not visible in previews.
-- [ ] T025 Release-prep (PR **Z**, after Y merges): bump versionName/versionCode,
+- [x] T025 Release-prep (PR **Z**, after Y merges): bump versionName/versionCode,
       fastlane changelogs en/es, refresh `docs/project-status.md` +
       `docs/fdroid.md` as needed — **do not** do this on the impl PR.
 

@@ -2,15 +2,15 @@
 
 > Canonical agent/project memory for “where we are” and “what’s next”.
 > Keep this file current when shipping a release or parking a deferred idea.
-> Last updated: **2026-07-22** (feature **006** planning started).
+> Last updated: **2026-07-22** (release-prep **v0.1.9** / feature **006**).
 
 ## Snapshot
 
 | Field | Value |
 |-------|--------|
-| App version | **0.1.8** (`versionCode` **9**) |
-| Latest tag / Release | [`v0.1.8`](https://github.com/mablanco/pricegrab/releases/tag/v0.1.8) on commit `1ac8d47` |
-| Active Spec Kit feature pointer | `.specify/feature.json` → `specs/006-compact-offer-row` |
+| App version | **0.1.9** (`versionCode` **10**) |
+| Latest tag / Release | Tag **`v0.1.9`** after manual QA (prep on `main`; previous: [`v0.1.8`](https://github.com/mablanco/pricegrab/releases/tag/v0.1.8)) |
+| Active Spec Kit feature pointer | `.specify/feature.json` → `specs/006-compact-offer-row` (shipped; pick next via backlog) |
 | Distribution | **F-Droid Mode B** + **GitHub Releases**; **not** on Google Play |
 | F-Droid package | https://f-droid.org/packages/com.mablanco.pricegrab/ (first publish: **v0.1.5**) |
 | Owner | Marco Antonio Blanco — chat in Spanish; engineering artifacts in English |
@@ -25,6 +25,7 @@
 | 003 | `visual-polish-branding` | Brandmark + steel-blue M3 (`#2F5C73`); hero result; no dynamic color | v0.1.5 |
 | 004 | `quantity-units` | Units `{g,kg,ml,L,pcs}`; same-dimension only; savings per kg/L/piece | v0.1.7 |
 | 005 | `multi-offer-compare` | Up to 3 offers (`+`/`−`); cheapest wins; savings **vs second-cheapest** (named in UI) | v0.1.8 |
+| 006 | `compact-offer-row` | Single-row offer inputs; adaptive two-row at large font (200%) | v0.1.9 |
 
 ### versionCode map
 
@@ -35,6 +36,7 @@
 | 7 | 0.1.6 | Icon safe-zone scale |
 | 8 | 0.1.7 | Quantity units; **fdroiddata `disable: not repro`** |
 | 9 | 0.1.8 | Three offers + icon optical fix (QA) |
+| 10 | 0.1.9 | Compact offer row + adaptive large-font layout |
 
 ## Spec Kit cadence
 
@@ -46,9 +48,9 @@ Global PR letter ledger lives in `specs/001-unit-price-comparison/tasks.md`.
 | 003 | O | P | Q → v0.1.5 |
 | 004 | R | S | T → v0.1.7 |
 | 005 | U | V | W → v0.1.8 |
-| 006 | X (planned) | Y | Z → next release |
+| 006 | X | Y | Z → v0.1.9 |
 
-Next free letter after planning **X** lands: **Y** (impl). Pattern: planning PR → impl PR → chore release-prep (version, changelogs, `docs/fdroid.md`, icons) → **tag from `main` after manual QA**.
+Next feature starts at the next free letter after **Z**. Pattern: planning PR → impl PR → chore release-prep (version, changelogs, `docs/fdroid.md`, icons) → **tag from `main` after manual QA**.
 
 Release playbook: `docs/release.md`. F-Droid playbook: `docs/fdroid.md`.
 
@@ -56,7 +58,7 @@ Release playbook: `docs/release.md`. F-Droid playbook: `docs/fdroid.md`.
 
 `branding/regenerate-icons.py` ← `branding/icon-source.png` → mipmaps + fastlane icons.
 
-| Constant | Value (post v0.1.8 QA #43) |
+| Constant | Value (post v0.1.8 QA #43; unchanged in v0.1.9) |
 |----------|----------------------------|
 | `ART_SCALE` | `0.72` |
 | `ART_OFFSET_X_PX` | `-17` |
@@ -66,9 +68,10 @@ History (short): 0.86 → 0.82 → 0.76 → 0.72 scale; Y nudge planned ~−95 s
 
 ## Open / operational
 
-1. **F-Droid v0.1.7 `not repro`** — fdroiddata marks build disabled. **Do not re-tag 0.1.7.** Recovery path is clean **v0.1.8** auto-update (`UpdateCheckMode: Tags`). If 0.1.8 also fails Mode B, investigate with `diffoscope` (see `docs/fdroid.md`).
+1. **F-Droid v0.1.7 `not repro`** — fdroiddata marks build disabled. **Do not re-tag 0.1.7.** Recovery path is clean **v0.1.8** / **v0.1.9** auto-update (`UpdateCheckMode: Tags`). If Mode B fails, investigate with `diffoscope` (see `docs/fdroid.md`).
 2. **Constitution header** still has obsolete `TODO(PROJECT_SCAFFOLD)` (Android + GHA already shipped) — housekeeping only; do not invent new scaffold work.
 3. **GitHub Issues** — empty as of 2026-07-19; backlog lives here + Out of Scope sections in specs.
+4. **Tag `v0.1.9`** — only after manual QA of compact row + 200% font (see `specs/006-compact-offer-row/quickstart.md`).
 
 ## Product backlog (deferred)
 
@@ -103,12 +106,6 @@ Captured from `specs/*/spec.md` and `research.md` Out of Scope / deferred notes.
 - **Google Play** — out unless constitution amended.
 - **Network / analytics / trackers** — forbidden without constitution amendment.
 - Signing key rotation requires coordinating `AllowedAPKSigningKeys` with F-Droid first.
-
-### In progress (Spec Kit)
-
-- **006 `compact-offer-row`** — single-row offer inputs at default font scale;
-  adaptive two-row layout at large font (incl. 200%). Branch
-  `006-compact-offer-row`. Planning letter **X**.
 
 ### Ideas (discussed, not yet Spec Kit features)
 

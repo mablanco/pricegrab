@@ -1,0 +1,4 @@
+Entrada de ofertas más compacta:
+• Precio, cantidad y unidad en una sola fila con tamaño de fuente normal — menos scroll con dos o tres ofertas.
+• Con fuente del sistema grande (incluido 200%) pasa a dos filas para que nada se recorte.
+• La comparación, las unidades y añadir/quitar la tercera oferta no cambian.
