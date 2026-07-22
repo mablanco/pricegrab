@@ -47,11 +47,11 @@ PR X merges (or continue on a follow-up `feat/…-impl` branch from `main`).
 **⚠️ CRITICAL**: No `OfferCard` layout change until T004’s unit test is green
 for the mapping (UI stories still write failing Compose tests first).
 
-- [ ] T003 [P] Add JVM unit tests for `arrangementFor(fontScale)` covering
+- [x] T003 [P] Add JVM unit tests for `arrangementFor(fontScale)` covering
       `< 1.3f → CompactSingleRow` and `≥ 1.3f → AdaptiveTwoRow` in
       `android/app/src/test/kotlin/com/mablanco/pricegrab/ui/compare/OfferInputArrangementTest.kt`
       (fail until T004 exists).
-- [ ] T004 Implement `OfferInputArrangement` enum + `arrangementFor(fontScale: Float)`
+- [x] T004 Implement `OfferInputArrangement` enum + `arrangementFor(fontScale: Float)`
       in `android/app/src/main/kotlin/com/mablanco/pricegrab/ui/compare/OfferInputArrangement.kt`
       per `data-model.md` / `research.md`; make T003 green.
 
@@ -71,27 +71,27 @@ one row → enter short values → comparison still correct; Offer C same layout
 
 > Write FIRST; ensure FAIL against today’s stacked layout.
 
-- [ ] T005 [P] [US1] Add Compose instrumented test asserting CompactSingleRow
+- [x] T005 [P] [US1] Add Compose instrumented test asserting CompactSingleRow
       geometry at `fontScale = 1f` for Offer A (and B): shared vertical
       centers within tolerance; left(price) < left(quantity) < left(unit) —
       per `contracts/offer-row-layout.md` — in
       `android/app/src/androidTest/kotlin/com/mablanco/pricegrab/ui/compare/CompareScreenCompactRowTest.kt`.
-- [ ] T006 [P] [US1] Extend or add assertion that Offer C (after add) uses the
+- [x] T006 [P] [US1] Extend or add assertion that Offer C (after add) uses the
       same single-row geometry in
       `android/app/src/androidTest/kotlin/com/mablanco/pricegrab/ui/compare/CompareScreenCompactRowTest.kt`
       (or `CompareScreenMultiOfferTest.kt` if cleaner).
 
 ### Implementation for User Story 1
 
-- [ ] T007 [US1] Refactor `OfferCard` in
+- [x] T007 [US1] Refactor `OfferCard` in
       `android/app/src/main/kotlin/com/mablanco/pricegrab/ui/compare/CompareScreen.kt`
       to render `CompactSingleRow`: one `Row` with price `weight(1.15f)`,
       quantity `weight(1f)`, unit fixed width; `Alignment.Top`; keep existing
       test tags `{prefix}_price|_quantity|_unit`.
-- [ ] T008 [US1] Wire `arrangementFor(LocalDensity.current.fontScale)` so
+- [x] T008 [US1] Wire `arrangementFor(LocalDensity.current.fontScale)` so
       CompactSingleRow is selected at default scale (AdaptiveTwoRow stub may
       temporarily reuse today’s two-row Column for non-compact until US2).
-- [ ] T009 [US1] Verify IME order Next (price) → Done (quantity) and decimal
+- [x] T009 [US1] Verify IME order Next (price) → Done (quantity) and decimal
       keyboard unchanged in `CompareScreen.kt` / `LabeledNumberField`.
 - [ ] T010 [US1] Run
       `./gradlew :app:connectedDebugAndroidTest --tests '*CompareScreenCompactRowTest*'`
@@ -112,7 +112,7 @@ arrangement → complete a comparison → no clipped controls.
 
 ### Tests for User Story 2 ⚠️
 
-- [ ] T011 [P] [US2] Extend
+- [x] T011 [P] [US2] Extend
       `android/app/src/androidTest/kotlin/com/mablanco/pricegrab/ui/compare/CompareScreenLargeFontTest.kt`
       with AdaptiveTwoRow geometry:
       `bottom(price) ≤ top(quantity) + slack`; quantity left of unit; all
@@ -120,13 +120,13 @@ arrangement → complete a comparison → no clipped controls.
 
 ### Implementation for User Story 2
 
-- [ ] T012 [US2] Implement AdaptiveTwoRow branch in `OfferCard`
+- [x] T012 [US2] Implement AdaptiveTwoRow branch in `OfferCard`
       (`CompareScreen.kt`): full-width price; then quantity | unit row
       (same controls/tags as today).
-- [ ] T013 [US2] Confirm switching arrangement on recomposition preserves
+- [x] T013 [US2] Confirm switching arrangement on recomposition preserves
       entered values (no state held in arrangement enum); rely on existing
       config-change coverage + spot-check.
-- [ ] T014 [US2] Ensure touch targets remain ≥ 48dp for unit selector /
+- [x] T014 [US2] Ensure touch targets remain ≥ 48dp for unit selector /
       fields in
       `android/app/src/main/kotlin/com/mablanco/pricegrab/ui/compare/CompareScreenUnits.kt`
       (adjust padding/width only if large-font test or manual QA fails).
@@ -146,21 +146,21 @@ names offer on price/quantity/unit in compact and adaptive modes.
 
 ### Tests for User Story 3 ⚠️
 
-- [ ] T016 [P] [US3] Extend
+- [x] T016 [P] [US3] Extend
       `android/app/src/androidTest/kotlin/com/mablanco/pricegrab/ui/compare/CompareScreenAccessibilityTest.kt`
       if needed so CD assertions still pass with compact row (Offer A
       price/quantity/unit).
-- [ ] T017 [P] [US3] Add or extend a focused test that an invalid quantity
+- [x] T017 [P] [US3] Add or extend a focused test that an invalid quantity
       shows error supporting text without hiding sibling controls (default
       scale compact row) — prefer
       `CompareScreenCompactRowTest.kt` or existing validation UI test file.
 
 ### Implementation for User Story 3
 
-- [ ] T018 [US3] Keep per-field `isError` + `supportingText` on
+- [x] T018 [US3] Keep per-field `isError` + `supportingText` on
       `LabeledNumberField` in `CompareScreen.kt`; fix clipping/overlap if
       compact-row error layout fails T017.
-- [ ] T019 [US3] Confirm semantics/`contentDescription` wiring unchanged for
+- [x] T019 [US3] Confirm semantics/`contentDescription` wiring unchanged for
       price, quantity (+ unit name), and unit selector; fix only if T016 fails.
 - [ ] T020 [US3] Manual TalkBack smoke (both arrangements) per
       `specs/006-compact-offer-row/quickstart.md`; note result in PR Y
@@ -178,10 +178,10 @@ names offer on price/quantity/unit in compact and adaptive modes.
       `./gradlew :app:testDebugUnitTest :app:connectedDebugAndroidTest`
       and fix any regressions in existing compare suites (tags must stay
       stable).
-- [ ] T022 [P] Detekt / assembleDebug clean for touched files.
+- [x] T022 [P] Detekt / assembleDebug clean for touched files.
 - [ ] T023 Walk `specs/006-compact-offer-row/quickstart.md` on a device or
       emulator (default + 200% font; 2 and 3 offers).
-- [ ] T024 [P] Update `@Preview`s in
+- [x] T024 [P] Update `@Preview`s in
       `android/app/src/main/kotlin/com/mablanco/pricegrab/ui/compare/CompareScreenPreviews.kt`
       if the compact row is not visible in previews.
 - [ ] T025 Release-prep (PR **Z**, after Y merges): bump versionName/versionCode,

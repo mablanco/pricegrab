@@ -10,6 +10,7 @@ import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.unit.Density
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.mablanco.pricegrab.ui.theme.PriceGrabTheme
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -68,14 +69,35 @@ class CompareScreenLargeFontTest {
         assertTagVisible("${TEST_TAG_OFFER_B}_quantity")
         assertTagVisible("${TEST_TAG_OFFER_B}_unit")
         assertTagVisible(TEST_TAG_RESULT)
+
+        assertAdaptiveTwoRow(TEST_TAG_OFFER_A)
+        assertAdaptiveTwoRow(TEST_TAG_OFFER_B)
     }
 
     private fun assertTagVisible(testTag: String) {
         composeRule.onNodeWithTag(testTag).performScrollTo().assertIsDisplayed()
     }
 
+    private fun assertAdaptiveTwoRow(prefix: String) {
+        val price = composeRule.onNodeWithTag("${prefix}_price")
+            .fetchSemanticsNode().boundsInRoot
+        val quantity = composeRule.onNodeWithTag("${prefix}_quantity")
+            .fetchSemanticsNode().boundsInRoot
+        val unit = composeRule.onNodeWithTag("${prefix}_unit")
+            .fetchSemanticsNode().boundsInRoot
+
+        assertTrue(
+            "at 200% font, price bottom should be above quantity top",
+            price.bottom <= quantity.top + ADAPTIVE_ROW_SLACK_PX,
+        )
+        assertTrue("quantity should be left of unit", quantity.left < unit.left)
+    }
+
     private companion object {
         const val LARGE_FONT_SCALE = 2.0f
+
+        /** Allow a few px of rounding / spacing between stacked rows. */
+        const val ADAPTIVE_ROW_SLACK_PX = 8f
 
         // Hardcoded to keep the test independent of locale; the brand name
         // is intentionally identical in every supported language.

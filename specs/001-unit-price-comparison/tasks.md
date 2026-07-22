@@ -448,7 +448,7 @@ scale, with adaptive two-row layout at large font (incl. 200%). No Android
 source. Cadence: PR X → PR Y → PR Z (mirrors 005’s U → V → W). See
 [`specs/006-compact-offer-row/tasks.md`](../../specs/006-compact-offer-row/tasks.md).
 
-### PR Y — `feat/0xx-compact-offer-row-impl` *(feature 006 — implementation)*
+### PR Y — `feat/025-compact-offer-row-impl` *(feature 006 — implementation)*
 
 Phases 2–6 (T003–T024): `OfferInputArrangement`, `OfferCard` compact /
 adaptive layouts, geometry + large-font + a11y tests. No version bump.

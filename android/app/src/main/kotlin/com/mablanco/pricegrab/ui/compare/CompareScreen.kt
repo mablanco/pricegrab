@@ -36,6 +36,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -311,6 +312,11 @@ private fun OfferCard(
     priceFocusRequester: FocusRequester?,
 ) {
     val spacing = MaterialTheme.spacing
+    val arrangement = arrangementFor(LocalDensity.current.fontScale)
+    val unitName = stringResource(quantityUnit.nameRes())
+    val priceCd = stringResource(R.string.cd_price_field, title)
+    val quantityCd = "${stringResource(R.string.cd_quantity_field, title)}, $unitName"
+
     Card(
         modifier = Modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
@@ -321,47 +327,153 @@ private fun OfferCard(
         ) {
             Text(text = title, style = MaterialTheme.typography.titleMedium)
 
-            LabeledNumberField(
-                value = priceRaw,
-                onValueChange = onPriceChange,
-                labelRes = R.string.price_label,
-                contentDescription = stringResource(R.string.cd_price_field, title),
-                error = priceError,
-                imeAction = ImeAction.Next,
-                testTag = "${testTagPrefix}_price",
-                focusRequester = priceFocusRequester,
-                modifier = Modifier.fillMaxWidth(),
-            )
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(spacing.s),
-                verticalAlignment = Alignment.Bottom,
-            ) {
-                val unitName = stringResource(quantityUnit.nameRes())
-                LabeledNumberField(
-                    value = quantityRaw,
-                    onValueChange = onQuantityChange,
-                    labelRes = R.string.quantity_label,
-                    contentDescription = "${stringResource(R.string.cd_quantity_field, title)}, $unitName",
-                    error = quantityError,
-                    imeAction = ImeAction.Done,
-                    testTag = "${testTagPrefix}_quantity",
-                    focusRequester = null,
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxWidth(),
+            when (arrangement) {
+                OfferInputArrangement.CompactSingleRow -> CompactOfferFieldsRow(
+                    title = title,
+                    priceRaw = priceRaw,
+                    priceError = priceError,
+                    quantityRaw = quantityRaw,
+                    quantityError = quantityError,
+                    quantityUnit = quantityUnit,
+                    priceCd = priceCd,
+                    quantityCd = quantityCd,
+                    onPriceChange = onPriceChange,
+                    onQuantityChange = onQuantityChange,
+                    onQuantityUnitChange = onQuantityUnitChange,
+                    testTagPrefix = testTagPrefix,
+                    priceFocusRequester = priceFocusRequester,
                 )
-                QuantityUnitSelector(
-                    offerTitle = title,
-                    selectedUnit = quantityUnit,
-                    onUnitSelected = onQuantityUnitChange,
-                    testTag = "${testTagPrefix}_unit",
+
+                OfferInputArrangement.AdaptiveTwoRow -> AdaptiveOfferFields(
+                    title = title,
+                    priceRaw = priceRaw,
+                    priceError = priceError,
+                    quantityRaw = quantityRaw,
+                    quantityError = quantityError,
+                    quantityUnit = quantityUnit,
+                    priceCd = priceCd,
+                    quantityCd = quantityCd,
+                    onPriceChange = onPriceChange,
+                    onQuantityChange = onQuantityChange,
+                    onQuantityUnitChange = onQuantityUnitChange,
+                    testTagPrefix = testTagPrefix,
+                    priceFocusRequester = priceFocusRequester,
                 )
             }
         }
     }
 }
+
+@Composable
+private fun CompactOfferFieldsRow(
+    title: String,
+    priceRaw: String,
+    priceError: InputError?,
+    quantityRaw: String,
+    quantityError: InputError?,
+    quantityUnit: QuantityUnit,
+    priceCd: String,
+    quantityCd: String,
+    onPriceChange: (String) -> Unit,
+    onQuantityChange: (String) -> Unit,
+    onQuantityUnitChange: (QuantityUnit) -> Unit,
+    testTagPrefix: String,
+    priceFocusRequester: FocusRequester?,
+) {
+    val spacing = MaterialTheme.spacing
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(spacing.s),
+        verticalAlignment = Alignment.Top,
+    ) {
+        LabeledNumberField(
+            value = priceRaw,
+            onValueChange = onPriceChange,
+            labelRes = R.string.price_label,
+            contentDescription = priceCd,
+            error = priceError,
+            imeAction = ImeAction.Next,
+            testTag = "${testTagPrefix}_price",
+            focusRequester = priceFocusRequester,
+            modifier = Modifier.weight(PRICE_FIELD_WEIGHT),
+        )
+        LabeledNumberField(
+            value = quantityRaw,
+            onValueChange = onQuantityChange,
+            labelRes = R.string.quantity_label,
+            contentDescription = quantityCd,
+            error = quantityError,
+            imeAction = ImeAction.Done,
+            testTag = "${testTagPrefix}_quantity",
+            focusRequester = null,
+            modifier = Modifier.weight(QUANTITY_FIELD_WEIGHT),
+        )
+        QuantityUnitSelector(
+            offerTitle = title,
+            selectedUnit = quantityUnit,
+            onUnitSelected = onQuantityUnitChange,
+            testTag = "${testTagPrefix}_unit",
+        )
+    }
+}
+
+@Composable
+private fun AdaptiveOfferFields(
+    title: String,
+    priceRaw: String,
+    priceError: InputError?,
+    quantityRaw: String,
+    quantityError: InputError?,
+    quantityUnit: QuantityUnit,
+    priceCd: String,
+    quantityCd: String,
+    onPriceChange: (String) -> Unit,
+    onQuantityChange: (String) -> Unit,
+    onQuantityUnitChange: (QuantityUnit) -> Unit,
+    testTagPrefix: String,
+    priceFocusRequester: FocusRequester?,
+) {
+    val spacing = MaterialTheme.spacing
+    LabeledNumberField(
+        value = priceRaw,
+        onValueChange = onPriceChange,
+        labelRes = R.string.price_label,
+        contentDescription = priceCd,
+        error = priceError,
+        imeAction = ImeAction.Next,
+        testTag = "${testTagPrefix}_price",
+        focusRequester = priceFocusRequester,
+        modifier = Modifier.fillMaxWidth(),
+    )
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(spacing.s),
+        verticalAlignment = Alignment.Top,
+    ) {
+        LabeledNumberField(
+            value = quantityRaw,
+            onValueChange = onQuantityChange,
+            labelRes = R.string.quantity_label,
+            contentDescription = quantityCd,
+            error = quantityError,
+            imeAction = ImeAction.Done,
+            testTag = "${testTagPrefix}_quantity",
+            focusRequester = null,
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth(),
+        )
+        QuantityUnitSelector(
+            offerTitle = title,
+            selectedUnit = quantityUnit,
+            onUnitSelected = onQuantityUnitChange,
+            testTag = "${testTagPrefix}_unit",
+        )
+    }
+}
+
+private const val PRICE_FIELD_WEIGHT = 1.15f
+private const val QUANTITY_FIELD_WEIGHT = 1f
 
 @Composable
 private fun LabeledNumberField(
