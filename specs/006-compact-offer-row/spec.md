@@ -2,7 +2,7 @@
 
 **Feature Branch**: `006-compact-offer-row`
 **Created**: 2026-07-22
-**Status**: Draft
+**Status**: Planning complete
 **Input**: User description: "Redesign the main comparison screen so each
 offer’s three fields (price, quantity/units, and unit magnitude) sit on a
 single compact row to use space better. Text fields feel too large for

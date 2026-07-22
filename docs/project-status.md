@@ -2,7 +2,7 @@
 
 > Canonical agent/project memory for “where we are” and “what’s next”.
 > Keep this file current when shipping a release or parking a deferred idea.
-> Last updated: **2026-07-19** (post **v0.1.8** ship).
+> Last updated: **2026-07-22** (feature **006** planning started).
 
 ## Snapshot
 
@@ -10,7 +10,7 @@
 |-------|--------|
 | App version | **0.1.8** (`versionCode` **9**) |
 | Latest tag / Release | [`v0.1.8`](https://github.com/mablanco/pricegrab/releases/tag/v0.1.8) on commit `1ac8d47` |
-| Active Spec Kit feature pointer | `.specify/feature.json` → `specs/005-multi-offer-compare` |
+| Active Spec Kit feature pointer | `.specify/feature.json` → `specs/006-compact-offer-row` |
 | Distribution | **F-Droid Mode B** + **GitHub Releases**; **not** on Google Play |
 | F-Droid package | https://f-droid.org/packages/com.mablanco.pricegrab/ (first publish: **v0.1.5**) |
 | Owner | Marco Antonio Blanco — chat in Spanish; engineering artifacts in English |
@@ -46,8 +46,9 @@ Global PR letter ledger lives in `specs/001-unit-price-comparison/tasks.md`.
 | 003 | O | P | Q → v0.1.5 |
 | 004 | R | S | T → v0.1.7 |
 | 005 | U | V | W → v0.1.8 |
+| 006 | X (planned) | Y | Z → next release |
 
-Next feature starts at the next free letter after **W**. Pattern: planning PR → impl PR → chore release-prep (version, changelogs, `docs/fdroid.md`, icons) → **tag from `main` after manual QA**.
+Next free letter after planning **X** lands: **Y** (impl). Pattern: planning PR → impl PR → chore release-prep (version, changelogs, `docs/fdroid.md`, icons) → **tag from `main` after manual QA**.
 
 Release playbook: `docs/release.md`. F-Droid playbook: `docs/fdroid.md`.
 
@@ -102,6 +103,12 @@ Captured from `specs/*/spec.md` and `research.md` Out of Scope / deferred notes.
 - **Google Play** — out unless constitution amended.
 - **Network / analytics / trackers** — forbidden without constitution amendment.
 - Signing key rotation requires coordinating `AllowedAPKSigningKeys` with F-Droid first.
+
+### In progress (Spec Kit)
+
+- **006 `compact-offer-row`** — single-row offer inputs at default font scale;
+  adaptive two-row layout at large font (incl. 200%). Branch
+  `006-compact-offer-row`. Planning letter **X**.
 
 ### Ideas (discussed, not yet Spec Kit features)
 
