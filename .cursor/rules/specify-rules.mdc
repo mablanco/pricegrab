@@ -7,9 +7,9 @@ For additional context about the active feature, technologies, project
 structure, shell commands, and other important information:
 
 1. Read the active feature pointer: [`.specify/feature.json`](../../.specify/feature.json)
-   (currently `specs/006-compact-offer-row`).
+   (currently `specs/007-settings-appearance`).
 2. Open the active plan:
-   [`specs/006-compact-offer-row/plan.md`](../../specs/006-compact-offer-row/plan.md)
+   [`specs/007-settings-appearance/plan.md`](../../specs/007-settings-appearance/plan.md)
    (and sibling `spec.md`, `research.md`, `tasks.md`).
 3. For shipped state and the product backlog, read
    [`docs/project-status.md`](../../docs/project-status.md).

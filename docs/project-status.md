@@ -2,7 +2,7 @@
 
 > Canonical agent/project memory for “where we are” and “what’s next”.
 > Keep this file current when shipping a release or parking a deferred idea.
-> Last updated: **2026-07-22** (release-prep **v0.1.9** / feature **006**).
+> Last updated: **2026-07-24** (feature **007** planning — Settings appearance).
 
 ## Snapshot
 
@@ -10,7 +10,8 @@
 |-------|--------|
 | App version | **0.1.9** (`versionCode` **10**) |
 | Latest tag / Release | Tag **`v0.1.9`** after manual QA (prep on `main`; previous: [`v0.1.8`](https://github.com/mablanco/pricegrab/releases/tag/v0.1.8)) |
-| Active Spec Kit feature pointer | `.specify/feature.json` → `specs/006-compact-offer-row` (shipped; pick next via backlog) |
+| Active Spec Kit feature pointer | `.specify/feature.json` → `specs/007-settings-appearance` (planning / in progress) |
+| Planned next release (007) | **0.1.10** (stay on 0.1.x; **not** 0.2.0). Do not bump version until release-prep. |
 | Distribution | **F-Droid Mode B** + **GitHub Releases**; **not** on Google Play |
 | F-Droid package | https://f-droid.org/packages/com.mablanco.pricegrab/ (first publish: **v0.1.5**) |
 | Owner | Marco Antonio Blanco — chat in Spanish; engineering artifacts in English |
@@ -49,8 +50,13 @@ Global PR letter ledger lives in `specs/001-unit-price-comparison/tasks.md`.
 | 004 | R | S | T → v0.1.7 |
 | 005 | U | V | W → v0.1.8 |
 | 006 | X | Y | Z → v0.1.9 |
+| 007 | AA | AB | AC → v0.1.10 (planned) |
 
-Next feature starts at the next free letter after **Z**. Pattern: planning PR → impl PR → chore release-prep (version, changelogs, `docs/fdroid.md`, icons) → **tag from `main` after manual QA**.
+Next free letter after **AC**. Pattern: planning PR → impl PR → chore release-prep (version, changelogs, `docs/fdroid.md`, icons) → **tag from `main` after manual QA**.
+
+**Version policy cue for agents**: Stay on **0.1.x** for 007. When a later
+feature would warrant a **MINOR** bump (0.2.0+), **prompt Marco** before
+choosing the version — do not invent a minor bump.
 
 Release playbook: `docs/release.md`. F-Droid playbook: `docs/fdroid.md`.
 
@@ -90,7 +96,7 @@ Captured from `specs/*/spec.md` and `research.md` Out of Scope / deferred notes.
 
 ### UX / branding polish
 - Android 12+ **SplashScreen** branding (`003`).
-- **Settings** screen / theme override / Material You toggle (`003` opted out of dynamic color).
+- ~~**Settings** screen / theme override / Material You toggle~~ — **in progress** as feature **007** (`specs/007-settings-appearance`; PR cadence AA → AB → AC → planned **v0.1.10**).
 - **Custom font** (APK/cold-start risk) (`003`).
 - Extra **motion / Lottie** beyond M3 defaults (`003`).
 - **Landscape / tablet / foldable** redesign (portrait-first today) (`003`).
@@ -139,3 +145,4 @@ implementation; none are scheduled.
 - Chat with Marco in **Spanish** by default; specs/plans/commits/code comments in **English**.
 - User-facing strings and store metadata: **ES + EN**.
 - Never overwrite a tag that produced an installable APK; bump version instead.
+- Before proposing a **MINOR** SemVer bump (0.2.0+), **ask Marco**; 007 release stays **0.1.10**.
