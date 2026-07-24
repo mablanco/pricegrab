@@ -35,11 +35,11 @@ package scaffolding. No Settings UI yet.
 - [x] T002 [P] Confirm `docs/project-status.md` Active Spec Kit pointer is
       `specs/007-settings-appearance`, cadence row 007 → **0.1.10**, and
       Settings backlog item marked in progress — done in planning commit.
-- [ ] T003 [P] Pin `androidx.datastore:datastore-preferences` in
+- [x] T003 [P] Pin `androidx.datastore:datastore-preferences` in
       `android/gradle/libs.versions.toml` and add
       `implementation(libs.androidx.datastore.preferences)` (or equivalent
       catalog alias) in `android/app/build.gradle.kts`.
-- [ ] T004 [P] Create package directories for
+- [x] T004 [P] Create package directories for
       `android/app/src/main/kotlin/com/mablanco/pricegrab/data/appearance/`
       and `android/app/src/main/kotlin/com/mablanco/pricegrab/ui/settings/`
       (placeholder `.gitkeep` or first empty files only if needed for
@@ -61,29 +61,29 @@ that depends on persisted prefs.
 until Phase 2 unit tests for defaults / `resolve()` are green. Theme
 parameter API may land here before screens exist.
 
-- [ ] T005 [P] Add JVM unit tests for `AppearanceMode` string mapping
+- [x] T005 [P] Add JVM unit tests for `AppearanceMode` string mapping
       (missing/invalid → `System`; `system`/`light`/`dark`) and default
       `AppearancePreferences` (`System`, `materialYouEnabled = false`) in
       `android/app/src/test/kotlin/com/mablanco/pricegrab/data/appearance/AppearancePreferencesTest.kt`
       (fail until T007).
-- [ ] T006 [P] Add JVM unit tests for `resolve(prefs, systemDark, sdkInt)`
+- [x] T006 [P] Add JVM unit tests for `resolve(prefs, systemDark, sdkInt)`
       covering System/Light/Dark × `useDynamicColor` only when
       `materialYouEnabled && sdkInt >= 31` in
       `android/app/src/test/kotlin/com/mablanco/pricegrab/data/appearance/AppearanceResolveTest.kt`
       (fail until T008).
-- [ ] T007 [P] Implement `AppearanceMode`, `AppearancePreferences`, and
+- [x] T007 [P] Implement `AppearanceMode`, `AppearancePreferences`, and
       preference key constants in
       `android/app/src/main/kotlin/com/mablanco/pricegrab/data/appearance/AppearancePreferences.kt`
       (and `AppearancePreferencesKeys.kt` if split) per `data-model.md` /
       `contracts/appearance-preferences.md`; make T005 green.
-- [ ] T008 Implement pure `resolve(...)` → `ResolvedAppearance` in
+- [x] T008 Implement pure `resolve(...)` → `ResolvedAppearance` in
       `android/app/src/main/kotlin/com/mablanco/pricegrab/data/appearance/AppearanceResolve.kt`
       (or same package as T007); make T006 green.
-- [ ] T009 Implement `AppearancePreferencesRepository` (DataStore file
+- [x] T009 Implement `AppearancePreferencesRepository` (DataStore file
       `appearance_preferences`, `Flow` read, `setMode` /
       `setMaterialYouEnabled` writes) in
       `android/app/src/main/kotlin/com/mablanco/pricegrab/data/appearance/AppearancePreferencesRepository.kt`.
-- [ ] T010 Extend `PriceGrabTheme` in
+- [x] T010 Extend `PriceGrabTheme` in
       `android/app/src/main/kotlin/com/mablanco/pricegrab/ui/theme/Theme.kt`
       to accept `darkTheme` + `useDynamicColor`; use brand schemes when
       dynamic is off/unsupported; use
@@ -110,39 +110,39 @@ Compare values preserved after round-trip.
 
 > Write FIRST; ensure FAIL until navigation + theme controls exist.
 
-- [ ] T011 [P] [US1] Add Compose instrumented test: Settings reachable via
+- [x] T011 [P] [US1] Add Compose instrumented test: Settings reachable via
       `settings_open` tag; theme tags `theme_system` / `theme_light` /
       `theme_dark`; selecting Light/Dark/System updates selection — in
       `android/app/src/androidTest/kotlin/com/mablanco/pricegrab/ui/settings/SettingsThemeTest.kt`.
-- [ ] T012 [P] [US1] Add instrumented test that Compare offer inputs survive
+- [x] T012 [P] [US1] Add instrumented test that Compare offer inputs survive
       Settings open → theme change → back (FR-012 / SC-004) in
       `android/app/src/androidTest/kotlin/com/mablanco/pricegrab/ui/settings/SettingsPreservesCompareTest.kt`
       (or same file as T011 if cleaner).
 
 ### Implementation for User Story 1
 
-- [ ] T013 [US1] Introduce lightweight `AppScreen` (`Compare` | `Settings`)
+- [x] T013 [US1] Introduce lightweight `AppScreen` (`Compare` | `Settings`)
       navigation state in
       `android/app/src/main/kotlin/com/mablanco/pricegrab/PriceGrabApp.kt`
       (no Navigation Compose); system/UI back returns to Compare;
       `CompareViewModel` remains Activity-scoped.
-- [ ] T014 [US1] Wire preference `Flow` into `PriceGrabApp`: collect
+- [x] T014 [US1] Wire preference `Flow` into `PriceGrabApp`: collect
       defaults until DataStore emits; call `resolve` + `PriceGrabTheme`
       with effective `darkTheme` / `useDynamicColor` (Material You may
       still always resolve false until US2 UI writes the flag).
-- [ ] T015 [US1] Add Settings entry affordance (gear / settings action,
+- [x] T015 [US1] Add Settings entry affordance (gear / settings action,
       tag `settings_open`, ≥48 dp) on Compare top bar in
       `android/app/src/main/kotlin/com/mablanco/pricegrab/ui/compare/CompareScreen.kt`.
-- [ ] T016 [US1] Implement Settings screen shell + theme single-selection
+- [x] T016 [US1] Implement Settings screen shell + theme single-selection
       control (radio list or segmented; prefer radio if 200%/`es`
       truncates) with tags from contract, writing `setMode` on change, in
       `android/app/src/main/kotlin/com/mablanco/pricegrab/ui/settings/SettingsScreen.kt`
       (+ thin `SettingsViewModel.kt` if helpful).
-- [ ] T017 [US1] Add EN/ES strings for Settings title, theme section, and
+- [x] T017 [US1] Add EN/ES strings for Settings title, theme section, and
       System/Light/Dark labels in
       `android/app/src/main/res/values/strings.xml` and
       `android/app/src/main/res/values-es/strings.xml`.
-- [ ] T018 [US1] Make T011/T012 green; smoke that theme applies app-wide
+- [x] T018 [US1] Make T011/T012 green; smoke that theme applies app-wide
       without Activity restart.
 
 **Checkpoint**: US1 MVP — theme override works end-to-end with persistence
@@ -164,11 +164,11 @@ brand; force-stop keeps preference. API &lt; 31 → cannot enable; brand stays.
 
 > Write FIRST; ensure FAIL until switch + dynamic wiring land.
 
-- [ ] T019 [P] [US2] Add instrumented test for Material You switch
+- [x] T019 [P] [US2] Add instrumented test for Material You switch
       (`material_you_switch`): default off; toggle on/off when available —
       in
       `android/app/src/androidTest/kotlin/com/mablanco/pricegrab/ui/settings/SettingsMaterialYouTest.kt`.
-- [ ] T020 [P] [US2] Add JVM or instrumented coverage for unavailable gate
+- [x] T020 [P] [US2] Add JVM or instrumented coverage for unavailable gate
       (sdk &lt; 31 → switch disabled / cannot enable; `useDynamicColor`
       false even if stored true) in
       `android/app/src/test/kotlin/com/mablanco/pricegrab/data/appearance/AppearanceResolveTest.kt`
@@ -177,19 +177,19 @@ brand; force-stop keeps preference. API &lt; 31 → cannot enable; brand stays.
 
 ### Implementation for User Story 2
 
-- [ ] T021 [US2] Add Material You `Switch` + supporting text (enabled only
+- [x] T021 [US2] Add Material You `Switch` + supporting text (enabled only
       when `SDK_INT >= 31`) on Settings; persist via
       `setMaterialYouEnabled` in
       `android/app/src/main/kotlin/com/mablanco/pricegrab/ui/settings/SettingsScreen.kt`.
-- [ ] T022 [US2] Confirm root theme path uses dynamic schemes when
+- [x] T022 [US2] Confirm root theme path uses dynamic schemes when
       `resolve(...).useDynamicColor` is true in
       `android/app/src/main/kotlin/com/mablanco/pricegrab/ui/theme/Theme.kt`
       / `PriceGrabApp.kt`; brand otherwise.
-- [ ] T023 [P] [US2] Add EN/ES strings for Material You title, description,
+- [x] T023 [P] [US2] Add EN/ES strings for Material You title, description,
       and unavailable-on-this-device copy in
       `android/app/src/main/res/values/strings.xml` and
       `android/app/src/main/res/values-es/strings.xml`.
-- [ ] T024 [US2] Make T019/T020 green.
+- [x] T024 [US2] Make T019/T020 green.
 
 **Checkpoint**: US1 + US2 both independently verifiable; defaults remain
 System + Material You off.
@@ -206,11 +206,11 @@ state → fontScale 2.0 no truncation/overlap → back to Compare.
 
 ### Tests for User Story 3 ⚠️
 
-- [ ] T025 [P] [US3] Add large-font instrumented smoke (`fontScale = 2.0`)
+- [x] T025 [P] [US3] Add large-font instrumented smoke (`fontScale = 2.0`)
       asserting Settings remains scrollable and primary labels/controls
       are displayed without overlap in
       `android/app/src/androidTest/kotlin/com/mablanco/pricegrab/ui/settings/SettingsLargeFontTest.kt`.
-- [ ] T026 [P] [US3] Add semantics / content-description assertions (or
+- [x] T026 [P] [US3] Add semantics / content-description assertions (or
       documented manual checklist tied to tags) for theme options +
       Material You state announcements in
       `android/app/src/androidTest/kotlin/com/mablanco/pricegrab/ui/settings/SettingsA11yTest.kt`
@@ -218,14 +218,14 @@ state → fontScale 2.0 no truncation/overlap → back to Compare.
 
 ### Implementation for User Story 3
 
-- [ ] T027 [US3] Audit Settings + Compare entry for ≥48 dp targets,
+- [x] T027 [US3] Audit Settings + Compare entry for ≥48 dp targets,
       meaningful semantics, and scrollable layout at large font in
       `SettingsScreen.kt` / Compare top-bar action; fix any gaps from
       US1/US2.
-- [ ] T028 [P] [US3] Verify all Settings user-visible strings exist in both
+- [x] T028 [P] [US3] Verify all Settings user-visible strings exist in both
       `values` and `values-es` (no hardcoded UI text); fix any missing
       translations.
-- [ ] T029 [US3] Make T025/T026 green; confirm back / predictive back returns
+- [x] T029 [US3] Make T025/T026 green; confirm back / predictive back returns
       to Compare with form state intact (regression on T012).
 
 **Checkpoint**: US3 a11y / i18n / discoverability acceptance scenarios pass.
@@ -237,12 +237,12 @@ state → fontScale 2.0 no truncation/overlap → back to Compare.
 **Purpose**: Regression, docs alignment, release-prep tasks deferred to PR
 **AC**.
 
-- [ ] T030 [P] Run Compare regression suite (unit + instrumented) and fix
+- [x] T030 [P] Run Compare regression suite (unit + instrumented) and fix
       any breakage from theme/root changes; keep existing offer test tags.
-- [ ] T031 [P] Walk `specs/007-settings-appearance/quickstart.md` manually
+- [x] T031 [P] Walk `specs/007-settings-appearance/quickstart.md` manually
       (or note blockers in PR AB); include SC-008 contrast smoke for brand
       + one dynamic palette when a device is available.
-- [ ] T032 [P] Update `docs/project-status.md` In-progress / feature notes
+- [x] T032 [P] Update `docs/project-status.md` In-progress / feature notes
       if drift after impl (still **no** versionCode bump on PR AB).
 - [ ] T033 Release-prep **only on PR AC** (not AB): bump to **0.1.10** /
       versionCode **11**, fastlane changelogs en/es, `docs/fdroid.md` +

@@ -48,4 +48,19 @@
     <string name="comparison_cleared">Comparación borrada</string>
     <string name="undo_action">Deshacer</string>
     <string name="reset_announcement">Comparación reiniciada</string>
+
+    <string name="settings_title">Ajustes</string>
+    <string name="settings_open_description">Abrir ajustes</string>
+    <string name="settings_back_description">Volver a la comparación</string>
+    <string name="settings_theme_section">Apariencia</string>
+    <string name="settings_theme_system">Sistema</string>
+    <string name="settings_theme_light">Claro</string>
+    <string name="settings_theme_dark">Oscuro</string>
+    <string name="settings_theme_selected">Seleccionado</string>
+    <string name="settings_theme_unselected">No seleccionado</string>
+    <string name="settings_material_you_title">Material You</string>
+    <string name="settings_material_you_description">Usar colores del fondo de pantalla</string>
+    <string name="settings_material_you_unavailable">No disponible en este dispositivo</string>
+    <string name="settings_material_you_on">Activado</string>
+    <string name="settings_material_you_off">Desactivado</string>
 </resources>
