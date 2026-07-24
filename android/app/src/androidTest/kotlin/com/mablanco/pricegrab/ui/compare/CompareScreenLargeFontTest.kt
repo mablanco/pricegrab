@@ -9,7 +9,9 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.unit.Density
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.mablanco.pricegrab.core.model.ComparisonOutcome
 import com.mablanco.pricegrab.ui.theme.PriceGrabTheme
+import java.math.BigDecimal
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
@@ -72,6 +74,47 @@ class CompareScreenLargeFontTest {
 
         assertAdaptiveTwoRow(TEST_TAG_OFFER_A)
         assertAdaptiveTwoRow(TEST_TAG_OFFER_B)
+    }
+
+    @Test
+    fun winnerSavingsBothVisibleAtTwoHundredPercentFontScale() {
+        composeRule.setContent {
+            val baseDensity = LocalDensity.current
+            val largeFontDensity = Density(
+                density = baseDensity.density,
+                fontScale = LARGE_FONT_SCALE,
+            )
+            CompositionLocalProvider(LocalDensity provides largeFontDensity) {
+                PriceGrabTheme {
+                    CompareScreen(
+                        state = CompareUiState(
+                            offers = listOf(
+                                OfferSlotState(priceRaw = "2.50", quantityRaw = "500"),
+                                OfferSlotState(priceRaw = "4.00", quantityRaw = "1000"),
+                            ),
+                            outcome = ComparisonOutcome.Winner(
+                                slotIndex = 1,
+                                secondSlotIndex = 0,
+                                perUnitDelta = BigDecimal("0.001"),
+                                percentDelta = BigDecimal("20"),
+                            ),
+                        ),
+                        onPriceChange = { _, _ -> },
+                        onQuantityChange = { _, _ -> },
+                        onUnitChange = { _, _ -> },
+                        onAddOffer = {},
+                        onRemoveOffer = {},
+                        onResetClick = {},
+                        onUndoClick = {},
+                        onUndoDismissed = {},
+                    )
+                }
+            }
+        }
+
+        composeRule.onNodeWithTag(TEST_TAG_HERO_RESULT).performScrollTo().assertIsDisplayed()
+        assertTagVisible(TEST_TAG_RESULT_SAVINGS)
+        assertTagVisible(TEST_TAG_RESULT_SAVINGS_PERCENT)
     }
 
     private fun assertTagVisible(testTag: String) {

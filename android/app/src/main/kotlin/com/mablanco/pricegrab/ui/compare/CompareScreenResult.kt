@@ -54,9 +54,17 @@ internal fun ResultRegion(
         )
         else -> null
     }
+    // Absolute and percent must appear together for a displayable winner
+    // (contracts/result-savings-display.md); never leave a half-rich hero.
+    val percentLine: String? = when {
+        savingsLine == null || savings == null -> null
+        else -> stringResource(R.string.result_savings_percent, savings.percentDelta)
+    }
     val a11ySummary: String = when {
         incompatibleUnits -> incompatibleMessage
         headline == null -> placeholder
+        savingsLine != null && percentLine != null ->
+            "$headline. $savingsLine. $percentLine"
         savingsLine != null -> "$headline. $savingsLine"
         else -> headline
     }
@@ -91,6 +99,7 @@ internal fun ResultRegion(
                     outcome = outcome,
                     headline = headline ?: "",
                     savingsLine = savingsLine,
+                    percentLine = percentLine,
                 )
             }
         }
@@ -126,6 +135,7 @@ private fun HeroResultCard(
     outcome: ComparisonOutcome,
     headline: String,
     savingsLine: String?,
+    percentLine: String?,
 ) {
     val spacing = MaterialTheme.spacing
     ElevatedCard(
@@ -156,6 +166,14 @@ private fun HeroResultCard(
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.testTag(TEST_TAG_RESULT_SAVINGS),
+                    )
+                }
+                if (percentLine != null) {
+                    Text(
+                        text = percentLine,
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.testTag(TEST_TAG_RESULT_SAVINGS_PERCENT),
                     )
                 }
             }

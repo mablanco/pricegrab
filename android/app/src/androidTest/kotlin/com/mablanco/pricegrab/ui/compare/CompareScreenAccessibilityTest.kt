@@ -76,9 +76,11 @@ class CompareScreenAccessibilityTest {
             "1",
             ctx.getString(R.string.offer_a_title),
         )
+        val percent = ctx.getString(R.string.result_savings_percent, "20")
 
         composeRule.onNodeWithTag("result").assert(hasContentDescriptionContaining(headline))
         composeRule.onNodeWithTag("result").assert(hasContentDescriptionContaining(savings))
+        composeRule.onNodeWithTag("result").assert(hasContentDescriptionContaining(percent))
     }
 
     /**
@@ -153,6 +155,10 @@ class CompareScreenAccessibilityTest {
         // would force TalkBack into a two-level heading hierarchy inside
         // the same card and over-announce the result.
         composeRule.onNodeWithTag(TEST_TAG_RESULT_SAVINGS).assert(
+            SemanticsMatcher.keyNotDefined(SemanticsProperties.Heading),
+        )
+        composeRule.onNodeWithTag(TEST_TAG_RESULT_SAVINGS_PERCENT).assertIsDisplayed()
+        composeRule.onNodeWithTag(TEST_TAG_RESULT_SAVINGS_PERCENT).assert(
             SemanticsMatcher.keyNotDefined(SemanticsProperties.Heading),
         )
     }

@@ -29,6 +29,7 @@
     <string name="result_savings_per_kg">Ahorras %1$s por kg frente a %2$s</string>
     <string name="result_savings_per_L">Ahorras %1$s por L frente a %2$s</string>
     <string name="result_savings_per_piece">Ahorras %1$s por unidad frente a %2$s</string>
+    <string name="result_savings_percent">%1$s%% menos</string>
 
     <string name="error_incompatible_units">Ambas ofertas deben usar el mismo tipo de medida (peso, volumen o unidades).</string>
 

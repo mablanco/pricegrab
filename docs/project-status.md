@@ -2,7 +2,7 @@
 
 > Canonical agent/project memory for “where we are” and “what’s next”.
 > Keep this file current when shipping a release or parking a deferred idea.
-> Last updated: **2026-07-24** (tasks ready for feature **008** richer result card; planning PR **AD**).
+> Last updated: **2026-07-24** (impl PR **AE** for feature **008** richer result card).
 
 ## Snapshot
 
@@ -10,7 +10,7 @@
 |-------|--------|
 | App version | **0.1.10** (`versionCode` **11**) |
 | Latest tag / Release | Tag **`v0.1.10`** after merge of release-prep + tag from `main` (previous: [`v0.1.9`](https://github.com/mablanco/pricegrab/releases/tag/v0.1.9)) |
-| Active Spec Kit feature pointer | `.specify/feature.json` → `specs/008-richer-result-card` (tasks ready; planning PR **AD**) |
+| Active Spec Kit feature pointer | `.specify/feature.json` → `specs/008-richer-result-card` (impl PR **AE** in progress) |
 | Distribution | **F-Droid Mode B** + **GitHub Releases**; **not** on Google Play |
 | F-Droid package | https://f-droid.org/packages/com.mablanco.pricegrab/ (first publish: **v0.1.5**) |
 | Owner | Marco Antonio Blanco — chat in Spanish; engineering artifacts in English |
