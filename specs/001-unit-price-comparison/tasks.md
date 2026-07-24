@@ -459,6 +459,23 @@ versionCode 10 / 0.1.9, changelogs en/es for code 10, `docs/fdroid.md` +
 `docs/project-status.md`. No icon regen. Tag `v0.1.9` from `main` after
 manual QA (`specs/006-compact-offer-row/quickstart.md`).
 
+### PR AA — `007-settings-appearance` *(feature 007 — planning only)*
+
+Spec + plan + research + data-model + contracts + quickstart + tasks for
+Settings appearance (System/Light/Dark + optional Material You). No Android
+source. Cadence: PR AA → PR AB → PR AC (letters continue after Z). See
+[`specs/007-settings-appearance/`](../../specs/007-settings-appearance/).
+Release target stays **0.1.10** (not 0.2.0).
+
+### PR AB — `feat/0xx-settings-appearance-impl` *(feature 007 — implementation)*
+
+Settings screen, DataStore preferences, theme wiring, tests. No version bump.
+
+### PR AC — `chore/0xx-…` *(feature 007 — release cut)*
+
+versionCode 11 / **0.1.10**, changelogs, `docs/fdroid.md` +
+`docs/project-status.md`. Tag `v0.1.10` from `main` after manual QA.
+
 ### Notes
 
 - Each PR must keep the main branch green (lint, detekt, unit tests, JaCoCo
