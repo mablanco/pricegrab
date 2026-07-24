@@ -72,9 +72,12 @@ class CompareScreenMultiOfferTest {
             "1",
             ctx.getString(R.string.offer_a_title),
         )
+        val percent = ctx.getString(R.string.result_savings_percent, "20")
 
         composeRule.onNodeWithText(headline).assertIsDisplayed()
         composeRule.onNodeWithText(savings).assertIsDisplayed()
+        composeRule.onNodeWithText(percent).assertIsDisplayed()
+        composeRule.onNodeWithTag(TEST_TAG_RESULT_SAVINGS_PERCENT).assertIsDisplayed()
     }
 
     @Test

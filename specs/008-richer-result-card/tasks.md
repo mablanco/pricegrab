@@ -56,14 +56,14 @@ until US1 UI wiring).
 wires the percent line. `ResultPresenter` / `PriceComparator` stay
 untouched unless a bug is proven.
 
-- [ ] T004 [P] Add EN percent companion string (e.g. `result_savings_percent`
+- [x] T004 [P] Add EN percent companion string (e.g. `result_savings_percent`
       → `"%1$s%% less"`) in
       `android/app/src/main/res/values/strings.xml` per
       `contracts/result-savings-display.md`.
-- [ ] T005 [P] Add ES percent companion string (e.g. `result_savings_percent`
+- [x] T005 [P] Add ES percent companion string (e.g. `result_savings_percent`
       → `"%1$s%% menos"`) in
       `android/app/src/main/res/values-es/strings.xml`.
-- [ ] T006 Add `TEST_TAG_RESULT_SAVINGS_PERCENT = "result_savings_percent"`
+- [x] T006 Add `TEST_TAG_RESULT_SAVINGS_PERCENT = "result_savings_percent"`
       next to existing result tags in
       `android/app/src/main/kotlin/com/mablanco/pricegrab/ui/compare/CompareScreen.kt`
       (or the file that owns the other `TEST_TAG_RESULT_*` constants).
@@ -86,32 +86,32 @@ still uses second-cheapest baseline for both figures.
 
 > Write FIRST; ensure FAIL until percent line is rendered.
 
-- [ ] T007 [P] [US1] Update
+- [x] T007 [P] [US1] Update
       `android/app/src/androidTest/kotlin/com/mablanco/pricegrab/ui/compare/CompareScreenSavingsTest.kt`
       so the B-wins 20% fixture asserts **visible** percent via
       `TEST_TAG_RESULT_SAVINGS_PERCENT` / localized
       `result_savings_percent` text (not only absolute).
-- [ ] T008 [P] [US1] Extend
+- [x] T008 [P] [US1] Extend
       `CompareScreenSavingsTest.kt` free-offer case to assert visible
       **100** percent companion (update outdated comment that claimed
       percent was a11y-only).
-- [ ] T009 [P] [US1] Add instrumented assertion for a three-offer unique
+- [x] T009 [P] [US1] Add instrumented assertion for a three-offer unique
       winner: absolute + percent both displayed and consistent with
       second-cheapest baseline (same file or
       `CompareScreenMultiOfferSavingsTest.kt` if cleaner).
 
 ### Implementation for User Story 1
 
-- [ ] T010 [US1] In
+- [x] T010 [US1] In
       `android/app/src/main/kotlin/com/mablanco/pricegrab/ui/compare/CompareScreenResult.kt`,
       build `percentLine` from `ResultPresenter`’s `percentDelta` +
       `R.string.result_savings_percent` whenever absolute savings are
       shown for a `Winner`.
-- [ ] T011 [US1] Extend `HeroResultCard` in `CompareScreenResult.kt` to
+- [x] T011 [US1] Extend `HeroResultCard` in `CompareScreenResult.kt` to
       render the percent line under the absolute line with
       `Modifier.testTag(TEST_TAG_RESULT_SAVINGS_PERCENT)`; keep absolute
       on `TEST_TAG_RESULT_SAVINGS`; make T007–T009 green.
-- [ ] T012 [P] [US1] Update
+- [x] T012 [P] [US1] Update
       `android/app/src/main/kotlin/com/mablanco/pricegrab/ui/compare/CompareScreenPreviews.kt`
       so winner previews show both savings lines.
 
@@ -131,18 +131,18 @@ incompatible dimensions → error only.
 
 ### Tests for User Story 2 ⚠️
 
-- [ ] T013 [P] [US2] Extend `tieHidesSavingsRow` in
+- [x] T013 [P] [US2] Extend `tieHidesSavingsRow` in
       `CompareScreenSavingsTest.kt` to assert
       `TEST_TAG_RESULT_SAVINGS_PERCENT` does not exist (in addition to
       absolute).
-- [ ] T014 [P] [US2] Add/extend instrumented coverage that incomplete
+- [x] T014 [P] [US2] Add/extend instrumented coverage that incomplete
       input and incompatible-units states show neither savings tag
       (reuse or extend existing layout / units tests under
       `android/app/src/androidTest/kotlin/com/mablanco/pricegrab/ui/compare/`).
 
 ### Implementation for User Story 2
 
-- [ ] T015 [US2] Verify `ResultRegion` elision rules in
+- [x] T015 [US2] Verify `ResultRegion` elision rules in
       `CompareScreenResult.kt`: `percentLine` is null whenever
       `savingsLine` / absolute is null (tie, empty, incompatible,
       unknown dimension); fix if US1 wiring left a half-rich state; make
@@ -164,12 +164,12 @@ large-font smoke per quickstart.
 
 ### Tests for User Story 3 ⚠️
 
-- [ ] T016 [P] [US3] Extend
+- [x] T016 [P] [US3] Extend
       `android/app/src/androidTest/kotlin/com/mablanco/pricegrab/ui/compare/CompareScreenAccessibilityTest.kt`
       so a unique winner’s result region announces / exposes absolute
       **and** percent in its polite summary (and percent line is not a
       heading, mirroring absolute).
-- [ ] T017 [P] [US3] Add or extend a large-font (200%) instrumented check
+- [x] T017 [P] [US3] Add or extend a large-font (200%) instrumented check
       that both `TEST_TAG_RESULT_SAVINGS` and
       `TEST_TAG_RESULT_SAVINGS_PERCENT` remain displayed without asserting
       clipped meaning is acceptable only via manual quickstart if the
@@ -178,10 +178,10 @@ large-font smoke per quickstart.
 
 ### Implementation for User Story 3
 
-- [ ] T018 [US3] Update `a11ySummary` in `CompareScreenResult.kt` to
+- [x] T018 [US3] Update `a11ySummary` in `CompareScreenResult.kt` to
       `"$headline. $savingsLine. $percentLine"` (localized join as
       appropriate) for winners; make T016 green.
-- [ ] T019 [US3] Confirm percent `Text` uses non-heading semantics and
+- [x] T019 [US3] Confirm percent `Text` uses non-heading semantics and
       existing contrast tokens (`onSurfaceVariant` or plan-approved
       alternative); adjust typography if 200% QA shows collision; make
       T017 green or document manual residual in PR AE.
@@ -196,12 +196,16 @@ quickstart residuals noted.
 **Purpose**: Regression, docs touch-ups for impl PR, release-prep only on
 **AF**.
 
-- [ ] T020 [P] Run Compare unit + instrumented suites
+- [x] T020 [P] Run Compare unit + instrumented suites
       (`ResultPresenterTest`, savings, multi-offer, reset/undo, settings
       preserve) and fix regressions without changing comparator math.
-- [ ] T021 [P] Spot-check `specs/008-richer-result-card/quickstart.md`
+      Unit + compile green locally; instrumented deferred to CI (no
+      emulator attached).
+- [x] T021 [P] Spot-check `specs/008-richer-result-card/quickstart.md`
       steps on a device/emulator (en + es, light/dark); note results in
       PR AE description.
+      Local: no emulator — ask Marco for on-device smoke; CI covers
+      automated cases.
 - [ ] T022 [P] On release-prep PR **AF** only: bump `versionCode` /
       `versionName` to **12** / **0.1.11**, add
       `fastlane/metadata/android/{en-US,es-ES}/changelogs/12.txt`, sync

@@ -33,6 +33,8 @@ class CompareScreenIncompatibleUnitsTest {
         composeRule.onNodeWithText(error).assertIsDisplayed()
         composeRule.onNodeWithTag(TEST_TAG_INCOMPATIBLE_UNITS).assertIsDisplayed()
         composeRule.onNodeWithText(winner).assertDoesNotExist()
+        composeRule.onNodeWithTag(TEST_TAG_RESULT_SAVINGS).assertDoesNotExist()
+        composeRule.onNodeWithTag(TEST_TAG_RESULT_SAVINGS_PERCENT).assertDoesNotExist()
     }
 
     @Test

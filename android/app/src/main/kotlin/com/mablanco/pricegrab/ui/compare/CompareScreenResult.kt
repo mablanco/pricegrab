@@ -40,26 +40,7 @@ internal fun ResultRegion(
 ) {
     val configuration = LocalConfiguration.current
     val locale = ConfigurationCompat.getLocales(configuration).get(0) ?: Locale.getDefault()
-
-    val placeholder = stringResource(R.string.result_placeholder)
-    val incompatibleMessage = stringResource(R.string.error_incompatible_units)
-    val headline = outcome?.let { outcomeHeadline(it) }
-    val savings = ResultPresenter.present(outcome, dimension, locale)
-    val savingsLine: String? = when {
-        savings == null -> null
-        outcome is ComparisonOutcome.Winner -> formatSavingsLine(
-            perUnitDelta = savings.perUnitDelta,
-            dimension = dimension,
-            versusOfferTitle = stringResource(offerTitleRes(outcome.secondSlotIndex)),
-        )
-        else -> null
-    }
-    val a11ySummary: String = when {
-        incompatibleUnits -> incompatibleMessage
-        headline == null -> placeholder
-        savingsLine != null -> "$headline. $savingsLine"
-        else -> headline
-    }
+    val copy = resultRegionCopy(outcome, incompatibleUnits, dimension, locale)
 
     Column(
         modifier = Modifier
@@ -67,32 +48,126 @@ internal fun ResultRegion(
             .testTag(TEST_TAG_RESULT)
             .semantics {
                 liveRegion = LiveRegionMode.Polite
-                contentDescription = a11ySummary
+                contentDescription = copy.a11ySummary
             },
     ) {
-        when {
-            incompatibleUnits -> {
-                Text(
-                    text = incompatibleMessage,
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.testTag(TEST_TAG_INCOMPATIBLE_UNITS),
-                )
-            }
-            outcome == null -> {
-                Text(
-                    text = placeholder,
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
-            else -> {
-                HeroResultCard(
-                    outcome = outcome,
-                    headline = headline ?: "",
-                    savingsLine = savingsLine,
-                )
-            }
+        ResultRegionBody(
+            outcome = outcome,
+            incompatibleUnits = incompatibleUnits,
+            copy = copy,
+        )
+    }
+}
+
+private data class ResultRegionCopy(
+    val placeholder: String,
+    val incompatibleMessage: String,
+    val headline: String?,
+    val savingsLine: String?,
+    val percentLine: String?,
+    val a11ySummary: String,
+)
+
+@Composable
+private fun resultRegionCopy(
+    outcome: ComparisonOutcome?,
+    incompatibleUnits: Boolean,
+    dimension: Dimension?,
+    locale: Locale,
+): ResultRegionCopy {
+    val placeholder = stringResource(R.string.result_placeholder)
+    val incompatibleMessage = stringResource(R.string.error_incompatible_units)
+    val headline = outcome?.let { outcomeHeadline(it) }
+    val savings = ResultPresenter.present(outcome, dimension, locale)
+    val savingsLine = absoluteSavingsLine(outcome, savings, dimension)
+    // Absolute and percent must appear together for a displayable winner
+    // (contracts/result-savings-display.md); never leave a half-rich hero.
+    val percentLine = percentSavingsLine(savingsLine, savings)
+    return ResultRegionCopy(
+        placeholder = placeholder,
+        incompatibleMessage = incompatibleMessage,
+        headline = headline,
+        savingsLine = savingsLine,
+        percentLine = percentLine,
+        a11ySummary = buildResultA11ySummary(
+            incompatibleUnits = incompatibleUnits,
+            incompatibleMessage = incompatibleMessage,
+            headline = headline,
+            placeholder = placeholder,
+            savingsLine = savingsLine,
+            percentLine = percentLine,
+        ),
+    )
+}
+
+@Composable
+private fun absoluteSavingsLine(
+    outcome: ComparisonOutcome?,
+    savings: SavingsPresentation?,
+    dimension: Dimension?,
+): String? {
+    if (savings == null || outcome !is ComparisonOutcome.Winner) return null
+    return formatSavingsLine(
+        perUnitDelta = savings.perUnitDelta,
+        dimension = dimension,
+        versusOfferTitle = stringResource(offerTitleRes(outcome.secondSlotIndex)),
+    )
+}
+
+@Composable
+private fun percentSavingsLine(
+    savingsLine: String?,
+    savings: SavingsPresentation?,
+): String? {
+    if (savingsLine == null || savings == null) return null
+    return stringResource(R.string.result_savings_percent, savings.percentDelta)
+}
+
+private fun buildResultA11ySummary(
+    incompatibleUnits: Boolean,
+    incompatibleMessage: String,
+    headline: String?,
+    placeholder: String,
+    savingsLine: String?,
+    percentLine: String?,
+): String = when {
+    incompatibleUnits -> incompatibleMessage
+    headline == null -> placeholder
+    savingsLine != null && percentLine != null ->
+        "$headline. $savingsLine. $percentLine"
+    savingsLine != null -> "$headline. $savingsLine"
+    else -> headline
+}
+
+@Composable
+private fun ResultRegionBody(
+    outcome: ComparisonOutcome?,
+    incompatibleUnits: Boolean,
+    copy: ResultRegionCopy,
+) {
+    when {
+        incompatibleUnits -> {
+            Text(
+                text = copy.incompatibleMessage,
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.testTag(TEST_TAG_INCOMPATIBLE_UNITS),
+            )
+        }
+        outcome == null -> {
+            Text(
+                text = copy.placeholder,
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+        else -> {
+            HeroResultCard(
+                outcome = outcome,
+                headline = copy.headline ?: "",
+                savingsLine = copy.savingsLine,
+                percentLine = copy.percentLine,
+            )
         }
     }
 }
@@ -126,6 +201,7 @@ private fun HeroResultCard(
     outcome: ComparisonOutcome,
     headline: String,
     savingsLine: String?,
+    percentLine: String?,
 ) {
     val spacing = MaterialTheme.spacing
     ElevatedCard(
@@ -156,6 +232,14 @@ private fun HeroResultCard(
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.testTag(TEST_TAG_RESULT_SAVINGS),
+                    )
+                }
+                if (percentLine != null) {
+                    Text(
+                        text = percentLine,
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.testTag(TEST_TAG_RESULT_SAVINGS_PERCENT),
                     )
                 }
             }

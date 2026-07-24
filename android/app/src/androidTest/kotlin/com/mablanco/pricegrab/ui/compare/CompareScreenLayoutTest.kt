@@ -39,6 +39,8 @@ class CompareScreenLayoutTest {
     @Test
     fun heroResultCardIsAbsentOnColdLaunch() {
         composeRule.onNodeWithTag(TEST_TAG_HERO_RESULT).assertDoesNotExist()
+        composeRule.onNodeWithTag(TEST_TAG_RESULT_SAVINGS).assertDoesNotExist()
+        composeRule.onNodeWithTag(TEST_TAG_RESULT_SAVINGS_PERCENT).assertDoesNotExist()
 
         val placeholder = composeRule.activity.getString(R.string.result_placeholder)
         composeRule.onNodeWithText(placeholder).assertIsDisplayed()
@@ -50,13 +52,11 @@ class CompareScreenLayoutTest {
 
         composeRule.onNodeWithTag(TEST_TAG_HERO_RESULT).assertIsDisplayed()
 
-        // Headline and savings line both populate from the new feature 003
-        // strings; their textual contents are pinned by
-        // CompareScreenIdentifyWinnerTest / CompareScreenSavingsTest. Here
-        // we just confirm both are present inside the hero card subtree
-        // (not stale from a previous comparison).
+        // Headline, absolute savings, and percent companion (feature 008)
+        // all populate inside the hero card subtree.
         composeRule.onNodeWithTag(TEST_TAG_RESULT_TEXT).assertIsDisplayed()
         composeRule.onNodeWithTag(TEST_TAG_RESULT_SAVINGS).assertIsDisplayed()
+        composeRule.onNodeWithTag(TEST_TAG_RESULT_SAVINGS_PERCENT).assertIsDisplayed()
     }
 
     @Test
@@ -68,6 +68,8 @@ class CompareScreenLayoutTest {
         composeRule.waitForIdle()
 
         composeRule.onNodeWithTag(TEST_TAG_HERO_RESULT).assertDoesNotExist()
+        composeRule.onNodeWithTag(TEST_TAG_RESULT_SAVINGS).assertDoesNotExist()
+        composeRule.onNodeWithTag(TEST_TAG_RESULT_SAVINGS_PERCENT).assertDoesNotExist()
 
         // The placeholder Text is back inside the always-emitted result
         // region; the screen does not leave a stale empty rectangle.
