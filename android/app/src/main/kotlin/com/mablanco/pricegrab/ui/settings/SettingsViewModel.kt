@@ -17,12 +17,17 @@ import kotlinx.coroutines.launch
  * Thin ViewModel over [AppearancePreferencesRepository] for the Settings
  * screen. Shares the Activity ViewModelStore so Compare navigation does
  * not recreate preference collection when returning from Settings.
+ *
+ * Single [Application] constructor so
+ * [androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory] can
+ * instantiate this class (Kotlin default parameters alone do not expose
+ * a reflective `(Application)` ctor).
  */
 class SettingsViewModel(
     application: Application,
-    private val repository: AppearancePreferencesRepository =
-        AppearancePreferencesRepository(application),
 ) : AndroidViewModel(application) {
+
+    private val repository = AppearancePreferencesRepository(application)
 
     val preferences: StateFlow<AppearancePreferences> = repository.preferences
         .stateIn(
