@@ -13,6 +13,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -59,6 +60,7 @@ import kotlinx.coroutines.withTimeoutOrNull
  */
 @Composable
 fun CompareScreen(
+    onOpenSettings: () -> Unit = {},
     modifier: Modifier = Modifier,
     viewModel: CompareViewModel = viewModel(),
 ) {
@@ -73,6 +75,7 @@ fun CompareScreen(
         onResetClick = viewModel::resetComparison,
         onUndoClick = viewModel::undoReset,
         onUndoDismissed = viewModel::dismissUndo,
+        onOpenSettings = onOpenSettings,
         modifier = modifier,
     )
 }
@@ -89,6 +92,7 @@ fun CompareScreen(
     onResetClick: () -> Unit,
     onUndoClick: () -> Unit,
     onUndoDismissed: () -> Unit,
+    onOpenSettings: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
@@ -104,7 +108,13 @@ fun CompareScreen(
 
     Scaffold(
         modifier = modifier,
-        topBar = { CompareTopBar(enabled = state.isResetEnabled, onResetClick = onResetClick) },
+        topBar = {
+            CompareTopBar(
+                resetEnabled = state.isResetEnabled,
+                onResetClick = onResetClick,
+                onOpenSettings = onOpenSettings,
+            )
+        },
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
     ) { innerPadding ->
         CompareContent(
@@ -168,8 +178,13 @@ private fun UndoSnackbarEffect(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun CompareTopBar(enabled: Boolean, onResetClick: () -> Unit) {
+private fun CompareTopBar(
+    resetEnabled: Boolean,
+    onResetClick: () -> Unit,
+    onOpenSettings: () -> Unit,
+) {
     val resetDescription = stringResource(R.string.reset_action_description)
+    val settingsDescription = stringResource(R.string.settings_open_description)
     CenterAlignedTopAppBar(
         title = {
             Row(
@@ -192,8 +207,19 @@ private fun CompareTopBar(enabled: Boolean, onResetClick: () -> Unit) {
         },
         actions = {
             IconButton(
+                onClick = onOpenSettings,
+                modifier = Modifier
+                    .testTag(TEST_TAG_SETTINGS_OPEN)
+                    .semantics { contentDescription = settingsDescription },
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Settings,
+                    contentDescription = null,
+                )
+            }
+            IconButton(
                 onClick = onResetClick,
-                enabled = enabled,
+                enabled = resetEnabled,
                 modifier = Modifier
                     .testTag(TEST_TAG_RESET)
                     .semantics { contentDescription = resetDescription },
@@ -533,6 +559,7 @@ const val TEST_TAG_RESULT_TEXT: String = "result_text"
 const val TEST_TAG_RESULT_SAVINGS: String = "result_savings"
 const val TEST_TAG_INCOMPATIBLE_UNITS: String = "incompatible_units"
 const val TEST_TAG_RESET: String = "reset_action"
+const val TEST_TAG_SETTINGS_OPEN: String = "settings_open"
 const val TEST_TAG_BRANDMARK: String = "brandmark"
 
 private val BRANDMARK_SIZE = 24.dp

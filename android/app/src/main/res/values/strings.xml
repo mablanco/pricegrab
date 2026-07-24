@@ -48,4 +48,19 @@
     <string name="comparison_cleared">Comparison cleared</string>
     <string name="undo_action">Undo</string>
     <string name="reset_announcement">Comparison reset</string>
+
+    <string name="settings_title">Settings</string>
+    <string name="settings_open_description">Open settings</string>
+    <string name="settings_back_description">Back to comparison</string>
+    <string name="settings_theme_section">Appearance</string>
+    <string name="settings_theme_system">System</string>
+    <string name="settings_theme_light">Light</string>
+    <string name="settings_theme_dark">Dark</string>
+    <string name="settings_theme_selected">Selected</string>
+    <string name="settings_theme_unselected">Not selected</string>
+    <string name="settings_material_you_title">Material You</string>
+    <string name="settings_material_you_description">Use colors from your wallpaper</string>
+    <string name="settings_material_you_unavailable">Unavailable on this device</string>
+    <string name="settings_material_you_on">On</string>
+    <string name="settings_material_you_off">Off</string>
 </resources>

@@ -2,7 +2,7 @@
 
 > Canonical agent/project memory for “where we are” and “what’s next”.
 > Keep this file current when shipping a release or parking a deferred idea.
-> Last updated: **2026-07-24** (feature **007** planning — Settings appearance).
+> Last updated: **2026-07-24** (feature **007** implementation — Settings appearance).
 
 ## Snapshot
 
@@ -10,7 +10,7 @@
 |-------|--------|
 | App version | **0.1.9** (`versionCode` **10**) |
 | Latest tag / Release | Tag **`v0.1.9`** after manual QA (prep on `main`; previous: [`v0.1.8`](https://github.com/mablanco/pricegrab/releases/tag/v0.1.8)) |
-| Active Spec Kit feature pointer | `.specify/feature.json` → `specs/007-settings-appearance` (planning / in progress) |
+| Active Spec Kit feature pointer | `.specify/feature.json` → `specs/007-settings-appearance` (implementation PR **AB**) |
 | Planned next release (007) | **0.1.10** (stay on 0.1.x; **not** 0.2.0). Do not bump version until release-prep. |
 | Distribution | **F-Droid Mode B** + **GitHub Releases**; **not** on Google Play |
 | F-Droid package | https://f-droid.org/packages/com.mablanco.pricegrab/ (first publish: **v0.1.5**) |

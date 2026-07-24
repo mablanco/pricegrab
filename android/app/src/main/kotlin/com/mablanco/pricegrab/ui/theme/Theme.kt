@@ -1,10 +1,14 @@
 package com.mablanco.pricegrab.ui.theme
 
+import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.dynamicDarkColorScheme
+import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 
 private val LightColors = lightColorScheme(
     primary = BrandPrimary,
@@ -63,22 +67,27 @@ private val DarkColors = darkColorScheme(
 /**
  * The PriceGrab Material 3 theme.
  *
- * Feature 003 deliberately opts out of Material You dynamic color: a
- * single-purpose, branded utility benefits more from a consistent visual
- * identity across users and devices than from wallpaper-derived theming.
- * The resolved decision is recorded in `specs/003-visual-polish-branding/
- * research.md` §2 and FR-004 in the same feature's spec.
- *
- * The brand palette in [LightColors] / [DarkColors] is generated
- * deterministically from the launcher icon's seed (`#2F5C73`) by Material
- * Color Utilities (TonalSpot scheme); see `Color.kt` for the audit trail.
+ * Feature 003 established a fixed brand palette from seed `#2F5C73`.
+ * Feature 007 restores Material You dynamic color as an **explicit
+ * opt-in**: pass [useDynamicColor] = true only after
+ * [com.mablanco.pricegrab.data.appearance.resolveAppearance] confirms
+ * the user enabled Material You and the device is API 31+. Otherwise the
+ * brand schemes remain in use (the default on a fresh install).
  */
 @Composable
 fun PriceGrabTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
+    useDynamicColor: Boolean = false,
     content: @Composable () -> Unit,
 ) {
-    val colors = if (darkTheme) DarkColors else LightColors
+    val colors = when {
+        useDynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
+            val context = LocalContext.current
+            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+        }
+        darkTheme -> DarkColors
+        else -> LightColors
+    }
 
     MaterialTheme(
         colorScheme = colors,
