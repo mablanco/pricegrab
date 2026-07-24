@@ -1,0 +1,4 @@
+Settings for appearance:
+• Choose System, Light, or Dark theme — applies immediately without restarting.
+• Optional Material You colors from your wallpaper (Android 12+); brand palette remains the default.
+• Preferences are saved on the device; your comparison inputs stay when you open and leave Settings.

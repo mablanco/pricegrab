@@ -2,16 +2,15 @@
 
 > Canonical agent/project memory for “where we are” and “what’s next”.
 > Keep this file current when shipping a release or parking a deferred idea.
-> Last updated: **2026-07-24** (feature **007** implementation — Settings appearance).
+> Last updated: **2026-07-24** (release-prep **v0.1.10** / feature **007**).
 
 ## Snapshot
 
 | Field | Value |
 |-------|--------|
-| App version | **0.1.9** (`versionCode` **10**) |
-| Latest tag / Release | Tag **`v0.1.9`** after manual QA (prep on `main`; previous: [`v0.1.8`](https://github.com/mablanco/pricegrab/releases/tag/v0.1.8)) |
-| Active Spec Kit feature pointer | `.specify/feature.json` → `specs/007-settings-appearance` (implementation PR **AB**) |
-| Planned next release (007) | **0.1.10** (stay on 0.1.x; **not** 0.2.0). Do not bump version until release-prep. |
+| App version | **0.1.10** (`versionCode` **11**) |
+| Latest tag / Release | Tag **`v0.1.10`** after merge of release-prep + tag from `main` (previous: [`v0.1.9`](https://github.com/mablanco/pricegrab/releases/tag/v0.1.9)) |
+| Active Spec Kit feature pointer | `.specify/feature.json` → `specs/007-settings-appearance` (shipped; pick next via backlog) |
 | Distribution | **F-Droid Mode B** + **GitHub Releases**; **not** on Google Play |
 | F-Droid package | https://f-droid.org/packages/com.mablanco.pricegrab/ (first publish: **v0.1.5**) |
 | Owner | Marco Antonio Blanco — chat in Spanish; engineering artifacts in English |
@@ -27,6 +26,7 @@
 | 004 | `quantity-units` | Units `{g,kg,ml,L,pcs}`; same-dimension only; savings per kg/L/piece | v0.1.7 |
 | 005 | `multi-offer-compare` | Up to 3 offers (`+`/`−`); cheapest wins; savings **vs second-cheapest** (named in UI) | v0.1.8 |
 | 006 | `compact-offer-row` | Single-row offer inputs; adaptive two-row at large font (200%) | v0.1.9 |
+| 007 | `settings-appearance` | Settings: System/Light/Dark + opt-in Material You (default off) | v0.1.10 |
 
 ### versionCode map
 
@@ -38,6 +38,7 @@
 | 8 | 0.1.7 | Quantity units; **fdroiddata `disable: not repro`** |
 | 9 | 0.1.8 | Three offers + icon optical fix (QA) |
 | 10 | 0.1.9 | Compact offer row + adaptive large-font layout |
+| 11 | 0.1.10 | Settings appearance (theme + Material You) |
 
 ## Spec Kit cadence
 
@@ -50,13 +51,13 @@ Global PR letter ledger lives in `specs/001-unit-price-comparison/tasks.md`.
 | 004 | R | S | T → v0.1.7 |
 | 005 | U | V | W → v0.1.8 |
 | 006 | X | Y | Z → v0.1.9 |
-| 007 | AA | AB | AC → v0.1.10 (planned) |
+| 007 | AA | AB | AC → v0.1.10 |
 
 Next free letter after **AC**. Pattern: planning PR → impl PR → chore release-prep (version, changelogs, `docs/fdroid.md`, icons) → **tag from `main` after manual QA**.
 
-**Version policy cue for agents**: Stay on **0.1.x** for 007. When a later
-feature would warrant a **MINOR** bump (0.2.0+), **prompt Marco** before
-choosing the version — do not invent a minor bump.
+**Version policy cue for agents**: When a later feature would warrant a
+**MINOR** bump (0.2.0+), **prompt Marco** before choosing the version —
+do not invent a minor bump.
 
 Release playbook: `docs/release.md`. F-Droid playbook: `docs/fdroid.md`.
 
@@ -64,7 +65,7 @@ Release playbook: `docs/release.md`. F-Droid playbook: `docs/fdroid.md`.
 
 `branding/regenerate-icons.py` ← `branding/icon-source.png` → mipmaps + fastlane icons.
 
-| Constant | Value (post v0.1.8 QA #43; unchanged in v0.1.9) |
+| Constant | Value (post v0.1.8 QA #43; unchanged in v0.1.10) |
 |----------|----------------------------|
 | `ART_SCALE` | `0.72` |
 | `ART_OFFSET_X_PX` | `-17` |
@@ -74,10 +75,10 @@ History (short): 0.86 → 0.82 → 0.76 → 0.72 scale; Y nudge planned ~−95 s
 
 ## Open / operational
 
-1. **F-Droid v0.1.7 `not repro`** — fdroiddata marks build disabled. **Do not re-tag 0.1.7.** Recovery path is clean **v0.1.8** / **v0.1.9** auto-update (`UpdateCheckMode: Tags`). If Mode B fails, investigate with `diffoscope` (see `docs/fdroid.md`).
+1. **F-Droid v0.1.7 `not repro`** — fdroiddata marks build disabled. **Do not re-tag 0.1.7.** Recovery path is clean **v0.1.8** / **v0.1.9** / **v0.1.10** auto-update (`UpdateCheckMode: Tags`). If Mode B fails, investigate with `diffoscope` (see `docs/fdroid.md`).
 2. **Constitution header** still has obsolete `TODO(PROJECT_SCAFFOLD)` (Android + GHA already shipped) — housekeeping only; do not invent new scaffold work.
 3. **GitHub Issues** — empty as of 2026-07-19; backlog lives here + Out of Scope sections in specs.
-4. **Tag `v0.1.9`** — only after manual QA of compact row + 200% font (see `specs/006-compact-offer-row/quickstart.md`).
+4. **Tag `v0.1.10`** — after this release-prep merges to `main` (QA of Settings already done on AB).
 
 ## Product backlog (deferred)
 
@@ -96,7 +97,7 @@ Captured from `specs/*/spec.md` and `research.md` Out of Scope / deferred notes.
 
 ### UX / branding polish
 - Android 12+ **SplashScreen** branding (`003`).
-- ~~**Settings** screen / theme override / Material You toggle~~ — **in progress** as feature **007** (`specs/007-settings-appearance`; PR cadence AA → AB → AC → planned **v0.1.10**).
+- ~~**Settings** screen / theme override / Material You toggle~~ — **shipped** in **007** / **v0.1.10**.
 - **Custom font** (APK/cold-start risk) (`003`).
 - Extra **motion / Lottie** beyond M3 defaults (`003`).
 - **Landscape / tablet / foldable** redesign (portrait-first today) (`003`).
@@ -145,4 +146,5 @@ implementation; none are scheduled.
 - Chat with Marco in **Spanish** by default; specs/plans/commits/code comments in **English**.
 - User-facing strings and store metadata: **ES + EN**.
 - Never overwrite a tag that produced an installable APK; bump version instead.
-- Before proposing a **MINOR** SemVer bump (0.2.0+), **ask Marco**; 007 release stays **0.1.10**.
+- When a future change would warrant a **MINOR** SemVer bump (0.2.0+), **prompt
+  Marco** before choosing the version.

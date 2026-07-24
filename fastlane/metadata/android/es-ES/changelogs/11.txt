@@ -1,0 +1,4 @@
+Ajustes de apariencia:
+• Elige tema Sistema, Claro u Oscuro — se aplica al momento, sin reiniciar.
+• Material You opcional con colores del fondo de pantalla (Android 12+); la paleta de marca sigue por defecto.
+• Las preferencias se guardan en el dispositivo; al abrir y salir de Ajustes no se pierden los datos de la comparación.
