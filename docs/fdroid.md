@@ -83,9 +83,9 @@ Repo: https://github.com/mablanco/pricegrab.git
 Binaries: https://github.com/mablanco/pricegrab/releases/download/v%v/app-release.apk
 
 Builds:
-  - versionName: 0.1.10
-    versionCode: 11
-    commit: b83594074dabd6a6a325cf5cd04b0c08a0835c34
+  - versionName: 0.1.11
+    versionCode: 12
+    commit: d25ce9a0759ce7da60a533d6ce960117e4456956
     subdir: android/app
     gradle:
       - yes
@@ -94,8 +94,8 @@ AllowedAPKSigningKeys: 70a9709ce5a4829668d9d50411b959bb90ad2e19d02e2069ad0ff3528
 
 AutoUpdateMode: Version
 UpdateCheckMode: Tags
-CurrentVersion: 0.1.10
-CurrentVersionCode: 11
+CurrentVersion: 0.1.11
+CurrentVersionCode: 12
 ```
 
 **Why these fields.**
@@ -381,6 +381,13 @@ What it took to get to the current state, in chronological order:
     Same Mode B contract; `UpdateCheckMode: Tags` should pick up
     `v0.1.10` after Marco tags from `main`. Update `Builds[0].commit`
     in this twin to the tagged SHA when convenient.
+15. **Upstream playbook sync for v0.1.11** (2026-07-25): feature 008
+    (richer result card — visible absolute + percent savings; PR AD/AE)
+    lands on `main`; this PR AF bumps to `0.1.11` / `versionCode` 12 and
+    en/es changelogs for code 12. No icon regen. Same Mode B contract;
+    `UpdateCheckMode: Tags` should pick up `v0.1.11` after Marco tags
+    from `main`. Update `Builds[0].commit` in this twin to the tagged
+    SHA when convenient.
 
 The byte-for-byte reproducibility verification for the **first**
 publication happened on F-Droid's main build farm via `fdroid publish`

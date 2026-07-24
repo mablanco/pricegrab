@@ -1,0 +1,4 @@
+Clearer comparison result:
+• When one offer wins, the result card shows absolute savings and how much cheaper it is in percent (e.g. 20% less).
+• Percent is visible on screen and announced by TalkBack — not accessibility-only.
+• Ties and incomplete comparisons stay quiet: no savings figures until there is a unique winner.

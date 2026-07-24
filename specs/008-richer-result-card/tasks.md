@@ -206,7 +206,7 @@ quickstart residuals noted.
       PR AE description.
       Local: no emulator — ask Marco for on-device smoke; CI covers
       automated cases.
-- [ ] T022 [P] On release-prep PR **AF** only: bump `versionCode` /
+- [x] T022 [P] On release-prep PR **AF** only: bump `versionCode` /
       `versionName` to **12** / **0.1.11**, add
       `fastlane/metadata/android/{en-US,es-ES}/changelogs/12.txt`, sync
       `docs/project-status.md` + `docs/fdroid.md` as needed. Agents must

@@ -2,15 +2,15 @@
 
 > Canonical agent/project memory for “where we are” and “what’s next”.
 > Keep this file current when shipping a release or parking a deferred idea.
-> Last updated: **2026-07-24** (impl PR **AE** for feature **008** richer result card).
+> Last updated: **2026-07-25** (release-prep **v0.1.11** / feature **008**).
 
 ## Snapshot
 
 | Field | Value |
 |-------|--------|
-| App version | **0.1.10** (`versionCode` **11**) |
-| Latest tag / Release | Tag **`v0.1.10`** after merge of release-prep + tag from `main` (previous: [`v0.1.9`](https://github.com/mablanco/pricegrab/releases/tag/v0.1.9)) |
-| Active Spec Kit feature pointer | `.specify/feature.json` → `specs/008-richer-result-card` (impl PR **AE** in progress) |
+| App version | **0.1.11** (`versionCode` **12**) |
+| Latest tag / Release | Tag **`v0.1.11`** after merge of release-prep + tag from `main` (previous: [`v0.1.10`](https://github.com/mablanco/pricegrab/releases/tag/v0.1.10)) |
+| Active Spec Kit feature pointer | `.specify/feature.json` → `specs/008-richer-result-card` (shipped; pick next via backlog) |
 | Distribution | **F-Droid Mode B** + **GitHub Releases**; **not** on Google Play |
 | F-Droid package | https://f-droid.org/packages/com.mablanco.pricegrab/ (first publish: **v0.1.5**) |
 | Owner | Marco Antonio Blanco — chat in Spanish; engineering artifacts in English |
@@ -27,6 +27,7 @@
 | 005 | `multi-offer-compare` | Up to 3 offers (`+`/`−`); cheapest wins; savings **vs second-cheapest** (named in UI) | v0.1.8 |
 | 006 | `compact-offer-row` | Single-row offer inputs; adaptive two-row at large font (200%) | v0.1.9 |
 | 007 | `settings-appearance` | Settings: System/Light/Dark + opt-in Material You (default off) | v0.1.10 |
+| 008 | `richer-result-card` | Hero shows absolute + percent savings (visible + TalkBack) | v0.1.11 |
 
 ### versionCode map
 
@@ -39,6 +40,7 @@
 | 9 | 0.1.8 | Three offers + icon optical fix (QA) |
 | 10 | 0.1.9 | Compact offer row + adaptive large-font layout |
 | 11 | 0.1.10 | Settings appearance (theme + Material You) |
+| 12 | 0.1.11 | Richer result card (absolute + percent visible) |
 
 ## Spec Kit cadence
 
@@ -52,7 +54,7 @@ Global PR letter ledger lives in `specs/001-unit-price-comparison/tasks.md`.
 | 005 | U | V | W → v0.1.8 |
 | 006 | X | Y | Z → v0.1.9 |
 | 007 | AA | AB | AC → v0.1.10 |
-| 008 | AD | AE | AF → v0.1.11 (planned) |
+| 008 | AD | AE | AF → v0.1.11 |
 
 Next free letter after **AF**. Pattern: planning PR → impl PR → chore release-prep (version, changelogs, `docs/fdroid.md`, icons) → **tag from `main` after manual QA**.
 
@@ -66,7 +68,7 @@ Release playbook: `docs/release.md`. F-Droid playbook: `docs/fdroid.md`.
 
 `branding/regenerate-icons.py` ← `branding/icon-source.png` → mipmaps + fastlane icons.
 
-| Constant | Value (post v0.1.8 QA #43; unchanged in v0.1.10) |
+| Constant | Value (post v0.1.8 QA #43; unchanged in v0.1.11) |
 |----------|----------------------------|
 | `ART_SCALE` | `0.72` |
 | `ART_OFFSET_X_PX` | `-17` |
@@ -76,10 +78,10 @@ History (short): 0.86 → 0.82 → 0.76 → 0.72 scale; Y nudge planned ~−95 s
 
 ## Open / operational
 
-1. **F-Droid v0.1.7 `not repro`** — fdroiddata marks build disabled. **Do not re-tag 0.1.7.** Recovery path is clean **v0.1.8** / **v0.1.9** / **v0.1.10** auto-update (`UpdateCheckMode: Tags`). If Mode B fails, investigate with `diffoscope` (see `docs/fdroid.md`).
+1. **F-Droid v0.1.7 `not repro`** — fdroiddata marks build disabled. **Do not re-tag 0.1.7.** Recovery path is clean **v0.1.8** / **v0.1.9** / **v0.1.10** / **v0.1.11** auto-update (`UpdateCheckMode: Tags`). If Mode B fails, investigate with `diffoscope` (see `docs/fdroid.md`).
 2. **Constitution header** still has obsolete `TODO(PROJECT_SCAFFOLD)` (Android + GHA already shipped) — housekeeping only; do not invent new scaffold work.
 3. **GitHub Issues** — empty as of 2026-07-19; backlog lives here + Out of Scope sections in specs.
-4. **Tag `v0.1.10`** — after this release-prep merges to `main` (QA of Settings already done on AB).
+4. **Tag `v0.1.11`** — after this release-prep merges to `main` (QA of richer result card on AE + quickstart smoke).
 
 ## Product backlog (deferred)
 
@@ -127,8 +129,7 @@ implementation; none are scheduled.
 - **Pack vs loose mode** — pack price / N pieces vs unit price (buy-N variant).
 - **Free-text offer labels** — shopper names (“Mercadona”, “Carrefour”) instead
   of only Offer A/B/C.
-- ~~**Richer result card**~~ — **in progress** as **008** (`specs/008-richer-result-card`);
-  make absolute + percent savings both clearly visible in the hero.
+- ~~**Richer result card**~~ — **shipped** in **008** / **v0.1.11**.
 - **Export / share** — share sheet for text or a result screenshot.
 
 ## Authoritative sources (priority)
