@@ -486,15 +486,17 @@ Android source. Cadence: PR AD → PR AE → PR AF. See
 [`specs/008-richer-result-card/`](../../specs/008-richer-result-card/).
 Release target stays **0.1.11** (not 0.2.0).
 
-### PR AE — `feat/0xx-richer-result-card-impl` *(feature 008 — implementation)*
+### PR AE — `feat/029-richer-result-card-impl` *(feature 008 — implementation)*
 
 Phases 2–6 (T004–T021): percent companion line on hero, a11y summary,
-savings/a11y tests. No version bump.
+savings/a11y tests. No version bump. Merged as
+[#53](https://github.com/mablanco/pricegrab/pull/53).
 
-### PR AF — `chore/0xx-fdroid-doc-sync-v0.1.11` *(feature 008 — release cut)*
+### PR AF — `chore/030-fdroid-doc-sync-v0.1.11` *(feature 008 — release cut)*
 
 versionCode 12 / **0.1.11**, changelogs en/es for code 12, `docs/fdroid.md` +
-`docs/project-status.md`. Tag `v0.1.11` from `main` after manual QA.
+`docs/project-status.md`. No icon regen. Tag `v0.1.11` from `main` after
+manual QA (richer result card quickstart).
 
 ### Notes
 

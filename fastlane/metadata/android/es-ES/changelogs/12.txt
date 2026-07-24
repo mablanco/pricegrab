@@ -1,0 +1,4 @@
+Resultado de comparación más claro:
+• Cuando gana una oferta, la tarjeta muestra el ahorro absoluto y cuánto más barata es en porcentaje (p. ej. 20% menos).
+• El porcentaje se ve en pantalla y lo anuncia TalkBack — no solo en accesibilidad.
+• Empates y comparaciones incompletas siguen sin cifras de ahorro hasta que haya un ganador único.
