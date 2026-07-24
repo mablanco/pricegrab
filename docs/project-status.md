@@ -2,7 +2,7 @@
 
 > Canonical agent/project memory for “where we are” and “what’s next”.
 > Keep this file current when shipping a release or parking a deferred idea.
-> Last updated: **2026-07-24** (release-prep **v0.1.10** / feature **007**).
+> Last updated: **2026-07-24** (tasks ready for feature **008** richer result card; planning PR **AD**).
 
 ## Snapshot
 
@@ -10,7 +10,7 @@
 |-------|--------|
 | App version | **0.1.10** (`versionCode` **11**) |
 | Latest tag / Release | Tag **`v0.1.10`** after merge of release-prep + tag from `main` (previous: [`v0.1.9`](https://github.com/mablanco/pricegrab/releases/tag/v0.1.9)) |
-| Active Spec Kit feature pointer | `.specify/feature.json` → `specs/007-settings-appearance` (shipped; pick next via backlog) |
+| Active Spec Kit feature pointer | `.specify/feature.json` → `specs/008-richer-result-card` (tasks ready; planning PR **AD**) |
 | Distribution | **F-Droid Mode B** + **GitHub Releases**; **not** on Google Play |
 | F-Droid package | https://f-droid.org/packages/com.mablanco.pricegrab/ (first publish: **v0.1.5**) |
 | Owner | Marco Antonio Blanco — chat in Spanish; engineering artifacts in English |
@@ -52,8 +52,9 @@ Global PR letter ledger lives in `specs/001-unit-price-comparison/tasks.md`.
 | 005 | U | V | W → v0.1.8 |
 | 006 | X | Y | Z → v0.1.9 |
 | 007 | AA | AB | AC → v0.1.10 |
+| 008 | AD | AE | AF → v0.1.11 (planned) |
 
-Next free letter after **AC**. Pattern: planning PR → impl PR → chore release-prep (version, changelogs, `docs/fdroid.md`, icons) → **tag from `main` after manual QA**.
+Next free letter after **AF**. Pattern: planning PR → impl PR → chore release-prep (version, changelogs, `docs/fdroid.md`, icons) → **tag from `main` after manual QA**.
 
 **Version policy cue for agents**: When a later feature would warrant a
 **MINOR** bump (0.2.0+), **prompt Marco** before choosing the version —
@@ -126,8 +127,8 @@ implementation; none are scheduled.
 - **Pack vs loose mode** — pack price / N pieces vs unit price (buy-N variant).
 - **Free-text offer labels** — shopper names (“Mercadona”, “Carrefour”) instead
   of only Offer A/B/C.
-- **Richer result card** — make both absolute savings and percent more visible
-  in the hero (percent is partly a11y-only today).
+- ~~**Richer result card**~~ — **in progress** as **008** (`specs/008-richer-result-card`);
+  make absolute + percent savings both clearly visible in the hero.
 - **Export / share** — share sheet for text or a result screenshot.
 
 ## Authoritative sources (priority)

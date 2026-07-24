@@ -478,6 +478,24 @@ versionCode 11 / **0.1.10**, changelogs en/es for code 11, `docs/fdroid.md` +
 `docs/project-status.md`. No icon regen. Tag `v0.1.10` from `main` after
 this PR merges (Settings QA already done on AB).
 
+### PR AD — `008-richer-result-card` *(feature 008 — planning only)*
+
+Spec + plan + research + data-model + contracts + quickstart + tasks for
+richer result card (visible absolute + percent savings on the hero). No
+Android source. Cadence: PR AD → PR AE → PR AF. See
+[`specs/008-richer-result-card/`](../../specs/008-richer-result-card/).
+Release target stays **0.1.11** (not 0.2.0).
+
+### PR AE — `feat/0xx-richer-result-card-impl` *(feature 008 — implementation)*
+
+Phases 2–6 (T004–T021): percent companion line on hero, a11y summary,
+savings/a11y tests. No version bump.
+
+### PR AF — `chore/0xx-fdroid-doc-sync-v0.1.11` *(feature 008 — release cut)*
+
+versionCode 12 / **0.1.11**, changelogs en/es for code 12, `docs/fdroid.md` +
+`docs/project-status.md`. Tag `v0.1.11` from `main` after manual QA.
+
 ### Notes
 
 - Each PR must keep the main branch green (lint, detekt, unit tests, JaCoCo
