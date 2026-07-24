@@ -244,7 +244,7 @@ state → fontScale 2.0 no truncation/overlap → back to Compare.
       + one dynamic palette when a device is available.
 - [x] T032 [P] Update `docs/project-status.md` In-progress / feature notes
       if drift after impl (still **no** versionCode bump on PR AB).
-- [ ] T033 Release-prep **only on PR AC** (not AB): bump to **0.1.10** /
+- [x] T033 Release-prep **only on PR AC** (not AB): bump to **0.1.10** /
       versionCode **11**, fastlane changelogs en/es, `docs/fdroid.md` +
       `docs/project-status.md`. **Do not** start AC until Marco asks;
       **prompt Marco** before any future MINOR (0.2.0+) bump.

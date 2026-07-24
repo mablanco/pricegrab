@@ -467,14 +467,16 @@ source. Cadence: PR AA → PR AB → PR AC (letters continue after Z). See
 [`specs/007-settings-appearance/`](../../specs/007-settings-appearance/).
 Release target stays **0.1.10** (not 0.2.0).
 
-### PR AB — `feat/0xx-settings-appearance-impl` *(feature 007 — implementation)*
+### PR AB — `feat/027-settings-appearance-impl` *(feature 007 — implementation)*
 
 Settings screen, DataStore preferences, theme wiring, tests. No version bump.
+Merged as [#50](https://github.com/mablanco/pricegrab/pull/50).
 
-### PR AC — `chore/0xx-…` *(feature 007 — release cut)*
+### PR AC — `chore/028-fdroid-doc-sync-v0.1.10` *(feature 007 — release cut)*
 
-versionCode 11 / **0.1.10**, changelogs, `docs/fdroid.md` +
-`docs/project-status.md`. Tag `v0.1.10` from `main` after manual QA.
+versionCode 11 / **0.1.10**, changelogs en/es for code 11, `docs/fdroid.md` +
+`docs/project-status.md`. No icon regen. Tag `v0.1.10` from `main` after
+this PR merges (Settings QA already done on AB).
 
 ### Notes
 

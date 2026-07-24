@@ -83,9 +83,9 @@ Repo: https://github.com/mablanco/pricegrab.git
 Binaries: https://github.com/mablanco/pricegrab/releases/download/v%v/app-release.apk
 
 Builds:
-  - versionName: 0.1.9
-    versionCode: 10
-    commit: ce31727ab3d628cb849fcee3580d9932b9823d3d
+  - versionName: 0.1.10
+    versionCode: 11
+    commit: b83594074dabd6a6a325cf5cd04b0c08a0835c34
     subdir: android/app
     gradle:
       - yes
@@ -94,8 +94,8 @@ AllowedAPKSigningKeys: 70a9709ce5a4829668d9d50411b959bb90ad2e19d02e2069ad0ff3528
 
 AutoUpdateMode: Version
 UpdateCheckMode: Tags
-CurrentVersion: 0.1.9
-CurrentVersionCode: 10
+CurrentVersion: 0.1.10
+CurrentVersionCode: 11
 ```
 
 **Why these fields.**
@@ -374,6 +374,13 @@ What it took to get to the current state, in chronological order:
     pick up `v0.1.9` after Marco tags from `main` post-QA. Update
     `Builds[0].commit` in this twin to the tagged SHA when convenient
     (auto-update does not require a manual fdroiddata MR).
+14. **Upstream playbook sync for v0.1.10** (2026-07-24): feature 007
+    (Settings appearance — theme System/Light/Dark + opt-in Material You;
+    PR AA/AB) lands on `main`; this PR AC bumps to `0.1.10` /
+    `versionCode` 11 and en/es changelogs for code 11. No icon regen.
+    Same Mode B contract; `UpdateCheckMode: Tags` should pick up
+    `v0.1.10` after Marco tags from `main`. Update `Builds[0].commit`
+    in this twin to the tagged SHA when convenient.
 
 The byte-for-byte reproducibility verification for the **first**
 publication happened on F-Droid's main build farm via `fdroid publish`
