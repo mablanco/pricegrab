@@ -2,19 +2,20 @@
 
 > Canonical agent/project memory for “where we are” and “what’s next”.
 > Keep this file current when shipping a release or parking a deferred idea.
-> Last updated: **2026-07-25** (release-prep **v0.1.11** / feature **008**).
+> Last updated: **2026-09-08** (memory sync from post-v0.1.8 planning chat + F-Droid check).
 
 ## Snapshot
 
 | Field | Value |
 |-------|--------|
 | App version | **0.1.11** (`versionCode` **12**) |
-| Latest tag / Release | Tag **`v0.1.11`** after merge of release-prep + tag from `main` (previous: [`v0.1.10`](https://github.com/mablanco/pricegrab/releases/tag/v0.1.10)) |
+| Latest tag / Release | [`v0.1.11`](https://github.com/mablanco/pricegrab/releases/tag/v0.1.11) (previous: [`v0.1.10`](https://github.com/mablanco/pricegrab/releases/tag/v0.1.10)) |
 | Active Spec Kit feature pointer | `.specify/feature.json` → `specs/008-richer-result-card` (shipped; pick next via backlog) |
 | Distribution | **F-Droid Mode B** + **GitHub Releases**; **not** on Google Play |
-| F-Droid package | https://f-droid.org/packages/com.mablanco.pricegrab/ (first publish: **v0.1.5**) |
+| F-Droid package | https://f-droid.org/packages/com.mablanco.pricegrab/ — **suggested 0.1.11** as of 2026-09-08 (also lists 0.1.9 / 0.1.8; first publish was **v0.1.5**) |
 | Owner | Marco Antonio Blanco — chat in Spanish; engineering artifacts in English |
 | Repo path | `~/Repos/PriceGrab/pricegrab` (git root). Parent `~/Repos/PriceGrab` holds keystore tooling + source art only. |
+| Cursor workspace | Prefer root `~/Repos/PriceGrab` (parent); always run git/Gradle/`gh` from `pricegrab/`. |
 
 ## Shipped features
 
@@ -78,10 +79,19 @@ History (short): 0.86 → 0.82 → 0.76 → 0.72 scale; Y nudge planned ~−95 s
 
 ## Open / operational
 
-1. **F-Droid v0.1.7 `not repro`** — fdroiddata marks build disabled. **Do not re-tag 0.1.7.** Recovery path is clean **v0.1.8** / **v0.1.9** / **v0.1.10** / **v0.1.11** auto-update (`UpdateCheckMode: Tags`). If Mode B fails, investigate with `diffoscope` (see `docs/fdroid.md`).
+1. **F-Droid v0.1.7 `not repro`** — fdroiddata still marks that build `disable: not repro`. **Do not re-tag 0.1.7.** Later tags (0.1.8+) are the recovery path. As of **2026-09-08**, the public index **suggestedVersionCode is 12 (0.1.11)** and also serves 0.1.9 / 0.1.8. If a new tag fails Mode B, investigate with `diffoscope` (`docs/fdroid.md`).
 2. **Constitution header** still has obsolete `TODO(PROJECT_SCAFFOLD)` (Android + GHA already shipped) — housekeeping only; do not invent new scaffold work.
 3. **GitHub Issues** — empty as of 2026-07-19; backlog lives here + Out of Scope sections in specs.
-4. **Tag `v0.1.11`** — after this release-prep merges to `main` (QA of richer result card on AE + quickstart smoke).
+
+## Next-feature cue (planning chat, 2026-07-19)
+
+Agent recommendation when Marco asks “what next?” (not a locked decision):
+
+1. **Preferred next Spec Kit feature**: **free-text offer labels** (shop/product names instead of only Offer A/B/C) — high aisle value after 3 offers + named second-cheapest savings; small UI; offline.
+2. **Then**: copy/share result → favorites/templates → buy-N or pack-vs-loose.
+3. **Avoid as immediate next**: 4+ offers (list redesign), density g↔ml, Google Play, live FX.
+
+**Material You note**: Explained in chat as wallpaper-derived dynamic color. Shipped in **007** / **v0.1.10** as an **opt-in** Settings toggle (**default off**); brand steel-blue palette remains the default look.
 
 ## Product backlog (deferred)
 
@@ -120,17 +130,19 @@ Captured from `specs/*/spec.md` and `research.md` Out of Scope / deferred notes.
 ### Ideas (discussed, not yet Spec Kit features)
 
 Parked from post-v0.1.8 planning chat. Still need `/speckit.specify` before
-implementation; none are scheduled.
+implementation; none are scheduled. (**Preferred next:** free-text labels — see
+cue above.)
 
+- **Free-text offer labels** — shop/product names (“Mercadona”, “Carrefour”)
+  instead of only Offer A/B/C. *(agent preferred next)*
 - **Favorites / templates** — saved presets (e.g. “milk 1 L”, “rice 1 kg”) that
   prefill price + quantity + unit.
 - **Copy result to clipboard** — shareable plain-text summary (e.g. WhatsApp).
+- **Export / share** — share sheet for text or a result screenshot.
 - **Home-screen widget or shortcut** — open straight into an empty comparison.
 - **Pack vs loose mode** — pack price / N pieces vs unit price (buy-N variant).
-- **Free-text offer labels** — shopper names (“Mercadona”, “Carrefour”) instead
-  of only Offer A/B/C.
 - ~~**Richer result card**~~ — **shipped** in **008** / **v0.1.11**.
-- **Export / share** — share sheet for text or a result screenshot.
+- ~~**Settings / Material You**~~ — **shipped** in **007** / **v0.1.10**.
 
 ## Authoritative sources (priority)
 

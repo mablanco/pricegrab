@@ -8,8 +8,9 @@ Guidance for AI coding agents (Cursor, Codex, Claude Code, etc.) working on this
    Non-negotiable principles: Modern Mobile UX, Accessibility, i18n (ES/EN),
    Offline-First Performance, Test-First Quality. Every change must comply.
 2. **Project status & backlog** — [`docs/project-status.md`](docs/project-status.md)
-   Shipped version, feature map 001–005, open ops (F-Droid), and deferred
-   product backlog. **Update this file when shipping a release or parking ideas.**
+   Shipped version, feature map 001–008, next-feature cue, open ops (F-Droid),
+   and deferred product backlog. **Update this file when shipping a release or
+   parking ideas.**
 3. **Project conventions** — `.cursor/rules/project-conventions.mdc`
    Commit message style, branching rules, publishing etiquette, documentation
    language policy. These override any conflicting global rules.
@@ -36,7 +37,8 @@ Each stage may trigger pre/post hooks defined in `.specify/extensions.yml`
 
 Cadence after feature 002: **planning PR → implementation PR → release-prep PR**,
 then tag from `main` after manual QA. Global PR letter ledger:
-`specs/001-unit-price-comparison/tasks.md` (letters through **W** for v0.1.8).
+`specs/001-unit-price-comparison/tasks.md` (letters through **AF** for v0.1.11;
+next free letter after **AF**).
 
 ## Non-negotiable operating rules
 
