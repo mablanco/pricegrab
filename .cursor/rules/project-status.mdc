@@ -6,35 +6,41 @@ alwaysApply: true
 # PriceGrab — status & backlog (agent memory)
 
 Full detail: [`docs/project-status.md`](../../docs/project-status.md). Refresh that
-file when shipping or parking work. Summary below (as of **2026-07-19**).
+file when shipping or parking work. Summary below (as of **2026-09-08**).
 
 ## Now
 
-- **Shipped**: **v0.1.8** / `versionCode` **9** — up to **3** offers; savings name
-  the **second-cheapest** offer; launcher art `ART_SCALE=0.72`,
-  `ART_OFFSET_X=-17`, `ART_OFFSET_Y=-45`.
+- **Shipped**: **v0.1.11** / `versionCode` **12** — richer result card (absolute +
+  percent). Prior: 0.1.10 Settings/Material You (opt-in, default off); 0.1.9
+  compact rows; 0.1.8 up to 3 offers.
 - **Dist**: F-Droid **Mode B** + GitHub Releases; no Play Store.
-- **Open ops**: F-Droid still has **0.1.7** as `disable: not repro` — **do not
-  re-tag 0.1.7**; let **0.1.8** auto-update. Investigate with `diffoscope` only
-  if 0.1.8 also fails.
+- **F-Droid**: public suggested is **0.1.11** (also serves 0.1.9 / 0.1.8).
+  **0.1.7** still `disable: not repro` — never re-tag 0.1.7.
 - **Active feature pointer**: `.specify/feature.json` →
-  `specs/005-multi-offer-compare`. Next Spec Kit letters start **after W**.
+  `specs/008-richer-result-card` (done). Next Spec Kit letters start **after AF**.
+- **Icons**: `ART_SCALE=0.72`, `ART_OFFSET_X=-17`, `ART_OFFSET_Y=-45`.
 
 ## Features shipped
 
-001 compare two → 002 reset/undo → 003 visual polish → 004 quantity units →
-005 multi-offer (max 3).
+001 compare → 002 reset/undo → 003 polish → 004 units → 005 multi-offer (max 3)
+→ 006 compact row → 007 settings/Material You → 008 richer result card.
 
-## Backlog (deferred — pick via new Spec Kit feature)
+## Next cue (planning chat)
+
+Prefer **free-text offer labels** next; then copy/share → favorites → buy-N /
+pack-vs-loose. Avoid as immediate next: 4+ offers, density g↔ml, Play, live FX.
+
+## Backlog (deferred — pick via Spec Kit)
 
 - Spec Out of Scope: 4+ offers; density g↔ml; US units; currency/FX; buy-N;
-  history; splash; settings/Material You; custom font; motion; tablet;
-  Reset confirm; deeper Undo; F-Droid 0.1.7 repro (if 0.1.8 also fails)
-- Ideas (not specified yet): favorites/templates; copy result; widget/shortcut;
-  pack-vs-loose; free-text offer labels; richer % + €/kg hero; export/share
+  history; splash; custom font; motion; tablet; Reset confirm; deeper Undo
+- Ideas: **free-text labels** (preferred); favorites; copy/share; widget;
+  pack-vs-loose
 
 ## Conventions (pointers)
 
 - Chat: Spanish with Marco. Artifacts: English. UI/store: ES+EN.
 - Never push/merge `main`. Cadence: planning → impl → release-prep → tag after QA.
+- Prompt Marco before any **MINOR** (0.2.0+) version bump.
 - Playbooks: `docs/release.md`, `docs/fdroid.md`. Ledger: `specs/001-…/tasks.md`.
+- Workspace root may be `~/Repos/PriceGrab`; git/Gradle live in `pricegrab/`.
