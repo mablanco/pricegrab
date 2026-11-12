@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  PriceGrab has no persisted data in v1, so there is nothing to back up.
-  Keep an empty ruleset so targetSdk 31+ defaults are explicit.
+  Auto Backup rules for Android 6..11. An empty ruleset does NOT mean
+  "back up nothing": it means "back up everything". Back up only the
+  appearance preferences DataStore (theme + dynamic colour, non-sensitive)
+  so any file added later stays out of backups until it is listed here.
 -->
 <full-backup-content>
+    <include domain="file" path="datastore/appearance_preferences.preferences_pb" />
 </full-backup-content>

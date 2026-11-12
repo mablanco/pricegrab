@@ -19,3 +19,22 @@ updates:
         update-types:
           - minor
           - patch
+
+  # Gradle plugins and libraries from android/gradle/libs.versions.toml.
+  # Monthly and grouped so F-Droid-reproducible releases are not churned
+  # by a stream of single-library bumps.
+  - package-ecosystem: gradle
+    directory: /android
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+    commit-message:
+      prefix: build
+      include: scope
+    groups:
+      gradle-minor-and-patch:
+        update-types:
+          - minor
+          - patch
