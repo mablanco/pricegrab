@@ -498,6 +498,14 @@ versionCode 12 / **0.1.11**, changelogs en/es for code 12, `docs/fdroid.md` +
 `docs/project-status.md`. No icon regen. Tag `v0.1.11` from `main` after
 manual QA (richer result card quickstart).
 
+### PR AG — `chore/032-fdroid-doc-sync-v0.1.12` *(security hardening — release cut)*
+
+No feature spec: ships the hardening from a source-only security audit
+([#60](https://github.com/mablanco/pricegrab/pull/60)) and the `release`
+signing environment ([#62](https://github.com/mablanco/pricegrab/pull/62)).
+versionCode 13 / **0.1.12**, changelogs en/es for code 13, `docs/fdroid.md`
++ `docs/project-status.md`. No icon regen. Tag `v0.1.12` from `main`.
+
 ### Notes
 
 - Each PR must keep the main branch green (lint, detekt, unit tests, JaCoCo
