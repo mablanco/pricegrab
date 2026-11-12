@@ -2,14 +2,14 @@
 
 > Canonical agent/project memory for “where we are” and “what’s next”.
 > Keep this file current when shipping a release or parking a deferred idea.
-> Last updated: **2026-11-12** (release-prep **v0.1.12** / security hardening).
+> Last updated: **2026-11-12** (**v0.1.12** tagged and released / security hardening).
 
 ## Snapshot
 
 | Field | Value |
 |-------|--------|
 | App version | **0.1.12** (`versionCode` **13**) |
-| Latest tag / Release | Tag **`v0.1.12`** after merge of release-prep + tag from `main` (previous: [`v0.1.11`](https://github.com/mablanco/pricegrab/releases/tag/v0.1.11)) |
+| Latest tag / Release | [`v0.1.12`](https://github.com/mablanco/pricegrab/releases/tag/v0.1.12) (previous: [`v0.1.11`](https://github.com/mablanco/pricegrab/releases/tag/v0.1.11)) |
 | Active Spec Kit feature pointer | `.specify/feature.json` → `specs/008-richer-result-card` (shipped; pick next via backlog) |
 | Distribution | **F-Droid Mode B** + **GitHub Releases**; **not** on Google Play |
 | F-Droid package | https://f-droid.org/packages/com.mablanco.pricegrab/ — **suggested 0.1.11** as of 2026-09-08 (also lists 0.1.9 / 0.1.8; first publish was **v0.1.5**) |
@@ -84,7 +84,8 @@ History (short): 0.86 → 0.82 → 0.76 → 0.72 scale; Y nudge planned ~−95 s
 1. **F-Droid v0.1.7 `not repro`** — fdroiddata still marks that build `disable: not repro`. **Do not re-tag 0.1.7.** Later tags (0.1.8+) are the recovery path. As of **2026-09-08**, the public index **suggestedVersionCode is 12 (0.1.11)** and also serves 0.1.9 / 0.1.8. If a new tag fails Mode B, investigate with `diffoscope` (`docs/fdroid.md`).
 2. **Constitution header** still has obsolete `TODO(PROJECT_SCAFFOLD)` (Android + GHA already shipped) — housekeeping only; do not invent new scaffold work.
 3. **GitHub Issues** — empty as of 2026-07-19; backlog lives here + Out of Scope sections in specs.
-4. **Tag `v0.1.12`** — after this release-prep merges to `main`. First release signed from the `release` GitHub Environment (only `v*` tags): once its `Signed release APK` job is green, delete the repository-level `SIGNING_*` secrets.
+4. **F-Droid pickup of `v0.1.12`** — tagged 2026-11-12 from `main` (`060a1d8`); signed APK cert matches `AllowedAPKSigningKeys`. Confirm F-Droid's Mode B build verifies and the index suggests 0.1.12.
+5. **Signing secrets** — live only in the `release` GitHub Environment (deployment policy: `v*` tags). Repository-level `SIGNING_*` secrets were deleted on 2026-11-12 after v0.1.12 signed successfully from the environment. Keystore + passphrase are backed up outside the repo.
 
 ## Next-feature cue (planning chat, 2026-07-19)
 
