@@ -1,7 +1,7 @@
 [versions]
 # Toolchain
 agp = "8.7.3"
-kotlin = "2.0.21"
+kotlin = "2.4.21"
 
 # Android SDK
 compileSdk = "35"
@@ -11,9 +11,9 @@ targetSdk = "35"
 # AndroidX / Jetpack
 activityCompose = "1.9.3"
 composeBom = "2024.12.01"
-coreKtx = "1.15.0"
+coreKtx = "1.19.1"
 lifecycle = "2.8.7"
-datastore = "1.1.1"
+datastore = "1.3.0"
 
 # Test
 junit = "4.13.2"
@@ -21,7 +21,7 @@ androidxTestJunit = "1.2.1"
 androidxTestEspresso = "3.6.1"
 
 # Static analysis / coverage
-detekt = "1.23.7"
+detekt = "1.23.8"
 jacoco = "0.8.12"
 
 [libraries]
