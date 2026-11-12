@@ -1,0 +1,3 @@
+Actualización interna:
+• Herramientas de compilación y librerías de Android actualizadas a sus versiones actuales.
+• Sin cambios visibles: comparaciones, unidades, ajustes y reiniciar/deshacer funcionan igual, y se conservan tus ajustes de tema.

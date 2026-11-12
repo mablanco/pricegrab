@@ -83,9 +83,9 @@ Repo: https://github.com/mablanco/pricegrab.git
 Binaries: https://github.com/mablanco/pricegrab/releases/download/v%v/app-release.apk
 
 Builds:
-  - versionName: 0.1.12
-    versionCode: 13
-    commit: 86fcdd3dffdfd1b3b94abdf2ece9904112e53f93
+  - versionName: 0.1.13
+    versionCode: 14
+    commit: 400d087eec7fdd47047243ce8f35925754f7b1e2
     subdir: android/app
     gradle:
       - yes
@@ -94,8 +94,8 @@ AllowedAPKSigningKeys: 70a9709ce5a4829668d9d50411b959bb90ad2e19d02e2069ad0ff3528
 
 AutoUpdateMode: Version
 UpdateCheckMode: Tags
-CurrentVersion: 0.1.12
-CurrentVersionCode: 13
+CurrentVersion: 0.1.13
+CurrentVersionCode: 14
 ```
 
 **Why these fields.**
@@ -412,6 +412,16 @@ What it took to get to the current state, in chronological order:
     `UpdateCheckMode: Tags` should pick up `v0.1.12` after Marco tags
     from `main`. Update `Builds[0].commit` in this twin to the tagged
     SHA when convenient.
+17. **Upstream playbook sync for v0.1.13** (2026-11-12): toolchain
+    upgrade (#69: Gradle 9.9.0, AGP 9.5.1 with built-in Kotlin, Kotlin
+    2.4.21, compileSdk 37, Compose BOM 2026.09.00, datastore 1.3.0) lands
+    on `main`; this PR AH bumps to `0.1.13` / `versionCode` 14 and en/es
+    changelogs for code 14. No icon regen, no user-visible change. First
+    release with AndroidX native libs (kept unstripped, gotcha 4 in §4)
+    and with Gradle 9 via `gradlew-fdroid` (9.9.0 is in the
+    gradle-transparency-log). Same signing key, same Mode B contract.
+    If verification fails, diff with `diffoscope` before touching
+    anything else.
 
 The byte-for-byte reproducibility verification for the **first**
 publication happened on F-Droid's main build farm via `fdroid publish`
