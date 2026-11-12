@@ -16,7 +16,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -25,7 +25,6 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
-import androidx.core.os.ConfigurationCompat
 import com.mablanco.pricegrab.R
 import com.mablanco.pricegrab.core.model.ComparisonOutcome
 import com.mablanco.pricegrab.core.model.Dimension
@@ -38,8 +37,7 @@ internal fun ResultRegion(
     incompatibleUnits: Boolean,
     dimension: Dimension?,
 ) {
-    val configuration = LocalConfiguration.current
-    val locale = ConfigurationCompat.getLocales(configuration).get(0) ?: Locale.getDefault()
+    val locale = LocalLocale.current.platformLocale
     val copy = resultRegionCopy(outcome, incompatibleUnits, dimension, locale)
 
     Column(

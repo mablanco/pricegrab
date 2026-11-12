@@ -213,7 +213,22 @@ resilient to both:
    abandoning Mode B and falling back to F-Droid signing the APK with
    its own key.
 
-If any of these three invariants ever has to be relaxed, document
+4. **Native libraries must never be stripped.** Since the 2026-11
+   toolchain upgrade, AndroidX ships small prebuilt `.so` files
+   (`libdatastore_shared_counter.so`, `libandroidx.graphics.path.so`).
+   AGP strips them only when an NDK is installed, so the GitHub runner
+   and F-Droid's build server could emit different bytes. We pin the
+   behaviour in `app/build.gradle.kts`:
+
+   ```kotlin
+   packaging {
+       jniLibs {
+           keepDebugSymbols += "**/*.so"
+       }
+   }
+   ```
+
+If any of these four invariants ever has to be relaxed, document
 the reason and the workaround here so we never re-debug it from
 scratch.
 
