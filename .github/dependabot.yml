@@ -33,7 +33,20 @@ updates:
     commit-message:
       prefix: build
       include: scope
+    # Major Gradle / AGP jumps need a coordinated, hand-made migration
+    # (see the 2026-11 toolchain upgrade), never a standalone bump.
+    ignore:
+      - dependency-name: gradle-wrapper
+        update-types: [version-update:semver-major]
+      - dependency-name: com.android.application
+        update-types: [version-update:semver-major]
     groups:
+      # Gradle, AGP and Kotlin depend on each other; bump them together.
+      toolchain:
+        patterns:
+          - gradle-wrapper
+          - com.android.application
+          - org.jetbrains.kotlin*
       gradle-minor-and-patch:
         update-types:
           - minor

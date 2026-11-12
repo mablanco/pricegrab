@@ -1,6 +1,5 @@
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.detekt)
     jacoco
@@ -19,7 +18,10 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        resourceConfigurations += listOf("en", "es")
+    }
+
+    androidResources {
+        localeFilters += listOf("en", "es")
     }
 
     signingConfigs {
@@ -72,18 +74,6 @@ android {
         }
     }
 
-    sourceSets {
-        getByName("main") {
-            java.srcDirs("src/main/kotlin")
-        }
-        getByName("test") {
-            java.srcDirs("src/test/kotlin")
-        }
-        getByName("androidTest") {
-            java.srcDirs("src/androidTest/kotlin")
-        }
-    }
-
     buildFeatures {
         compose = true
         buildConfig = false
@@ -93,13 +83,6 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
         isCoreLibraryDesugaringEnabled = false
-    }
-
-    kotlinOptions {
-        jvmTarget = "17"
-        freeCompilerArgs += listOf(
-            "-opt-in=kotlin.RequiresOptIn",
-        )
     }
 
     testOptions {
@@ -113,12 +96,26 @@ android {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
+        jniLibs {
+            // Required for F-Droid Reproducible Builds (Mode B in docs/fdroid.md).
+            // AndroidX ships small prebuilt .so files (datastore, compose graphics).
+            // AGP strips them only when an NDK is installed, so a CI runner and
+            // F-Droid's build server could produce different bytes. Never strip.
+            keepDebugSymbols += "**/*.so"
+        }
     }
 
     dependenciesInfo {
         // F-Droid does not allow the encrypted dependency metadata blob.
         includeInApk = false
         includeInBundle = false
+    }
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
+        optIn.add("kotlin.RequiresOptIn")
     }
 }
 
@@ -160,6 +157,9 @@ jacoco {
     toolVersion = libs.versions.jacoco.get()
 }
 
+// AGP 9 built-in Kotlin writes compiled classes here (not tmp/kotlin-classes).
+val kotlinClassesDir = layout.buildDirectory.dir("intermediates/built_in_kotlinc/debug/compileDebugKotlin/classes")
+
 // Aggregated JaCoCo report over the unit-test task.
 val jacocoReportFileFilter = listOf(
     "**/R.class",
@@ -176,7 +176,7 @@ tasks.register<JacocoReport>("jacocoTestReport") {
     dependsOn("testDebugUnitTest")
 
     classDirectories.setFrom(
-        fileTree("${layout.buildDirectory.get()}/tmp/kotlin-classes/debug") {
+        fileTree(kotlinClassesDir) {
             exclude(jacocoReportFileFilter)
         },
     )
@@ -200,7 +200,7 @@ tasks.register<JacocoCoverageVerification>("jacocoCoreCoverageVerification") {
     dependsOn("jacocoTestReport")
 
     classDirectories.setFrom(
-        fileTree("${layout.buildDirectory.get()}/tmp/kotlin-classes/debug") {
+        fileTree(kotlinClassesDir) {
             include("com/mablanco/pricegrab/core/calc/**")
             exclude(jacocoReportFileFilter)
         },
