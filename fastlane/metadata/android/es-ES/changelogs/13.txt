@@ -1,0 +1,4 @@
+Mejoras de robustez y seguridad:
+• La app ya no se cierra si otra app la abre con datos malformados.
+• Las copias de seguridad solo incluyen tus ajustes de apariencia (tema y Material You).
+• Proceso de publicación reforzado: herramientas de compilación fijadas y clave de firma limitada a las etiquetas de release.

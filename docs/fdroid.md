@@ -83,9 +83,9 @@ Repo: https://github.com/mablanco/pricegrab.git
 Binaries: https://github.com/mablanco/pricegrab/releases/download/v%v/app-release.apk
 
 Builds:
-  - versionName: 0.1.11
-    versionCode: 12
-    commit: d25ce9a0759ce7da60a533d6ce960117e4456956
+  - versionName: 0.1.12
+    versionCode: 13
+    commit: 86fcdd3dffdfd1b3b94abdf2ece9904112e53f93
     subdir: android/app
     gradle:
       - yes
@@ -94,8 +94,8 @@ AllowedAPKSigningKeys: 70a9709ce5a4829668d9d50411b959bb90ad2e19d02e2069ad0ff3528
 
 AutoUpdateMode: Version
 UpdateCheckMode: Tags
-CurrentVersion: 0.1.11
-CurrentVersionCode: 12
+CurrentVersion: 0.1.12
+CurrentVersionCode: 13
 ```
 
 **Why these fields.**
@@ -386,6 +386,15 @@ What it took to get to the current state, in chronological order:
     lands on `main`; this PR AF bumps to `0.1.11` / `versionCode` 12 and
     en/es changelogs for code 12. No icon regen. Same Mode B contract;
     `UpdateCheckMode: Tags` should pick up `v0.1.11` after Marco tags
+    from `main`. Update `Builds[0].commit` in this twin to the tagged
+    SHA when convenient.
+16. **Upstream playbook sync for v0.1.12** (2026-11-12): security
+    hardening (#60: validated launch-extras state, explicit backup rules,
+    SHA-pinned CI, Gradle wrapper checksum) and the `release` GitHub
+    Environment for the signing secrets (#62) land on `main`; this PR AG
+    bumps to `0.1.12` / `versionCode` 13 and en/es changelogs for code
+    13. No icon regen. Same signing key, same Mode B contract;
+    `UpdateCheckMode: Tags` should pick up `v0.1.12` after Marco tags
     from `main`. Update `Builds[0].commit` in this twin to the tagged
     SHA when convenient.
 

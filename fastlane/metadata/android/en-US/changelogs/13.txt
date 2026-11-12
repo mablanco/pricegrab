@@ -1,0 +1,4 @@
+Robustness and security hardening:
+• The app no longer crashes if another app launches it with malformed data.
+• Backups now include only your appearance settings (theme and Material You).
+• Hardened release pipeline: pinned build tools and signing key restricted to release tags.
