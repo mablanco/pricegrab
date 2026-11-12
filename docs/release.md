@@ -44,7 +44,7 @@ Pick a long passphrase and save it in a password manager.
 > repo's `.gitignore` already blocks `*.jks` and `*.keystore`, but the
 > safest place is a private vault.
 
-## 2. Upload the keystore as a GitHub secret (one-time)
+## 2. Upload the keystore as GitHub environment secrets (one-time)
 
 Encode the keystore as base64 so it survives the secret editor:
 
@@ -52,8 +52,10 @@ Encode the keystore as base64 so it survives the secret editor:
 base64 -w0 pricegrab-release.jks > pricegrab-release.jks.b64
 ```
 
-In **Settings → Secrets and variables → Actions → New repository
-secret**, create:
+The secrets live in the `release` environment (**Settings →
+Environments → release**), whose deployment policy only admits `v*`
+tags, so no branch or PR workflow can read them. Under
+**Environment secrets → Add environment secret**, create:
 
 | Secret name                    | Value                                                            |
 |--------------------------------|------------------------------------------------------------------|
