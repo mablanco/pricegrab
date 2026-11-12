@@ -92,9 +92,14 @@ For every public release:
    ```
 
 5. The `Signed release APK` job in `android-ci.yml` will:
+   - Fail fast if the tagged commit is not on `main`
+     (`git merge-base --is-ancestor`), so a tag on a feature branch
+     never gets signed.
    - Decode the keystore from `SIGNING_KEYSTORE_BASE64`.
-   - Run `:app:assembleRelease` with the four `PRICEGRAB_*` env vars.
+   - Run `:app:assembleRelease` with the four `PRICEGRAB_*` env vars,
+     restoring the Gradle cache read-only.
    - Attach the resulting APK to a new GitHub Release at the tag.
+   - Delete the decoded keystore from the runner, even on failure.
 
    Pre-release tags (`v0.1.0-rc1`, `v0.1.0-beta1`, `v0.1.0-alpha1`)
    are automatically marked as pre-releases by the workflow.
