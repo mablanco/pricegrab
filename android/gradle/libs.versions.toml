@@ -1,6 +1,6 @@
 [versions]
 # Toolchain
-agp = "8.7.3"
+agp = "9.5.1"
 kotlin = "2.0.21"
 
 # Android SDK
