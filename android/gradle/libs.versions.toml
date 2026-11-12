@@ -10,7 +10,7 @@ targetSdk = "35"
 
 # AndroidX / Jetpack
 activityCompose = "1.9.3"
-composeBom = "2024.12.01"
+composeBom = "2026.09.00"
 coreKtx = "1.15.0"
 lifecycle = "2.8.7"
 datastore = "1.1.1"
