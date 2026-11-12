@@ -2,14 +2,14 @@
 
 > Canonical agent/project memory for “where we are” and “what’s next”.
 > Keep this file current when shipping a release or parking a deferred idea.
-> Last updated: **2026-11-12** (**v0.1.12** tagged and released / security hardening).
+> Last updated: **2026-11-12** (release-prep **v0.1.13** / toolchain upgrade).
 
 ## Snapshot
 
 | Field | Value |
 |-------|--------|
-| App version | **0.1.12** (`versionCode` **13**) |
-| Latest tag / Release | [`v0.1.12`](https://github.com/mablanco/pricegrab/releases/tag/v0.1.12) (previous: [`v0.1.11`](https://github.com/mablanco/pricegrab/releases/tag/v0.1.11)) |
+| App version | **0.1.13** (`versionCode` **14**) |
+| Latest tag / Release | Tag **`v0.1.13`** after merge of release-prep + tag from `main` (previous: [`v0.1.12`](https://github.com/mablanco/pricegrab/releases/tag/v0.1.12)) |
 | Active Spec Kit feature pointer | `.specify/feature.json` → `specs/008-richer-result-card` (shipped; pick next via backlog) |
 | Distribution | **F-Droid Mode B** + **GitHub Releases**; **not** on Google Play |
 | F-Droid package | https://f-droid.org/packages/com.mablanco.pricegrab/ — **suggested 0.1.11** as of 2026-09-08 (also lists 0.1.9 / 0.1.8; first publish was **v0.1.5**) |
@@ -43,6 +43,7 @@
 | 11 | 0.1.10 | Settings appearance (theme + Material You) |
 | 12 | 0.1.11 | Richer result card (absolute + percent visible) |
 | 13 | 0.1.12 | Security hardening (launch-extras state, backup rules, release CI) |
+| 14 | 0.1.13 | Toolchain upgrade (Gradle 9.9, AGP 9.5, Kotlin 2.4, compileSdk 37) |
 
 ## Spec Kit cadence
 
@@ -58,8 +59,9 @@ Global PR letter ledger lives in `specs/001-unit-price-comparison/tasks.md`.
 | 007 | AA | AB | AC → v0.1.10 |
 | 008 | AD | AE | AF → v0.1.11 |
 | hardening | — | #60, #62 | AG → v0.1.12 |
+| toolchain | — | #69 | AH → v0.1.13 |
 
-Next free letter after **AG**. Pattern: planning PR → impl PR → chore release-prep (version, changelogs, `docs/fdroid.md`, icons) → **tag from `main` after manual QA**.
+Next free letter after **AH**. Pattern: planning PR → impl PR → chore release-prep (version, changelogs, `docs/fdroid.md`, icons) → **tag from `main` after manual QA**.
 
 **Version policy cue for agents**: When a later feature would warrant a
 **MINOR** bump (0.2.0+), **prompt Marco** before choosing the version —
@@ -71,7 +73,7 @@ Release playbook: `docs/release.md`. F-Droid playbook: `docs/fdroid.md`.
 
 `branding/regenerate-icons.py` ← `branding/icon-source.png` → mipmaps + fastlane icons.
 
-| Constant | Value (post v0.1.8 QA #43; unchanged in v0.1.12) |
+| Constant | Value (post v0.1.8 QA #43; unchanged in v0.1.13) |
 |----------|----------------------------|
 | `ART_SCALE` | `0.72` |
 | `ART_OFFSET_X_PX` | `-17` |
@@ -86,6 +88,7 @@ History (short): 0.86 → 0.82 → 0.76 → 0.72 scale; Y nudge planned ~−95 s
 3. **GitHub Issues** — empty as of 2026-07-19; backlog lives here + Out of Scope sections in specs.
 4. **F-Droid pickup of `v0.1.12`** — tagged 2026-11-12 from `main` (`060a1d8`); signed APK cert matches `AllowedAPKSigningKeys`. Confirm F-Droid's Mode B build verifies and the index suggests 0.1.12.
 5. **Signing secrets** — live only in the `release` GitHub Environment (deployment policy: `v*` tags). Repository-level `SIGNING_*` secrets were deleted on 2026-11-12 after v0.1.12 signed successfully from the environment. Keystore + passphrase are backed up outside the repo.
+6. **Tag `v0.1.13`** — after this release-prep merges to `main`. First release built with Gradle 9 / AGP 9 and with AndroidX native libs; watch F-Droid's Mode B verification closely (`docs/fdroid.md` §4 gotcha 4).
 
 ## Next-feature cue (planning chat, 2026-07-19)
 

@@ -1,0 +1,3 @@
+Under-the-hood update:
+• Updated build tools and Android libraries to their current versions.
+• No visible changes: comparisons, units, settings and reset/undo work as before, and your theme settings are kept.

@@ -506,6 +506,15 @@ signing environment ([#62](https://github.com/mablanco/pricegrab/pull/62)).
 versionCode 13 / **0.1.12**, changelogs en/es for code 13, `docs/fdroid.md`
 + `docs/project-status.md`. No icon regen. Tag `v0.1.12` from `main`.
 
+### PR AH — `chore/034-fdroid-doc-sync-v0.1.13` *(toolchain upgrade — release cut)*
+
+No feature spec: ships the coordinated toolchain upgrade
+([#69](https://github.com/mablanco/pricegrab/pull/69): Gradle 9.9, AGP 9.5,
+Kotlin 2.4, compileSdk 37, Compose BOM 2026.09). versionCode 14 /
+**0.1.13**, changelogs en/es for code 14, `docs/fdroid.md` +
+`docs/project-status.md`. No icon regen, no user-visible change. Tag
+`v0.1.13` from `main`.
+
 ### Notes
 
 - Each PR must keep the main branch green (lint, detekt, unit tests, JaCoCo
