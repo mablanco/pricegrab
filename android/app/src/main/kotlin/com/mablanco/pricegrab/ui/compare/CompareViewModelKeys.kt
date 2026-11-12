@@ -17,19 +17,44 @@ internal object CompareViewModelKeys {
     fun undoQuantityUnit(i: Int): String = "undoQuantityUnit$i"
 }
 
+internal const val UNDO_LIFETIME_MS = 10_000L
+
+private val BLOCKED_INPUT_CHARS: Set<Char> = setOf('-', '+', 'e', 'E')
+
+/**
+ * Drops characters the numeric fields never accept (signs, exponent markers,
+ * whitespace). Applied both to typed input and to every string read back
+ * from [SavedStateHandle].
+ */
+internal fun sanitizeNumericInput(value: String): String =
+    value.filter { c -> c !in BLOCKED_INPUT_CHARS && !c.isWhitespace() }
+
+// MainActivity is exported, and AndroidX seeds SavedStateHandle defaults from
+// the launch intent's extras, so any app can put arbitrary values under these
+// keys. Every read below is type-checked and re-validated instead of trusted.
+private fun readString(savedStateHandle: SavedStateHandle, key: String): String? =
+    savedStateHandle.get<Any?>(key) as? String
+
+private fun readInt(savedStateHandle: SavedStateHandle, key: String): Int? =
+    savedStateHandle.get<Any?>(key) as? Int
+
 internal fun readQuantityUnit(savedStateHandle: SavedStateHandle, key: String): QuantityUnit {
-    val stored: String? = savedStateHandle[key]
+    val stored: String? = readString(savedStateHandle, key)
     return stored?.let { runCatching { QuantityUnit.valueOf(it) }.getOrNull() }
         ?: QuantityUnit.Gram
 }
 
 internal fun readOffersFromSavedState(savedStateHandle: SavedStateHandle): List<OfferSlotState> {
-    val count = (savedStateHandle[CompareViewModelKeys.OFFER_COUNT] as Int? ?: MIN_OFFERS)
+    val count = (readInt(savedStateHandle, CompareViewModelKeys.OFFER_COUNT) ?: MIN_OFFERS)
         .coerceIn(MIN_OFFERS, MAX_OFFERS)
     return List(count) { i ->
         OfferSlotState(
-            priceRaw = savedStateHandle[CompareViewModelKeys.price(i)] ?: "",
-            quantityRaw = savedStateHandle[CompareViewModelKeys.quantity(i)] ?: "",
+            priceRaw = sanitizeNumericInput(
+                readString(savedStateHandle, CompareViewModelKeys.price(i)) ?: "",
+            ),
+            quantityRaw = sanitizeNumericInput(
+                readString(savedStateHandle, CompareViewModelKeys.quantity(i)) ?: "",
+            ),
             quantityUnit = readQuantityUnit(savedStateHandle, CompareViewModelKeys.quantityUnit(i)),
         )
     }
@@ -82,26 +107,27 @@ internal fun persistUndoToSavedState(
 }
 
 internal fun restoreUndoStateFromSavedState(savedStateHandle: SavedStateHandle): UndoState? {
-    val deadline: Long = savedStateHandle[CompareViewModelKeys.UNDO_DEADLINE] ?: return null
-    if (deadline <= System.currentTimeMillis()) return null
+    val deadline = savedStateHandle.get<Any?>(CompareViewModelKeys.UNDO_DEADLINE) as? Long ?: return null
+    val now = System.currentTimeMillis()
+    // A deadline further out than one undo lifetime was not written by us.
+    if (deadline <= now || deadline > now + UNDO_LIFETIME_MS) return null
     val snapshot = readUndoSnapshotFromSavedState(savedStateHandle) ?: return null
     return UndoState(snapshot, deadline)
 }
 
 internal fun readUndoSnapshotFromSavedState(savedStateHandle: SavedStateHandle): PreResetSnapshot? {
-    val count = savedStateHandle[CompareViewModelKeys.UNDO_OFFER_COUNT] as Int?
-        ?: return null
+    val count = readInt(savedStateHandle, CompareViewModelKeys.UNDO_OFFER_COUNT) ?: return null
     if (count !in MIN_OFFERS..MAX_OFFERS) return null
 
     val slots = (0 until count).map { i ->
-        val price: String? = savedStateHandle[CompareViewModelKeys.undoPrice(i)]
-        val quantity: String? = savedStateHandle[CompareViewModelKeys.undoQuantity(i)]
+        val price = readString(savedStateHandle, CompareViewModelKeys.undoPrice(i))
+        val quantity = readString(savedStateHandle, CompareViewModelKeys.undoQuantity(i))
         if (price == null || quantity == null) {
             return@map null
         }
         OfferSlotSnapshot(
-            priceRaw = price,
-            quantityRaw = quantity,
+            priceRaw = sanitizeNumericInput(price),
+            quantityRaw = sanitizeNumericInput(quantity),
             quantityUnit = readQuantityUnit(
                 savedStateHandle,
                 CompareViewModelKeys.undoQuantityUnit(i),

@@ -33,11 +33,11 @@ class CompareViewModel(
     }
 
     fun onPriceChange(index: Int, value: String) = updateSlot(index) {
-        it.copy(priceRaw = sanitize(value))
+        it.copy(priceRaw = sanitizeNumericInput(value))
     }
 
     fun onQuantityChange(index: Int, value: String) = updateSlot(index) {
-        it.copy(quantityRaw = sanitize(value))
+        it.copy(quantityRaw = sanitizeNumericInput(value))
     }
 
     fun onUnitChange(index: Int, unit: QuantityUnit) = updateSlot(index) {
@@ -156,9 +156,6 @@ class CompareViewModel(
         )
     }
 
-    private fun sanitize(value: String): String =
-        value.filter { c -> c !in BLOCKED_CHARS && !c.isWhitespace() }
-
     private fun priceErrorFor(result: OfferParseResult, raw: String): InputError? = when {
         raw.isBlank() -> null
         result is OfferParseResult.InvalidPrice -> InputError.NotANumber
@@ -171,11 +168,5 @@ class CompareViewModel(
         result is OfferParseResult.InvalidQuantity -> InputError.NotANumber
         result is OfferParseResult.NonPositiveQuantity -> InputError.NonPositiveQuantity
         else -> null
-    }
-
-    private companion object {
-        const val UNDO_LIFETIME_MS = 10_000L
-
-        val BLOCKED_CHARS: Set<Char> = setOf('-', '+', 'e', 'E')
     }
 }
