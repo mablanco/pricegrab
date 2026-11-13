@@ -2,7 +2,8 @@
 
 **Feature Branch**: `009-length-units`
 **Created**: 2026-11-13
-**Status**: Draft
+**Status**: Planning (2026-11-13) — plan, research, data-model,
+contracts, quickstart and tasks on branch `009-length-units` (PR AI)
 **Input**: User description: "Add length units (centimetre, metre) for
 comparing goods sold by length, per GitHub issue #56: 'When you're shopping
 at a construction market, it would be nice to have length units. As for
@@ -39,9 +40,9 @@ that names **per m**, without any manual conversion.
 2. **Given** Offer A = 49.00 for 5 **m** and Offer B = 22.00 for 250 **cm**,
    **When** the comparison completes,
    **Then** Offer B is cheaper and the savings line reads
-   "Save 1.00 per m vs Offer A" (ES: "Ahorras 1,00 por m frente a
-   Oferta A"), and the percent line shows the same percentage rules as
-   feature 008.
+   "Save 1 per m vs Offer A" (ES: "Ahorras 1 por m frente a
+   Oferta A"), and the percent line reads "10.2% less" (ES: "10,2%
+   menos") under the same rules as feature 008.
 3. **Given** both offers use **cm** (e.g. 200 cm vs 300 cm),
    **When** the comparison completes,
    **Then** the savings line still references **per m** (shelf-style
@@ -92,8 +93,8 @@ sizes.
 
 **Independent Test**: With TalkBack on, in each locale, select `m` on an
 offer and complete a winning comparison; the quantity field announces the
-unit name ("metres" / "metros") and the result announces "per metre" /
-"por metro".
+unit name ("metres" / "metros") and the result announces the visible
+savings line with "per m" / "por m", as it does for kg / L.
 
 **Acceptance Scenarios**:
 
@@ -101,6 +102,8 @@ unit name ("metres" / "metros") and the result announces "per metre" /
    **When** focus lands on a quantity field set to `cm` or `m`,
    **Then** the announcement includes the full unit name (centimetres /
    metres; ES centímetros / metros).
+   The result announcement reuses the visible savings line ("per m" /
+   "por m"), consistent with the other dimensions.
 2. **Given** the device locale is `es-ES`,
    **When** the unit selector is open,
    **Then** the new options show `cm` and `m` and their accessible names
@@ -149,8 +152,9 @@ unit name ("metres" / "metros") and the result announces "per metre" /
   hero card (features 005 and 008) MUST work for length exactly as for the
   other dimensions.
 - **FR-007**: Unit labels and accessible names for cm and m MUST exist in
-  `en` and `es`; TalkBack MUST announce the full unit name on the quantity
-  field and "per metre" / "por metro" in the result.
+  `en` and `es`; TalkBack MUST announce the full unit name on the unit
+  selector and its options, and the result MUST announce the visible
+  savings line ("per m" / "por m"), as for the other dimensions.
 - **FR-008**: No new permissions, network access or persisted data;
   existing reset / undo / saved-state behaviour extends to the new units.
 
