@@ -2,7 +2,8 @@
 
 **Feature Branch**: `010-currency-symbol`
 **Created**: 2026-11-13
-**Status**: Draft
+**Status**: Planning (2026-11-13) — plan, research, data-model,
+contracts, quickstart and tasks on branch `010-currency-symbol`
 **Input**: User description: "Show a currency symbol on prices and savings,
 configurable in Settings, per GitHub issue #57: 'It would be nice, if in
 settings there would be an input box, where the user can input his local
@@ -80,7 +81,7 @@ Automatic and verify the region symbol returns.
 2. **Given** the shopper selects Custom and types `zł`,
    **When** they return to Compare,
    **Then** price fields and the savings line use `zł`, positioned by the
-   app language's money convention.
+   locale's money convention.
 3. **Given** a custom symbol was saved,
    **When** the app is killed and relaunched,
    **Then** the custom symbol is still in use.
@@ -135,10 +136,11 @@ announcement include the currency, and nothing is clipped.
   `zł`, `R$`, `kr`, `NT$`) are accepted; longer input is cut at 4.
 - **Whitespace**: leading and trailing spaces in the custom symbol are
   ignored; a symbol of only spaces counts as empty (no symbol).
-- **Language vs region**: position follows the **app language** (es →
-  after the amount with a space, en → before without a space); the
-  automatic symbol follows the **device region**. An en-GB device shows
-  "£1", an es-US device shows "1 US$" or "1 $" as Android formats it.
+- **Language vs region**: position and spacing follow the device locale
+  already used to format numbers (es-ES → after the amount with a space,
+  en-US / en-GB → before without a space); the automatic symbol follows
+  the device region. An en-GB device shows "£1"; a language-only locale
+  with no region resolves no automatic symbol.
 - **Language change while running**: switching the device language
   updates placement and the automatic symbol on next composition, like
   other localized text.
@@ -168,7 +170,8 @@ announcement include the currency, and nothing is clipped.
 - **FR-004**: The choice and the custom symbol MUST persist across app
   restarts and be included in the existing backup rules.
 - **FR-005**: Placement (before/after the amount, spacing) MUST follow the
-  app language's currency format, for both automatic and custom symbols.
+  currency format of the locale already used to format numbers, for both
+  automatic and custom symbols.
 - **FR-006**: The custom symbol MUST be trimmed and limited to 4
   characters. An empty custom symbol means "no symbol".
 - **FR-007**: The symbol MUST be display-only. Price parsing, validation,
@@ -214,9 +217,9 @@ announcement include the currency, and nothing is clipped.
 - **Free-text custom symbol instead of a fixed list**: issue #57 asks for
   an input box, and free text covers every currency without maintaining a
   list. Automatic default covers the common case.
-- **Position follows language, not the symbol**: the same symbol is
+- **Position follows the locale, not the symbol**: the same symbol is
   placed differently in Spanish and English text, matching how each
-  language writes money. The app does not ask the shopper where to put it.
+  locale writes money. The app does not ask the shopper where to put it.
 - **Amounts keep current precision rules**: adding a symbol does not
   force two decimals; "1 €" stays "1 €", not "1,00 €".
 - **Percent line unchanged**: percentages never carry a currency.

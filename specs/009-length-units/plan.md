@@ -21,7 +21,7 @@ selector order. Add the `when` branches the compiler then requires
 update `error_incompatible_units`. `PriceComparator`, `ComparisonGate`,
 `OfferParser`, `ResultPresenter`, `CompareViewModel` and saved-state
 handling need **no** code change. Ship via planning (**AI**) →
-implementation (**AJ**) → release prep (**AK**).
+implementation (**AJ**) → release prep (**AM**).
 
 ## Technical Context
 
@@ -186,7 +186,7 @@ untouched.
 |--------|-------------|----------|
 | **AI** | `009-length-units` (this branch) | Spec + plan + research + data-model + contracts + quickstart + tasks (planning only; no app source) |
 | **AJ** | `feat/0xx-length-units-impl` | Implementation + tests |
-| **AK** | `chore/0xx-fdroid-doc-sync-v0.1.14` | Version, changelogs, status / F-Droid docs |
+| **AM** | `chore/0xx-fdroid-doc-sync-v0.1.14` | Version, changelogs, status / F-Droid docs |
 
 Global ledger: `specs/001-unit-price-comparison/tasks.md` gains the AI entry
 in this planning PR.
