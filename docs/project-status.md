@@ -10,7 +10,7 @@
 |-------|--------|
 | App version | **0.1.13** (`versionCode` **14**) |
 | Latest tag / Release | Tag **`v0.1.13`** after merge of release-prep + tag from `main` (previous: [`v0.1.12`](https://github.com/mablanco/pricegrab/releases/tag/v0.1.12)) |
-| Active Spec Kit feature pointer | `.specify/feature.json` → `specs/008-richer-result-card` (shipped; pick next via backlog) |
+| Active Spec Kit feature pointer | `.specify/feature.json` → `specs/009-length-units` (planning; cm/m per issue #56; release target 0.1.14) |
 | Distribution | **F-Droid Mode B** + **GitHub Releases**; **not** on Google Play |
 | F-Droid package | https://f-droid.org/packages/com.mablanco.pricegrab/ — **suggested 0.1.11** as of 2026-09-08 (also lists 0.1.9 / 0.1.8; first publish was **v0.1.5**) |
 | Owner | Marco Antonio Blanco — chat in Spanish; engineering artifacts in English |
@@ -58,6 +58,7 @@ Global PR letter ledger lives in `specs/001-unit-price-comparison/tasks.md`.
 | 006 | X | Y | Z → v0.1.9 |
 | 007 | AA | AB | AC → v0.1.10 |
 | 008 | AD | AE | AF → v0.1.11 |
+| 009 | AI | AJ | AK → v0.1.14 (planned) |
 | hardening | — | #60, #62 | AG → v0.1.12 |
 | toolchain | — | #69 | AH → v0.1.13 |
 

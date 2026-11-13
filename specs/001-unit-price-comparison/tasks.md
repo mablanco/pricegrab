@@ -515,6 +515,15 @@ Kotlin 2.4, compileSdk 37, Compose BOM 2026.09). versionCode 14 /
 `docs/project-status.md`. No icon regen, no user-visible change. Tag
 `v0.1.13` from `main`.
 
+### PR AI — `009-length-units` *(feature 009 — planning only)*
+
+Spec + plan + research + data-model + contracts + quickstart + tasks for
+length units (cm, m; results per m), requested in
+[#56](https://github.com/mablanco/pricegrab/issues/56). No Android source.
+Cadence: PR AI → PR AJ → PR AK. See
+[`specs/009-length-units/`](../../specs/009-length-units/). Release target
+**0.1.14**, after `v0.1.13` is tagged.
+
 ### Notes
 
 - Each PR must keep the main branch green (lint, detekt, unit tests, JaCoCo
