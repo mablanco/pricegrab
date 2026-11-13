@@ -47,7 +47,7 @@ with feature 009 (**AM**, 0.1.14).
 
 **Primary Dependencies**: None new. `java.util.Currency`,
 `java.text.DecimalFormat` (ICU-backed on Android), DataStore Preferences
-1.3.0 and Material 3 `OutlinedTextField` `prefix` / `suffix` slots already
+1.3.0 and Material 3 `OutlinedTextField` labels already
 in use.
 
 **Storage**: DataStore file `appearance_preferences` (feature 007) gains
@@ -110,7 +110,7 @@ prep **AM** ships 009 + 010 as **0.1.14** (versionCode 15).
 
 | Principle / section | Gate | Plan evidence | Status |
 |---------------------|------|---------------|--------|
-| I. Modern Mobile UX | M3, single-purpose flow, sensible defaults | Automatic default needs no setup; Settings section mirrors Appearance; symbol uses M3 text-field affix slots. | ✅ |
+| I. Modern Mobile UX | M3, single-purpose flow, sensible defaults | Automatic default needs no setup; Settings section mirrors Appearance; symbol shown in the price field label. | ✅ |
 | II. Accessibility (NON-NEGOTIABLE) | TalkBack, 200% font, 48 dp targets | Price content description includes the symbol; result reads the visible line; Settings rows reuse the selectable-row semantics of Appearance; 200% tests on Compare and Settings. | ✅ |
 | III. Internationalization (ES/EN) | Strings in resources, locale-aware formatting | New Settings strings in `values` + `values-es`; placement from the locale's currency pattern; numbers still via `LocaleNumberFormatter`. | ✅ |
 | IV. Offline-First Performance | No network, ≤ 2 s cold start | Local DataStore keys only; no conversion; no new deps. | ✅ |
