@@ -1,17 +1,20 @@
 package com.mablanco.pricegrab.ui.settings
 
+import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.mablanco.pricegrab.MainActivity
 import com.mablanco.pricegrab.R
 import com.mablanco.pricegrab.data.appearance.AppearancePreferencesRepository
 import com.mablanco.pricegrab.ui.compare.TEST_TAG_SETTINGS_OPEN
+import com.mablanco.pricegrab.ui.compare.hasContentDescriptionContaining
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Rule
@@ -49,5 +52,21 @@ class SettingsA11yTest {
         composeRule.onNodeWithText(materialYou).assertIsDisplayed()
         composeRule.onNodeWithTag(TEST_TAG_THEME_SYSTEM).assertIsSelected()
         composeRule.onNodeWithTag(TEST_TAG_MATERIAL_YOU_SWITCH).assertIsDisplayed()
+    }
+
+    @Test
+    fun currencyOptionsExposeAccessibleNamesAndSelection() {
+        composeRule.onNodeWithTag(TEST_TAG_SETTINGS_OPEN).performClick()
+        val activity = composeRule.activity
+        composeRule.onNodeWithText(activity.getString(R.string.settings_currency_section))
+            .performScrollTo()
+            .assertIsDisplayed()
+        composeRule.onNodeWithTag(TEST_TAG_CURRENCY_AUTOMATIC).performScrollTo().assertIsSelected()
+        composeRule.onNodeWithTag(TEST_TAG_CURRENCY_CUSTOM)
+            .performScrollTo()
+            .assert(hasContentDescriptionContaining(activity.getString(R.string.settings_currency_custom)))
+        composeRule.onNodeWithText(activity.getString(R.string.settings_currency_symbol_label))
+            .performScrollTo()
+            .assertIsDisplayed()
     }
 }

@@ -42,7 +42,7 @@ class CompareScreenUnitsTest {
         val winner = ctx.winnerHeadline(R.string.offer_b_title)
         val savings = ctx.getString(
             R.string.result_savings_per_kg,
-            "1",
+            ctx.expectedMoney("1"),
             ctx.getString(R.string.offer_a_title),
         )
 
@@ -62,7 +62,7 @@ class CompareScreenUnitsTest {
         val ctx = composeRule.activity
         val savings = ctx.getString(
             R.string.result_savings_per_L,
-            "0.4",
+            ctx.expectedMoney("0.4"),
             ctx.getString(R.string.offer_a_title),
         )
         composeRule.onNodeWithText(savings).assertIsDisplayed()
@@ -80,7 +80,7 @@ class CompareScreenUnitsTest {
         val ctx = composeRule.activity
         val savings = ctx.getString(
             R.string.result_savings_per_piece,
-            "0.083333",
+            ctx.expectedMoney("0.083333"),
             ctx.getString(R.string.offer_a_title),
         )
         composeRule.onNodeWithText(savings).assertIsDisplayed()
@@ -113,7 +113,7 @@ class CompareScreenUnitsTest {
         val ctx = composeRule.activity
         val savings = ctx.getString(
             R.string.result_savings_per_m,
-            "1",
+            ctx.expectedMoney("1"),
             ctx.getString(R.string.offer_a_title),
         )
         val percent = ctx.getString(R.string.result_savings_percent, "10.2")

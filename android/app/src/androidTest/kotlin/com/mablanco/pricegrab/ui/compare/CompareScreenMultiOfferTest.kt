@@ -69,7 +69,7 @@ class CompareScreenMultiOfferTest {
         val headline = ctx.winnerHeadline(R.string.offer_b_title)
         val savings = ctx.getString(
             R.string.result_savings_per_kg,
-            "1",
+            ctx.expectedMoney("1"),
             ctx.getString(R.string.offer_a_title),
         )
         val percent = ctx.getString(R.string.result_savings_percent, "20")

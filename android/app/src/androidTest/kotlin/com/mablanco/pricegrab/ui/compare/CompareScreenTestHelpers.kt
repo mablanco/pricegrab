@@ -8,6 +8,11 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import com.mablanco.pricegrab.MainActivity
 import com.mablanco.pricegrab.R
+import com.mablanco.pricegrab.core.format.MoneyFormatter
+import com.mablanco.pricegrab.data.currency.CurrencyPreferencesRepository
+import com.mablanco.pricegrab.data.currency.resolveCurrencySymbol
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 
 /**
  * Opens [testTag] and picks a unit from the dropdown by its accessibility
@@ -27,3 +32,14 @@ internal fun AndroidComposeTestRule<*, MainActivity>.selectUnit(
 /** Localized winner headline for the given offer title resource. */
 internal fun Context.winnerHeadline(@StringRes offerTitleRes: Int): String =
     getString(R.string.result_winner, getString(offerTitleRes))
+
+/**
+ * [amount] as the real app shows it: wrapped with the currency symbol the
+ * stored preference resolves to for this device's locale (feature 010).
+ */
+internal fun Context.expectedMoney(amount: String): String {
+    val locale = resources.configuration.locales[0]
+    val prefs = runBlocking { CurrencyPreferencesRepository(this@expectedMoney).preferences.first() }
+    val symbol = resolveCurrencySymbol(prefs, locale)
+    return MoneyFormatter.wrap(amount, MoneyFormatter.affixes(symbol, locale))
+}

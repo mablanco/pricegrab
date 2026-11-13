@@ -35,7 +35,7 @@ class CompareScreenSavingsTest {
         val ctx = composeRule.activity
         val expectedAbsolute = ctx.getString(
             R.string.result_savings_per_kg,
-            "1",
+            ctx.expectedMoney("1"),
             ctx.getString(R.string.offer_a_title),
         )
         val expectedPercent = ctx.getString(R.string.result_savings_percent, "20")
@@ -57,7 +57,7 @@ class CompareScreenSavingsTest {
         val ctx = composeRule.activity
         val expectedAbsolute = ctx.getString(
             R.string.result_savings_per_kg,
-            "50",
+            ctx.expectedMoney("50"),
             ctx.getString(R.string.offer_b_title),
         )
         val expectedPercent = ctx.getString(R.string.result_savings_percent, "100")
@@ -82,7 +82,7 @@ class CompareScreenSavingsTest {
         val ctx = composeRule.activity
         val expectedAbsolute = ctx.getString(
             R.string.result_savings_per_kg,
-            "1",
+            ctx.expectedMoney("1"),
             ctx.getString(R.string.offer_a_title),
         )
         val expectedPercent = ctx.getString(R.string.result_savings_percent, "20")

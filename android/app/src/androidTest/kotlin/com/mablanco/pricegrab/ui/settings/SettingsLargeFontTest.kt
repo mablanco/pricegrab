@@ -57,5 +57,8 @@ class SettingsLargeFontTest {
             .performScrollTo()
             .assertIsDisplayed()
         composeRule.onNodeWithText(themeSection).assertIsDisplayed()
+        composeRule.onNodeWithTag(TEST_TAG_CURRENCY_AUTOMATIC).performScrollTo().assertIsDisplayed()
+        composeRule.onNodeWithTag(TEST_TAG_CURRENCY_CUSTOM).performScrollTo().assertIsDisplayed()
+        composeRule.onNodeWithTag(TEST_TAG_CURRENCY_SYMBOL_FIELD).performScrollTo().assertIsDisplayed()
     }
 }
