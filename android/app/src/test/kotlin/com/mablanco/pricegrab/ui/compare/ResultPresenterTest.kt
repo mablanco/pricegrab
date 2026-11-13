@@ -60,6 +60,19 @@ class ResultPresenterTest {
     }
 
     @Test
+    fun `length delta one hundredth per cm displays as 1 per m`() {
+        val outcome = ComparisonOutcome.Winner(
+            slotIndex = 1,
+            secondSlotIndex = 0,
+            perUnitDelta = BigDecimal("0.01"),
+            percentDelta = BigDecimal("10.2040816"),
+        )
+        val result = ResultPresenter.present(outcome, Dimension.Length, enUs)
+        assertEquals("1", result?.perUnitDelta)
+        assertEquals("10.2", result?.percentDelta)
+    }
+
+    @Test
     fun `count delta displays without mass scaling`() {
         val outcome = ComparisonOutcome.Winner(
             slotIndex = 1,

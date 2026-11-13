@@ -107,4 +107,64 @@ class CompareViewModelUnitsTest {
         assertEquals(0, java.math.BigDecimal("0.001").compareTo(winner.perUnitDelta))
         assertEquals(0, java.math.BigDecimal("20").compareTo(winner.percentDelta))
     }
+
+    // ---- Feature 009: length units -------------------------------------------
+
+    @Test
+    fun readyWhenMetreVsCentimetre() {
+        val viewModel = CompareViewModel(SavedStateHandle()).withLengthExample()
+
+        val state = viewModel.state.value
+        assertFalse(state.incompatibleUnits)
+        val winner = state.outcome as ComparisonOutcome.Winner
+        assertEquals(1, winner.slotIndex)
+        assertEquals(0, java.math.BigDecimal("0.01").compareTo(winner.perUnitDelta))
+    }
+
+    @Test
+    fun incompatibleUnitsWhenLengthVsAnyOtherDimension() {
+        listOf(QuantityUnit.Gram, QuantityUnit.Kilogram, QuantityUnit.Litre, QuantityUnit.Piece)
+            .forEach { other ->
+                val viewModel = CompareViewModel(SavedStateHandle()).withLengthExample()
+                viewModel.onUnitChange(1, other)
+
+                val state = viewModel.state.value
+                assertTrue("Metre vs $other", state.incompatibleUnits)
+                assertNull("Metre vs $other", state.outcome)
+            }
+    }
+
+    @Test
+    fun resetReturnsLengthUnitsToGramAndUndoRestoresThem() {
+        val viewModel = CompareViewModel(SavedStateHandle()).withLengthExample()
+
+        viewModel.resetComparison()
+        assertEquals(QuantityUnit.Gram, viewModel.state.value.offers[0].quantityUnit)
+        assertEquals(QuantityUnit.Gram, viewModel.state.value.offers[1].quantityUnit)
+
+        viewModel.undoReset()
+        assertEquals(QuantityUnit.Metre, viewModel.state.value.offers[0].quantityUnit)
+        assertEquals(QuantityUnit.Centimetre, viewModel.state.value.offers[1].quantityUnit)
+    }
+
+    @Test
+    fun savedLengthUnitIsRestoredAfterProcessDeath() {
+        val handle = SavedStateHandle()
+        CompareViewModel(handle).withLengthExample()
+
+        val restored = CompareViewModel(handle).state.value
+        assertEquals(QuantityUnit.Metre, restored.offers[0].quantityUnit)
+        assertEquals(QuantityUnit.Centimetre, restored.offers[1].quantityUnit)
+        assertTrue(restored.outcome is ComparisonOutcome.Winner)
+    }
+
+    /** Issue #56: 5 m @ 49 vs 250 cm @ 22 → B wins (8.80/m vs 9.80/m). */
+    private fun CompareViewModel.withLengthExample(): CompareViewModel = apply {
+        onPriceChange(0, "49")
+        onQuantityChange(0, "5")
+        onUnitChange(0, QuantityUnit.Metre)
+        onPriceChange(1, "22")
+        onQuantityChange(1, "250")
+        onUnitChange(1, QuantityUnit.Centimetre)
+    }
 }

@@ -2,14 +2,19 @@ package com.mablanco.pricegrab.ui.compare
 
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.unit.Density
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
+import com.mablanco.pricegrab.R
 import com.mablanco.pricegrab.core.model.ComparisonOutcome
+import com.mablanco.pricegrab.core.model.QuantityUnit
 import com.mablanco.pricegrab.ui.theme.PriceGrabTheme
 import java.math.BigDecimal
 import org.junit.Assert.assertTrue
@@ -115,6 +120,47 @@ class CompareScreenLargeFontTest {
         composeRule.onNodeWithTag(TEST_TAG_HERO_RESULT).performScrollTo().assertIsDisplayed()
         assertTagVisible(TEST_TAG_RESULT_SAVINGS)
         assertTagVisible(TEST_TAG_RESULT_SAVINGS_PERCENT)
+    }
+
+    @Test
+    fun lengthUnitCodesStayVisibleAtTwoHundredPercentFontScale() {
+        composeRule.setContent {
+            val baseDensity = LocalDensity.current
+            val largeFontDensity = Density(
+                density = baseDensity.density,
+                fontScale = LARGE_FONT_SCALE,
+            )
+            CompositionLocalProvider(LocalDensity provides largeFontDensity) {
+                PriceGrabTheme {
+                    CompareScreen(
+                        state = CompareUiState(
+                            offers = listOf(
+                                OfferSlotState(quantityUnit = QuantityUnit.Centimetre),
+                                OfferSlotState(quantityUnit = QuantityUnit.Metre),
+                            ),
+                        ),
+                        onPriceChange = { _, _ -> },
+                        onQuantityChange = { _, _ -> },
+                        onUnitChange = { _, _ -> },
+                        onAddOffer = {},
+                        onRemoveOffer = {},
+                        onResetClick = {},
+                        onUndoClick = {},
+                        onUndoDismissed = {},
+                    )
+                }
+            }
+        }
+
+        val ctx = InstrumentationRegistry.getInstrumentation().targetContext
+        assertTagVisible("${TEST_TAG_OFFER_A}_unit")
+        assertTagVisible("${TEST_TAG_OFFER_B}_unit")
+        composeRule.onNodeWithTag("${TEST_TAG_OFFER_A}_unit")
+            .assert(hasText(ctx.getString(R.string.unit_code_cm)))
+        composeRule.onNodeWithTag("${TEST_TAG_OFFER_B}_unit")
+            .assert(hasText(ctx.getString(R.string.unit_code_m)))
+        assertAdaptiveTwoRow(TEST_TAG_OFFER_A)
+        assertAdaptiveTwoRow(TEST_TAG_OFFER_B)
     }
 
     private fun assertTagVisible(testTag: String) {
