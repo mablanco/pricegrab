@@ -69,4 +69,10 @@
     <string name="settings_material_you_unavailable">No disponible en este dispositivo</string>
     <string name="settings_material_you_on">Activado</string>
     <string name="settings_material_you_off">Desactivado</string>
+    <string name="settings_currency_section">Moneda</string>
+    <string name="settings_currency_automatic">Automática (%1$s)</string>
+    <string name="settings_currency_automatic_none">Automática (ninguna)</string>
+    <string name="settings_currency_custom">Personalizada</string>
+    <string name="settings_currency_symbol_label">Símbolo</string>
+    <string name="settings_currency_symbol_hint">Déjalo vacío para no mostrar símbolo</string>
 </resources>

@@ -17,6 +17,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
@@ -26,6 +27,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -38,6 +40,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mablanco.pricegrab.R
 import com.mablanco.pricegrab.data.appearance.AppearanceMode
 import com.mablanco.pricegrab.data.appearance.AppearancePreferences
+import com.mablanco.pricegrab.data.currency.CurrencyMode
+import com.mablanco.pricegrab.data.currency.CurrencyPreferences
+import com.mablanco.pricegrab.data.currency.capCustomSymbol
+import com.mablanco.pricegrab.data.currency.resolveCurrencySymbol
 import com.mablanco.pricegrab.ui.theme.spacing
 
 const val TEST_TAG_SETTINGS_SCREEN: String = "settings_screen"
@@ -46,6 +52,9 @@ const val TEST_TAG_THEME_SYSTEM: String = "theme_system"
 const val TEST_TAG_THEME_LIGHT: String = "theme_light"
 const val TEST_TAG_THEME_DARK: String = "theme_dark"
 const val TEST_TAG_MATERIAL_YOU_SWITCH: String = "material_you_switch"
+const val TEST_TAG_CURRENCY_AUTOMATIC: String = "currency_automatic"
+const val TEST_TAG_CURRENCY_CUSTOM: String = "currency_custom"
+const val TEST_TAG_CURRENCY_SYMBOL_FIELD: String = "currency_symbol_field"
 
 @Composable
 fun SettingsScreen(
@@ -54,6 +63,7 @@ fun SettingsScreen(
     viewModel: SettingsViewModel = viewModel(),
 ) {
     val preferences by viewModel.preferences.collectAsStateWithLifecycle()
+    val currency by viewModel.currencyPreferences.collectAsStateWithLifecycle()
     SettingsScreen(
         preferences = preferences,
         materialYouSupported = viewModel.materialYouSupported,
@@ -61,6 +71,13 @@ fun SettingsScreen(
         onMaterialYouChange = viewModel::setMaterialYouEnabled,
         onBack = onBack,
         modifier = modifier,
+        currency = currency,
+        automaticCurrencySymbol = resolveCurrencySymbol(
+            CurrencyPreferences(),
+            LocalLocale.current.platformLocale,
+        ),
+        onCurrencyModeSelected = viewModel::setCurrencyMode,
+        onCustomCurrencySymbolChange = viewModel::setCustomCurrencySymbol,
     )
 }
 
@@ -73,6 +90,10 @@ fun SettingsScreen(
     onMaterialYouChange: (Boolean) -> Unit,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
+    currency: CurrencyPreferences = CurrencyPreferences(),
+    automaticCurrencySymbol: String = "",
+    onCurrencyModeSelected: (CurrencyMode) -> Unit = {},
+    onCustomCurrencySymbolChange: (String) -> Unit = {},
 ) {
     val backDescription = stringResource(R.string.settings_back_description)
     Scaffold(
@@ -118,6 +139,16 @@ fun SettingsScreen(
                 checked = preferences.materialYouEnabled && materialYouSupported,
                 onCheckedChange = onMaterialYouChange,
             )
+            Text(
+                text = stringResource(R.string.settings_currency_section),
+                style = MaterialTheme.typography.titleMedium,
+            )
+            CurrencyGroup(
+                currency = currency,
+                automaticSymbol = automaticCurrencySymbol,
+                onModeSelected = onCurrencyModeSelected,
+                onCustomSymbolChange = onCustomCurrencySymbolChange,
+            )
         }
     }
 }
@@ -147,6 +178,46 @@ private fun ThemeModeGroup(
             onClick = { onModeSelected(AppearanceMode.Dark) },
         )
     }
+}
+
+@Composable
+private fun CurrencyGroup(
+    currency: CurrencyPreferences,
+    automaticSymbol: String,
+    onModeSelected: (CurrencyMode) -> Unit,
+    onCustomSymbolChange: (String) -> Unit,
+) {
+    val automaticLabel = if (automaticSymbol.isEmpty()) {
+        stringResource(R.string.settings_currency_automatic_none)
+    } else {
+        stringResource(R.string.settings_currency_automatic, automaticSymbol)
+    }
+    val customSelected = currency.mode == CurrencyMode.Custom
+    Column(modifier = Modifier.selectableGroup()) {
+        ThemeOptionRow(
+            label = automaticLabel,
+            selected = !customSelected,
+            testTag = TEST_TAG_CURRENCY_AUTOMATIC,
+            onClick = { onModeSelected(CurrencyMode.Automatic) },
+        )
+        ThemeOptionRow(
+            label = stringResource(R.string.settings_currency_custom),
+            selected = customSelected,
+            testTag = TEST_TAG_CURRENCY_CUSTOM,
+            onClick = { onModeSelected(CurrencyMode.Custom) },
+        )
+    }
+    OutlinedTextField(
+        value = currency.customSymbol,
+        onValueChange = { onCustomSymbolChange(capCustomSymbol(it)) },
+        enabled = customSelected,
+        singleLine = true,
+        label = { Text(stringResource(R.string.settings_currency_symbol_label)) },
+        supportingText = { Text(stringResource(R.string.settings_currency_symbol_hint)) },
+        modifier = Modifier
+            .fillMaxWidth()
+            .testTag(TEST_TAG_CURRENCY_SYMBOL_FIELD),
+    )
 }
 
 @Composable

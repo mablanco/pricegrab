@@ -38,6 +38,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -49,6 +50,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mablanco.pricegrab.R
+import com.mablanco.pricegrab.core.format.MoneyAffixes
+import com.mablanco.pricegrab.core.format.MoneyFormatter
 import com.mablanco.pricegrab.core.model.QuantityUnit
 import com.mablanco.pricegrab.ui.theme.spacing
 import kotlinx.coroutines.withTimeoutOrNull
@@ -340,7 +343,13 @@ private fun OfferCard(
     val spacing = MaterialTheme.spacing
     val arrangement = arrangementFor(LocalDensity.current.fontScale)
     val unitName = stringResource(quantityUnit.nameRes())
-    val priceCd = stringResource(R.string.cd_price_field, title)
+    val currencySymbol = LocalCurrencySymbol.current
+    val locale = LocalLocale.current.platformLocale
+    val currency = remember(currencySymbol, locale) {
+        MoneyFormatter.affixes(currencySymbol, locale)
+    }
+    val priceLabel = stringResource(R.string.cd_price_field, title)
+    val priceCd = if (currencySymbol.isEmpty()) priceLabel else "$priceLabel, $currencySymbol"
     val quantityCd = "${stringResource(R.string.cd_quantity_field, title)}, $unitName"
 
     Card(
@@ -362,6 +371,7 @@ private fun OfferCard(
                     quantityError = quantityError,
                     quantityUnit = quantityUnit,
                     priceCd = priceCd,
+                    currency = currency,
                     quantityCd = quantityCd,
                     onPriceChange = onPriceChange,
                     onQuantityChange = onQuantityChange,
@@ -378,6 +388,7 @@ private fun OfferCard(
                     quantityError = quantityError,
                     quantityUnit = quantityUnit,
                     priceCd = priceCd,
+                    currency = currency,
                     quantityCd = quantityCd,
                     onPriceChange = onPriceChange,
                     onQuantityChange = onQuantityChange,
@@ -399,6 +410,7 @@ private fun CompactOfferFieldsRow(
     quantityError: InputError?,
     quantityUnit: QuantityUnit,
     priceCd: String,
+    currency: MoneyAffixes,
     quantityCd: String,
     onPriceChange: (String) -> Unit,
     onQuantityChange: (String) -> Unit,
@@ -417,6 +429,7 @@ private fun CompactOfferFieldsRow(
             onValueChange = onPriceChange,
             labelRes = R.string.price_label,
             contentDescription = priceCd,
+            currency = currency,
             error = priceError,
             imeAction = ImeAction.Next,
             testTag = "${testTagPrefix}_price",
@@ -452,6 +465,7 @@ private fun AdaptiveOfferFields(
     quantityError: InputError?,
     quantityUnit: QuantityUnit,
     priceCd: String,
+    currency: MoneyAffixes,
     quantityCd: String,
     onPriceChange: (String) -> Unit,
     onQuantityChange: (String) -> Unit,
@@ -465,6 +479,7 @@ private fun AdaptiveOfferFields(
         onValueChange = onPriceChange,
         labelRes = R.string.price_label,
         contentDescription = priceCd,
+        currency = currency,
         error = priceError,
         imeAction = ImeAction.Next,
         testTag = "${testTagPrefix}_price",
@@ -512,6 +527,7 @@ private fun LabeledNumberField(
     testTag: String,
     focusRequester: FocusRequester?,
     modifier: Modifier = Modifier,
+    currency: MoneyAffixes = MoneyAffixes.NONE,
 ) {
     val baseModifier = modifier
         .testTag(testTag)
@@ -523,6 +539,8 @@ private fun LabeledNumberField(
         label = { Text(stringResource(labelRes)) },
         singleLine = true,
         isError = error != null,
+        prefix = currencyAffix(currency.prefix, "${testTag}_currency"),
+        suffix = currencyAffix(currency.suffix, "${testTag}_currency"),
         supportingText = error?.let {
             { Text(stringResource(it.messageRes())) }
         },
@@ -536,6 +554,13 @@ private fun LabeledNumberField(
             baseModifier
         },
     )
+}
+
+/** Text-field affix slot for a non-blank currency [affix], else no slot. */
+private fun currencyAffix(affix: String, testTag: String): (@Composable () -> Unit)? {
+    val symbol = affix.trim()
+    if (symbol.isEmpty()) return null
+    return { Text(text = symbol, modifier = Modifier.testTag(testTag)) }
 }
 
 @StringRes

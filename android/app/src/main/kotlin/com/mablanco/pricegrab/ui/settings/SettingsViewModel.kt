@@ -8,6 +8,9 @@ import com.mablanco.pricegrab.data.appearance.AppearanceMode
 import com.mablanco.pricegrab.data.appearance.AppearancePreferences
 import com.mablanco.pricegrab.data.appearance.AppearancePreferencesRepository
 import com.mablanco.pricegrab.data.appearance.DYNAMIC_COLOR_MIN_SDK
+import com.mablanco.pricegrab.data.currency.CurrencyMode
+import com.mablanco.pricegrab.data.currency.CurrencyPreferences
+import com.mablanco.pricegrab.data.currency.CurrencyPreferencesRepository
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
@@ -28,12 +31,20 @@ class SettingsViewModel(
 ) : AndroidViewModel(application) {
 
     private val repository = AppearancePreferencesRepository(application)
+    private val currencyRepository = CurrencyPreferencesRepository(application)
 
     val preferences: StateFlow<AppearancePreferences> = repository.preferences
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = AppearancePreferences(),
+        )
+
+    val currencyPreferences: StateFlow<CurrencyPreferences> = currencyRepository.preferences
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = CurrencyPreferences(),
         )
 
     val materialYouSupported: Boolean =
@@ -46,5 +57,13 @@ class SettingsViewModel(
     fun setMaterialYouEnabled(enabled: Boolean) {
         if (!materialYouSupported && enabled) return
         viewModelScope.launch { repository.setMaterialYouEnabled(enabled) }
+    }
+
+    fun setCurrencyMode(mode: CurrencyMode) {
+        viewModelScope.launch { currencyRepository.setMode(mode) }
+    }
+
+    fun setCustomCurrencySymbol(symbol: String) {
+        viewModelScope.launch { currencyRepository.setCustomSymbol(symbol) }
     }
 }

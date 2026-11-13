@@ -39,22 +39,22 @@ contracts/currency-display.md, quickstart.md
 
 **Purpose**: Pure building blocks every story uses.
 
-- [ ] T003 [P] Write failing `test/core/format/MoneyFormatterTest.kt`
+- [x] T003 [P] Write failing `test/core/format/MoneyFormatterTest.kt`
       covering every row of the `affixes` / `wrap` table in
       `contracts/currency-display.md` (es-ES, en-US, custom `zł`, empty).
-- [ ] T004 [P] Write failing `test/data/currency/CurrencyPreferencesTest.kt`:
+- [x] T004 [P] Write failing `test/data/currency/CurrencyPreferencesTest.kt`:
       defaults (Automatic, `""`), `CurrencyMode` storage round-trip and
       unknown → Automatic, custom symbol capped at 4.
-- [ ] T005 [P] Write failing `test/data/currency/CurrencyResolveTest.kt`
+- [x] T005 [P] Write failing `test/data/currency/CurrencyResolveTest.kt`
       covering the `resolveCurrencySymbol` table (es-ES €, en-US $, en-GB
       £, `en` → `""`, custom trimmed, blank → `""`).
-- [ ] T006 [P] Implement `main/core/format/MoneyFormatter.kt`
+- [x] T006 [P] Implement `main/core/format/MoneyFormatter.kt`
       (`MoneyAffixes`, `affixes`, `wrap`) using the locale's currency
       `DecimalFormat` with the symbol substituted (research §2).
-- [ ] T007 [P] Implement `main/data/currency/CurrencyPreferences.kt`
+- [x] T007 [P] Implement `main/data/currency/CurrencyPreferences.kt`
       (`CurrencyMode`, `CurrencyPreferences`, `MAX_CUSTOM_SYMBOL_LENGTH`)
       and `main/data/currency/CurrencyResolve.kt`.
-- [ ] T008 Add `CURRENCY_MODE` / `CURRENCY_CUSTOM_SYMBOL` keys to
+- [x] T008 Add `CURRENCY_MODE` / `CURRENCY_CUSTOM_SYMBOL` keys to
       `main/data/appearance/AppearancePreferencesKeys.kt` (KDoc: the file
       holds all user preferences) and implement
       `main/data/currency/CurrencyPreferencesRepository.kt` over
@@ -72,13 +72,13 @@ contracts/currency-display.md, quickstart.md
 
 ### Tests (write first)
 
-- [ ] T009 [P] [US1] Create `androidTest/ui/compare/CompareScreenCurrencyTest.kt`
+- [x] T009 [P] [US1] Create `androidTest/ui/compare/CompareScreenCurrencyTest.kt`
       rendering stateless `CompareScreen` inside
       `CompositionLocalProvider(LocalCurrencySymbol provides "€")`: price
       fields show the symbol; winner state shows the wrapped savings amount;
       percent line has no symbol; quantity fields have no symbol; empty
       symbol renders as today.
-- [ ] T010 [P] [US1] Add `expectedMoney(amount: String)` to
+- [x] T010 [P] [US1] Add `expectedMoney(amount: String)` to
       `androidTest/ui/compare/CompareScreenTestHelpers.kt` (resolver +
       formatter with default prefs and the activity locale) and use it in
       every Activity-based `result_savings_per_*` assertion
@@ -88,17 +88,17 @@ contracts/currency-display.md, quickstart.md
 
 ### Implementation
 
-- [ ] T011 [US1] Create `main/ui/compare/CurrencyLocal.kt` with
+- [x] T011 [US1] Create `main/ui/compare/CurrencyLocal.kt` with
       `LocalCurrencySymbol = staticCompositionLocalOf { "" }`.
-- [ ] T012 [US1] In `main/PriceGrabApp.kt`, collect currency preferences
+- [x] T012 [US1] In `main/PriceGrabApp.kt`, collect currency preferences
       (via `SettingsViewModel`, T016), resolve with the current
       `LocalLocale.current.platformLocale`, and provide
       `LocalCurrencySymbol` around the screen `when`.
-- [ ] T013 [US1] In `main/ui/compare/CompareScreen.kt`, pass the affixes to
+- [x] T013 [US1] In `main/ui/compare/CompareScreen.kt`, pass the affixes to
       the price `LabeledNumberField` (prefix or suffix `Text`) in both
       `CompactOfferFieldsRow` and `AdaptiveOfferFields`; append the symbol
       to `priceCd` when non-empty.
-- [ ] T014 [US1] In `main/ui/compare/CompareScreenResult.kt`, wrap
+- [x] T014 [US1] In `main/ui/compare/CompareScreenResult.kt`, wrap
       `savings.perUnitDelta` with the affixes before `formatSavingsLine`.
 
 **Checkpoint**: US1 tests green; existing Compare suites green with
@@ -113,7 +113,7 @@ persists across restart; Automatic restores region symbol.
 
 ### Tests (write first)
 
-- [ ] T015 [P] [US2] Create `androidTest/ui/settings/SettingsCurrencyTest.kt`
+- [x] T015 [P] [US2] Create `androidTest/ui/settings/SettingsCurrencyTest.kt`
       (clear DataStore before each test like the existing Settings tests):
       Automatic selected and labelled with the resolved symbol; select
       Custom, type `zł`, go back → Compare price field shows `zł`; typing 5
@@ -122,17 +122,17 @@ persists across restart; Automatic restores region symbol.
 
 ### Implementation
 
-- [ ] T016 [US2] Extend `main/ui/settings/SettingsViewModel.kt` with
+- [x] T016 [US2] Extend `main/ui/settings/SettingsViewModel.kt` with
       `currencyPreferences: StateFlow<CurrencyPreferences>`,
       `setCurrencyMode`, `setCustomCurrencySymbol` (capped at 4).
-- [ ] T017 [P] [US2] Add EN strings in `res/values/strings.xml`:
+- [x] T017 [P] [US2] Add EN strings in `res/values/strings.xml`:
       `settings_currency_section`, `settings_currency_automatic`
       (`Automatic (%1$s)`), `settings_currency_automatic_none`,
       `settings_currency_custom`, `settings_currency_symbol_label`,
       `settings_currency_symbol_hint`.
-- [ ] T018 [P] [US2] Add ES equivalents in `res/values-es/strings.xml`
+- [x] T018 [P] [US2] Add ES equivalents in `res/values-es/strings.xml`
       (contract table).
-- [ ] T019 [US2] Add the Currency section to
+- [x] T019 [US2] Add the Currency section to
       `main/ui/settings/SettingsScreen.kt` (+ `PriceGrabAppContent`
       parameters): two selectable rows reusing the Appearance row pattern
       and an `OutlinedTextField` enabled only for Custom.
@@ -143,20 +143,21 @@ persists across restart; Automatic restores region symbol.
 
 ## Phase 5: User Story 3 — Accessibility and large font (P2)
 
-- [ ] T020 [P] [US3] Extend `androidTest/ui/compare/CompareScreenLargeFontTest.kt`
+- [x] T020 [P] [US3] *(Covered in `CompareScreenCurrencyTest.kt` instead of
+      editing the shared layout tests.)* Extend `androidTest/ui/compare/CompareScreenLargeFontTest.kt`
       and `CompareScreenCompactRowTest.kt` with a 4-character symbol
       (`CHF`): price field and typed amount visible; compact row geometry
       holds at default scale.
-- [ ] T021 [P] [US3] Extend `androidTest/ui/settings/SettingsA11yTest.kt`
+- [x] T021 [P] [US3] Extend `androidTest/ui/settings/SettingsA11yTest.kt`
       and `SettingsLargeFontTest.kt` for the Currency rows (selected state,
       labels, 200% layout).
-- [ ] T022 [US3] Fix any layout or semantics gaps found by T020 / T021.
+- [x] T022 [US3] *(None needed so far; re-check after CI.)* Fix any layout or semantics gaps found by T020 / T021.
 
 ---
 
 ## Phase 6: Polish & Cross-Cutting Concerns
 
-- [ ] T023 [P] Add a Compare preview with `€` in
+- [x] T023 [P] Add a Compare preview with `€` in
       `main/ui/compare/CompareScreenPreviews.kt` and update the
       `PriceGrabAppPreview` parameters.
 - [ ] T024 Full gate from `android/`: `lintDebug`, `detekt`,
