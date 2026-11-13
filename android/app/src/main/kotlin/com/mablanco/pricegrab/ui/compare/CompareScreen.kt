@@ -340,7 +340,13 @@ private fun OfferCard(
     val spacing = MaterialTheme.spacing
     val arrangement = arrangementFor(LocalDensity.current.fontScale)
     val unitName = stringResource(quantityUnit.nameRes())
-    val priceCd = stringResource(R.string.cd_price_field, title)
+    val currencySymbol = LocalCurrencySymbol.current
+    val priceFieldName = stringResource(R.string.cd_price_field, title)
+    val priceCd = if (currencySymbol.isEmpty()) {
+        priceFieldName
+    } else {
+        "$priceFieldName, $currencySymbol"
+    }
     val quantityCd = "${stringResource(R.string.cd_quantity_field, title)}, $unitName"
 
     Card(
@@ -362,6 +368,7 @@ private fun OfferCard(
                     quantityError = quantityError,
                     quantityUnit = quantityUnit,
                     priceCd = priceCd,
+                    currencySymbol = currencySymbol,
                     quantityCd = quantityCd,
                     onPriceChange = onPriceChange,
                     onQuantityChange = onQuantityChange,
@@ -378,6 +385,7 @@ private fun OfferCard(
                     quantityError = quantityError,
                     quantityUnit = quantityUnit,
                     priceCd = priceCd,
+                    currencySymbol = currencySymbol,
                     quantityCd = quantityCd,
                     onPriceChange = onPriceChange,
                     onQuantityChange = onQuantityChange,
@@ -399,6 +407,7 @@ private fun CompactOfferFieldsRow(
     quantityError: InputError?,
     quantityUnit: QuantityUnit,
     priceCd: String,
+    currencySymbol: String,
     quantityCd: String,
     onPriceChange: (String) -> Unit,
     onQuantityChange: (String) -> Unit,
@@ -417,6 +426,7 @@ private fun CompactOfferFieldsRow(
             onValueChange = onPriceChange,
             labelRes = R.string.price_label,
             contentDescription = priceCd,
+            currencySymbol = currencySymbol,
             error = priceError,
             imeAction = ImeAction.Next,
             testTag = "${testTagPrefix}_price",
@@ -452,6 +462,7 @@ private fun AdaptiveOfferFields(
     quantityError: InputError?,
     quantityUnit: QuantityUnit,
     priceCd: String,
+    currencySymbol: String,
     quantityCd: String,
     onPriceChange: (String) -> Unit,
     onQuantityChange: (String) -> Unit,
@@ -465,6 +476,7 @@ private fun AdaptiveOfferFields(
         onValueChange = onPriceChange,
         labelRes = R.string.price_label,
         contentDescription = priceCd,
+        currencySymbol = currencySymbol,
         error = priceError,
         imeAction = ImeAction.Next,
         testTag = "${testTagPrefix}_price",
@@ -512,6 +524,7 @@ private fun LabeledNumberField(
     testTag: String,
     focusRequester: FocusRequester?,
     modifier: Modifier = Modifier,
+    currencySymbol: String = "",
 ) {
     val baseModifier = modifier
         .testTag(testTag)
@@ -520,7 +533,7 @@ private fun LabeledNumberField(
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
-        label = { Text(stringResource(labelRes)) },
+        label = { FieldLabel(stringResource(labelRes), currencySymbol, "${testTag}_label") },
         singleLine = true,
         isError = error != null,
         supportingText = error?.let {
@@ -536,6 +549,21 @@ private fun LabeledNumberField(
             baseModifier
         },
     )
+}
+
+/**
+ * Text-field label, with the currency symbol appended for money fields
+ * ("Price (€)"). The label stays visible while the field is empty, unlike
+ * the text field's prefix / suffix slots.
+ */
+@Composable
+private fun FieldLabel(label: String, currencySymbol: String, testTag: String) {
+    val text = if (currencySymbol.isEmpty()) {
+        label
+    } else {
+        stringResource(R.string.field_label_with_currency, label, currencySymbol)
+    }
+    Text(text = text, modifier = Modifier.testTag(testTag))
 }
 
 @StringRes

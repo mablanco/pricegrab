@@ -46,14 +46,14 @@ fun resolveCurrencySymbol(prefs: CurrencyPreferences, locale: Locale): String
 
 | Surface | With `€` in es-ES | With `$` in en-US | With `""` |
 |---------|-------------------|-------------------|-----------|
-| Price field | suffix `€` | prefix `$` | no affix (today) |
+| Price field label | `Precio (€)` | `Price ($)` | `Price` (today) |
 | Price content description | `Precio de Oferta A, €` | `Price for Offer A, $` | today's text |
 | Quantity field | unchanged | unchanged | unchanged |
 | Savings line (2.50/500 g vs 4.00/1 kg) | `Ahorras 1 € por kg frente a Oferta A` | `Save $1 per kg vs Offer A` | today's text |
 | Percent line | `20% menos` | `20% less` | unchanged |
 | Tie / empty / incompatible | no amount | no amount | unchanged |
 
-The affix is never part of the editable text; `onPriceChange` receives
+The symbol is never part of the editable text; `onPriceChange` receives
 digits only, exactly as today.
 
 ## Settings screen

@@ -7,6 +7,7 @@
     <string name="offer_b_title">Offer B</string>
     <string name="offer_c_title">Offer C</string>
     <string name="price_label">Price</string>
+    <string name="field_label_with_currency">%1$s (%2$s)</string>
     <string name="quantity_label">Quantity</string>
 
     <string name="cd_price_field">Price for %1$s</string>
@@ -69,4 +70,10 @@
     <string name="settings_material_you_unavailable">Unavailable on this device</string>
     <string name="settings_material_you_on">On</string>
     <string name="settings_material_you_off">Off</string>
+    <string name="settings_currency_section">Currency</string>
+    <string name="settings_currency_automatic">Automatic (%1$s)</string>
+    <string name="settings_currency_automatic_none">Automatic (none)</string>
+    <string name="settings_currency_custom">Custom</string>
+    <string name="settings_currency_symbol_label">Symbol</string>
+    <string name="settings_currency_symbol_hint">Leave empty to hide the symbol</string>
 </resources>

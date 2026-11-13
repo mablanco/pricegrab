@@ -27,6 +27,8 @@ import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import com.mablanco.pricegrab.R
 import com.mablanco.pricegrab.core.model.ComparisonOutcome
+import com.mablanco.pricegrab.core.format.MoneyAffixes
+import com.mablanco.pricegrab.core.format.MoneyFormatter
 import com.mablanco.pricegrab.core.model.Dimension
 import com.mablanco.pricegrab.ui.theme.spacing
 import java.util.Locale
@@ -76,8 +78,9 @@ private fun resultRegionCopy(
     val placeholder = stringResource(R.string.result_placeholder)
     val incompatibleMessage = stringResource(R.string.error_incompatible_units)
     val headline = outcome?.let { outcomeHeadline(it) }
+    val currency = MoneyFormatter.affixes(LocalCurrencySymbol.current, locale)
     val savings = ResultPresenter.present(outcome, dimension, locale)
-    val savingsLine = absoluteSavingsLine(outcome, savings, dimension)
+    val savingsLine = absoluteSavingsLine(outcome, savings, dimension, currency)
     // Absolute and percent must appear together for a displayable winner
     // (contracts/result-savings-display.md); never leave a half-rich hero.
     val percentLine = percentSavingsLine(savingsLine, savings)
@@ -103,10 +106,11 @@ private fun absoluteSavingsLine(
     outcome: ComparisonOutcome?,
     savings: SavingsPresentation?,
     dimension: Dimension?,
+    currency: MoneyAffixes,
 ): String? {
     if (savings == null || outcome !is ComparisonOutcome.Winner) return null
     return formatSavingsLine(
-        perUnitDelta = savings.perUnitDelta,
+        perUnitDelta = MoneyFormatter.wrap(savings.perUnitDelta, currency),
         dimension = dimension,
         versusOfferTitle = stringResource(offerTitleRes(outcome.secondSlotIndex)),
     )

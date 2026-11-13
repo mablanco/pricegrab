@@ -1,6 +1,7 @@
 package com.mablanco.pricegrab.ui.compare
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.tooling.preview.Preview
 import com.mablanco.pricegrab.core.model.ComparisonOutcome
 import com.mablanco.pricegrab.ui.theme.PriceGrabTheme
@@ -82,3 +83,12 @@ private fun CompareScreenThreeOffersPreview() {
         )
     }
 }
+
+@Preview(showBackground = true, locale = "es-rES", name = "Winner with currency (es-ES)")
+@Composable
+private fun CompareScreenCurrencyPreview() {
+    CompositionLocalProvider(LocalCurrencySymbol provides "€") {
+        CompareScreenWinnerPreview()
+    }
+}
+

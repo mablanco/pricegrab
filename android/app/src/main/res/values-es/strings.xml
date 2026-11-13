@@ -7,6 +7,7 @@
     <string name="offer_b_title">Oferta B</string>
     <string name="offer_c_title">Oferta C</string>
     <string name="price_label">Precio</string>
+    <string name="field_label_with_currency">%1$s (%2$s)</string>
     <string name="quantity_label">Cantidad</string>
 
     <string name="cd_price_field">Precio de %1$s</string>
@@ -69,4 +70,10 @@
     <string name="settings_material_you_unavailable">No disponible en este dispositivo</string>
     <string name="settings_material_you_on">Activado</string>
     <string name="settings_material_you_off">Desactivado</string>
+    <string name="settings_currency_section">Moneda</string>
+    <string name="settings_currency_automatic">Automática (%1$s)</string>
+    <string name="settings_currency_automatic_none">Automática (ninguna)</string>
+    <string name="settings_currency_custom">Personalizada</string>
+    <string name="settings_currency_symbol_label">Símbolo</string>
+    <string name="settings_currency_symbol_hint">Déjalo vacío para no mostrar símbolo</string>
 </resources>
