@@ -101,6 +101,8 @@ internal fun QuantityUnit.codeRes(): Int = when (this) {
     QuantityUnit.Kilogram -> R.string.unit_code_kg
     QuantityUnit.Millilitre -> R.string.unit_code_ml
     QuantityUnit.Litre -> R.string.unit_code_L
+    QuantityUnit.Centimetre -> R.string.unit_code_cm
+    QuantityUnit.Metre -> R.string.unit_code_m
     QuantityUnit.Piece -> R.string.unit_code_pcs
 }
 
@@ -110,5 +112,7 @@ internal fun QuantityUnit.nameRes(): Int = when (this) {
     QuantityUnit.Kilogram -> R.string.unit_name_kilogram
     QuantityUnit.Millilitre -> R.string.unit_name_millilitre
     QuantityUnit.Litre -> R.string.unit_name_litre
+    QuantityUnit.Centimetre -> R.string.unit_name_centimetre
+    QuantityUnit.Metre -> R.string.unit_name_metre
     QuantityUnit.Piece -> R.string.unit_name_piece
 }

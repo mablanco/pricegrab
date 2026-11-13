@@ -12,5 +12,6 @@ enum class Dimension(
 ) {
     Mass(BigDecimal("1000")),
     Volume(BigDecimal("1000")),
+    Length(BigDecimal("100")),
     Count(BigDecimal.ONE),
 }

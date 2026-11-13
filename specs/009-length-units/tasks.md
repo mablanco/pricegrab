@@ -58,17 +58,17 @@ T007 land together in one commit with the US1 branches.
 untouched (research §1). If a change there seems necessary, stop and
 re-check the plan.
 
-- [ ] T004 [P] Write failing JVM tests in `test/core/model/QuantityUnitTest.kt`:
+- [x] T004 [P] Write failing JVM tests in `test/core/model/QuantityUnitTest.kt`:
       `Centimetre` / `Metre` map to `Dimension.Length` with multipliers 1 /
       100; `QuantityUnit.entries` names equal
       `[Gram, Kilogram, Millilitre, Litre, Centimetre, Metre, Piece]`;
       `DEFAULT == Gram`; `Dimension.Length.displayUnitScale == 100`.
-- [ ] T005 [P] Write failing JVM tests in `test/core/model/OfferTest.kt`:
+- [x] T005 [P] Write failing JVM tests in `test/core/model/OfferTest.kt`:
       `22 / 250 cm` and `22 / 2.5 m` have equal `quantityInBaseUnits`
       (250) and equal `unitPrice` (0.088).
-- [ ] T006 Add `Length(BigDecimal("100"))` after `Volume` in
+- [x] T006 Add `Length(BigDecimal("100"))` after `Volume` in
       `main/core/model/Dimension.kt`.
-- [ ] T007 Add `Centimetre, Metre` between `Litre` and `Piece` in
+- [x] T007 Add `Centimetre, Metre` between `Litre` and `Piece` in
       `main/core/model/QuantityUnit.kt`; extend `dimension`
       (`Centimetre, Metre -> Dimension.Length`) and `toBaseMultiplier`
       (`Centimetre` → 1, `Metre` → 100).
@@ -87,41 +87,41 @@ wins, "Save 1 per m vs Offer A", "10.2% less" (quickstart §Issue #56).
 
 ### Tests for User Story 1 (write first, must fail)
 
-- [ ] T008 [P] [US1] Add comparator cases in
+- [x] T008 [P] [US1] Add comparator cases in
       `test/core/calc/PriceComparatorTest.kt`: issue #56 canonical (B wins,
       `perUnitDelta` 0.01 per cm, `percentDelta` ≈ 10.2); tie 5 m @ 49 vs
       500 cm @ 49; three offers 20/200 cm, 27/300 cm, 12/1 m → B wins vs A.
-- [ ] T009 [P] [US1] Add presenter case in
+- [x] T009 [P] [US1] Add presenter case in
       `test/ui/compare/ResultPresenterTest.kt`: `Dimension.Length`,
       `perUnitDelta = 0.01` → display `"1"`, percent `"10.2"` (en-US).
-- [ ] T010 [P] [US1] Add ViewModel cases in
+- [x] T010 [P] [US1] Add ViewModel cases in
       `test/ui/compare/CompareViewModelUnitsTest.kt`: cm vs m produces an
       outcome; Reset returns `Metre` slots to `Gram`; Undo restores
       `Metre` / `Centimetre`.
-- [ ] T011 [P] [US1] Add instrumented cases in
+- [x] T011 [P] [US1] Add instrumented cases in
       `androidTest/ui/compare/CompareScreenUnitsTest.kt`: selector lists
       g, kg, ml, L, cm, m, pcs in order and defaults to g; issue #56
       scenario shows `Save 1 per m vs Offer A` (en-US) and the es-ES
       equivalent if the suite already runs es-ES.
-- [ ] T012 [P] [US1] Add a rotation / process-death case for `Metre` in
+- [x] T012 [P] [US1] Add a rotation / process-death case for `Metre` in
       `androidTest/ui/compare/CompareScreenConfigChangeTest.kt` (or
       `test/ui/compare/CompareViewModelSavedStateHardeningTest.kt` for
       saved-state restore at JVM level).
 
 ### Implementation for User Story 1
 
-- [ ] T013 [P] [US1] Add EN strings in `res/values/strings.xml`:
+- [x] T013 [P] [US1] Add EN strings in `res/values/strings.xml`:
       `unit_code_cm` = `cm`, `unit_code_m` = `m`,
       `unit_name_centimetre` = `centimetres`, `unit_name_metre` = `metres`,
       `result_savings_per_m` = `Save %1$s per m vs %2$s`.
-- [ ] T014 [P] [US1] Add ES strings in `res/values-es/strings.xml`:
+- [x] T014 [P] [US1] Add ES strings in `res/values-es/strings.xml`:
       `cm`, `m`, `centímetros`, `metros`,
       `Ahorras %1$s por m frente a %2$s`.
-- [ ] T015 [US1] Add `Centimetre` / `Metre` branches to `codeRes()` and
+- [x] T015 [US1] Add `Centimetre` / `Metre` branches to `codeRes()` and
       `nameRes()` in `main/ui/compare/CompareScreenUnits.kt`.
-- [ ] T016 [US1] Map `Dimension.Length -> R.string.result_savings_per_m` in
+- [x] T016 [US1] Map `Dimension.Length -> R.string.result_savings_per_m` in
       `formatSavingsLine` in `main/ui/compare/CompareScreenResult.kt`.
-- [ ] T017 [US1] Run `./gradlew :app:testDebugUnitTest` (from `android/`):
+- [x] T017 [US1] Run `./gradlew :app:testDebugUnitTest` (from `android/`):
       T004, T005, T008–T010, T012 green; then the instrumented T011.
 
 **Checkpoint**: US1 independently testable — the issue #56 scenario works
@@ -139,21 +139,21 @@ incompatible message and no winner.
 
 ### Tests for User Story 2 (write first, must fail)
 
-- [ ] T018 [P] [US2] Add ViewModel cases in
+- [x] T018 [P] [US2] Add ViewModel cases in
       `test/ui/compare/CompareViewModelUnitsTest.kt`: `Metre` vs each of
       `Kilogram`, `Litre`, `Piece` (and `Centimetre` vs `Gram`) →
       `incompatibleUnits == true`, `outcome == null`.
-- [ ] T019 [P] [US2] Update
+- [x] T019 [P] [US2] Update
       `androidTest/ui/compare/CompareScreenIncompatibleUnitsTest.kt`: m vs
       kg shows the new EN text (and ES if covered); switching B to cm
       clears the error. Update any existing assertion on the old text.
 
 ### Implementation for User Story 2
 
-- [ ] T020 [P] [US2] Update `error_incompatible_units` in
+- [x] T020 [P] [US2] Update `error_incompatible_units` in
       `res/values/strings.xml` to "Both offers must use the same kind of
       measure (weight, volume, length, or count)."
-- [ ] T021 [P] [US2] Update `error_incompatible_units` in
+- [x] T021 [P] [US2] Update `error_incompatible_units` in
       `res/values-es/strings.xml` to "Ambas ofertas deben usar el mismo
       tipo de medida (peso, volumen, longitud o unidades)."
 
@@ -171,12 +171,12 @@ incompatible message and no winner.
 
 ### Tests for User Story 3
 
-- [ ] T022 [P] [US3] Add a case in
+- [x] T022 [P] [US3] Add a case in
       `androidTest/ui/compare/CompareScreenAccessibilityTest.kt`: the `m` and
       `cm` menu options expose content descriptions `metres` /
       `centimetres`; the result live region contains `per m` for the
       issue #56 scenario.
-- [ ] T023 [P] [US3] Add a 200% font case in
+- [x] T023 [P] [US3] Add a 200% font case in
       `androidTest/ui/compare/CompareScreenLargeFontTest.kt` (or
       `CompareScreenCompactRowTest.kt`, whichever already parametrises
       units): offers set to `cm` and `m` display their codes without
@@ -184,7 +184,7 @@ incompatible message and no winner.
 
 ### Implementation for User Story 3
 
-- [ ] T024 [US3] No production change expected (T013–T016 provide the
+- [x] T024 [US3] No production change expected (T013–T016 provide the
       strings and branches). If T022 / T023 fail, fix in
       `main/ui/compare/CompareScreenUnits.kt` without changing
       `UNIT_SELECTOR_WIDTH` unless a test proves it necessary.
@@ -195,7 +195,7 @@ incompatible message and no winner.
 
 ## Phase 6: Polish & Cross-Cutting Concerns
 
-- [ ] T025 [P] Add a length-unit preview (e.g. issue #56 winner) in
+- [x] T025 [P] *(Skipped: previews do not cover per-dimension variants.)* Add a length-unit preview (e.g. issue #56 winner) in
       `main/ui/compare/CompareScreenPreviews.kt` if previews cover other
       dimensions.
 - [ ] T026 Run the full gate from `android/`: `./gradlew lint detekt

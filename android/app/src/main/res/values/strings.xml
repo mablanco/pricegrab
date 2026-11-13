@@ -28,20 +28,25 @@
     <string name="result_savings">Save %1$s per unit vs %2$s</string>
     <string name="result_savings_per_kg">Save %1$s per kg vs %2$s</string>
     <string name="result_savings_per_L">Save %1$s per L vs %2$s</string>
+    <string name="result_savings_per_m">Save %1$s per m vs %2$s</string>
     <string name="result_savings_per_piece">Save %1$s per piece vs %2$s</string>
     <string name="result_savings_percent">%1$s%% less</string>
 
-    <string name="error_incompatible_units">Both offers must use the same kind of measure (weight, volume, or count).</string>
+    <string name="error_incompatible_units">Both offers must use the same kind of measure (weight, volume, length, or count).</string>
 
     <string name="unit_code_g">g</string>
     <string name="unit_code_kg">kg</string>
     <string name="unit_code_ml">ml</string>
     <string name="unit_code_L">L</string>
+    <string name="unit_code_cm">cm</string>
+    <string name="unit_code_m">m</string>
     <string name="unit_code_pcs">pcs</string>
     <string name="unit_name_gram">grams</string>
     <string name="unit_name_kilogram">kilograms</string>
     <string name="unit_name_millilitre">millilitres</string>
     <string name="unit_name_litre">litres</string>
+    <string name="unit_name_centimetre">centimetres</string>
+    <string name="unit_name_metre">metres</string>
     <string name="unit_name_piece">pieces</string>
 
     <string name="reset_action">Reset</string>
