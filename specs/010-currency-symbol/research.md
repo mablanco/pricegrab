@@ -80,22 +80,20 @@ The value changes rarely (Settings), so static is fine.
 Putting the symbol in `CompareUiState` / ViewModel — rejected: it is a
 preference, not form state, and must not enter saved state (FR-007).
 
-## 5. Price field affix
+## 5. Price field: symbol in the label
 
-**Decision**: Material 3 `OutlinedTextField` `prefix` / `suffix` slots,
-chosen by which affix the locale pattern uses; content description becomes
-"Price for Offer A, €".
+**Decision**: Append the symbol to the price field's label
+(`field_label_with_currency` = `%1$s (%2$s)` → "Price (€)" / "Precio (€)");
+content description becomes "Price for Offer A, €".
 
-**Rationale**: Affix slots are display-only (not part of the editable
-text), so parsing is untouched and the cursor never lands inside the
-symbol. Appending to the content description matches how quantity fields
-append the unit name.
+**Rationale**: The label is visible whether the field is empty, focused or
+filled, and it adds no width to the compact row. Appending to the content
+description matches how quantity fields append the unit name.
 
-**Risk**: Compact single row at default font is the tightest layout
-(price weight 1.15). A 1–4 character affix fits at `bodyLarge`; at large
-font the adaptive layout already gives price the full width. Covered by
-`CompareScreenCompactRowTest` + `CompareScreenLargeFontTest` with a
-4-character symbol (`CHF` / `NT$`).
+**Alternatives considered**: Material 3 `OutlinedTextField` `prefix` /
+`suffix` slots — tried first and rejected after CI: M3 only shows the
+affixes while the label is floating (field focused or non-empty), so an
+empty price field showed no symbol at all, failing FR-001 / US1.
 
 ## 6. Savings line
 

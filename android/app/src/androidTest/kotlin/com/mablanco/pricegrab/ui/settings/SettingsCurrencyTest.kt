@@ -21,6 +21,7 @@ import com.mablanco.pricegrab.data.currency.CurrencyPreferences
 import com.mablanco.pricegrab.data.currency.resolveCurrencySymbol
 import com.mablanco.pricegrab.ui.compare.TEST_TAG_OFFER_A
 import com.mablanco.pricegrab.ui.compare.TEST_TAG_SETTINGS_OPEN
+import com.mablanco.pricegrab.ui.compare.priceLabel
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
@@ -63,8 +64,8 @@ class SettingsCurrencyTest {
         composeRule.onNodeWithTag(TEST_TAG_SETTINGS_BACK).performClick()
         composeRule.waitForIdle()
 
-        composeRule.onNodeWithTag("${TEST_TAG_OFFER_A}_price_currency", useUnmergedTree = true)
-            .assertTextEquals("zł")
+        composeRule.onNodeWithTag("${TEST_TAG_OFFER_A}_price_label", useUnmergedTree = true)
+            .assertTextEquals(context.priceLabel("zł"))
     }
 
     @Test
@@ -88,8 +89,8 @@ class SettingsCurrencyTest {
         composeRule.onNodeWithTag(TEST_TAG_SETTINGS_BACK).performClick()
         composeRule.waitForIdle()
 
-        composeRule.onNodeWithTag("${TEST_TAG_OFFER_A}_price_currency", useUnmergedTree = true)
-            .assertDoesNotExist()
+        composeRule.onNodeWithTag("${TEST_TAG_OFFER_A}_price_label", useUnmergedTree = true)
+            .assertTextEquals(context.priceLabel(""))
     }
 
     @Test
@@ -103,16 +104,8 @@ class SettingsCurrencyTest {
         composeRule.onNodeWithTag(TEST_TAG_SETTINGS_BACK).performClick()
         composeRule.waitForIdle()
 
-        val regionSymbol = automaticSymbol()
-        val currencyNode = composeRule.onNodeWithTag(
-            "${TEST_TAG_OFFER_A}_price_currency",
-            useUnmergedTree = true,
-        )
-        if (regionSymbol.isEmpty()) {
-            currencyNode.assertDoesNotExist()
-        } else {
-            currencyNode.assertTextEquals(regionSymbol)
-        }
+        composeRule.onNodeWithTag("${TEST_TAG_OFFER_A}_price_label", useUnmergedTree = true)
+            .assertTextEquals(context.priceLabel(automaticSymbol()))
     }
 
     private fun openSettings() {

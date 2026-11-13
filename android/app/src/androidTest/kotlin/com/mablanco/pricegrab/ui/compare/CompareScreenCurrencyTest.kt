@@ -41,12 +41,12 @@ class CompareScreenCurrencyTest {
     fun priceFieldsShowTheSymbolAndQuantityFieldsDoNot() {
         setCompareScreen(CompareUiState(), symbol = "€")
 
-        composeRule.onNodeWithTag("${TEST_TAG_OFFER_A}_price_currency", useUnmergedTree = true)
-            .assertTextEquals("€")
-        composeRule.onNodeWithTag("${TEST_TAG_OFFER_B}_price_currency", useUnmergedTree = true)
-            .assertTextEquals("€")
-        composeRule.onNodeWithTag("${TEST_TAG_OFFER_A}_quantity_currency", useUnmergedTree = true)
-            .assertDoesNotExist()
+        composeRule.onNodeWithTag("${TEST_TAG_OFFER_A}_price_label", useUnmergedTree = true)
+            .assertTextEquals(context.priceLabel("€"))
+        composeRule.onNodeWithTag("${TEST_TAG_OFFER_B}_price_label", useUnmergedTree = true)
+            .assertTextEquals(context.priceLabel("€"))
+        composeRule.onNodeWithTag("${TEST_TAG_OFFER_A}_quantity_label", useUnmergedTree = true)
+            .assertTextEquals(context.getString(R.string.quantity_label))
     }
 
     @Test
@@ -85,8 +85,8 @@ class CompareScreenCurrencyTest {
             context.getString(R.string.offer_a_title),
         )
         composeRule.onNodeWithText(savings).performScrollTo().assertIsDisplayed()
-        composeRule.onNodeWithTag("${TEST_TAG_OFFER_A}_price_currency", useUnmergedTree = true)
-            .assertDoesNotExist()
+        composeRule.onNodeWithTag("${TEST_TAG_OFFER_A}_price_label", useUnmergedTree = true)
+            .assertTextEquals(context.priceLabel(""))
     }
 
     @Test
@@ -99,7 +99,8 @@ class CompareScreenCurrencyTest {
         assertTrue(abs(price.bottom - quantity.bottom) < ROW_Y_TOLERANCE_PX)
         assertTrue(abs(quantity.bottom - unit.bottom) < ROW_Y_TOLERANCE_PX)
         assertTrue(price.left < quantity.left)
-        composeRule.onNodeWithTag("${TEST_TAG_OFFER_A}_price_currency", useUnmergedTree = true)
+        composeRule.onNodeWithTag("${TEST_TAG_OFFER_A}_price_label", useUnmergedTree = true)
+            .assertTextEquals(context.priceLabel("CHF"))
             .assertIsDisplayed()
     }
 
@@ -117,7 +118,8 @@ class CompareScreenCurrencyTest {
         )
 
         composeRule.onNodeWithTag("${TEST_TAG_OFFER_A}_price").performScrollTo().assertIsDisplayed()
-        composeRule.onNodeWithTag("${TEST_TAG_OFFER_A}_price_currency", useUnmergedTree = true)
+        composeRule.onNodeWithTag("${TEST_TAG_OFFER_A}_price_label", useUnmergedTree = true)
+            .assertTextEquals(context.priceLabel("CHF"))
             .assertIsDisplayed()
         composeRule.onNodeWithText("1234.56", useUnmergedTree = true).assertIsDisplayed()
     }

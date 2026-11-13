@@ -43,3 +43,9 @@ internal fun Context.expectedMoney(amount: String): String {
     val symbol = resolveCurrencySymbol(prefs, locale)
     return MoneyFormatter.wrap(amount, MoneyFormatter.affixes(symbol, locale))
 }
+
+/** Price field label as shown with [symbol] ("Price (€)"), or plain when empty. */
+internal fun Context.priceLabel(symbol: String): String {
+    val label = getString(R.string.price_label)
+    return if (symbol.isEmpty()) label else getString(R.string.field_label_with_currency, label, symbol)
+}

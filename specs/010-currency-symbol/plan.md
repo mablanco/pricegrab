@@ -28,8 +28,10 @@ Technical approach:
   through a `LocalCurrencySymbol` `CompositionLocal` (default `""`), so
   `CompareScreen`'s public signature and the many test call sites stay
   unchanged.
-- **UI**: price `OutlinedTextField` gets a `prefix` or `suffix` slot with
-  the symbol; its content description appends the symbol. The savings line
+- **UI**: the price field's label carries the symbol ("Price (€)"), so it
+  is visible even when the field is empty (M3 affix slots only show while
+  the label floats — research §5); its content description appends the
+  symbol. The savings line
   passes the wrapped amount into the existing `result_savings_per_*`
   templates (no template change). Settings gains a Currency section
   (Automatic / Custom radio rows + text field), following the Appearance

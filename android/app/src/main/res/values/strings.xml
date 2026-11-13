@@ -7,6 +7,7 @@
     <string name="offer_b_title">Offer B</string>
     <string name="offer_c_title">Offer C</string>
     <string name="price_label">Price</string>
+    <string name="field_label_with_currency">%1$s (%2$s)</string>
     <string name="quantity_label">Quantity</string>
 
     <string name="cd_price_field">Price for %1$s</string>
