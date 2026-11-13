@@ -162,4 +162,26 @@ class CompareScreenAccessibilityTest {
             SemanticsMatcher.keyNotDefined(SemanticsProperties.Heading),
         )
     }
+
+    @Test
+    fun lengthResultAnnouncesPerMetreSavingsAndUnitName() {
+        composeRule.onNodeWithTag("offerA_price").performTextInput("49")
+        composeRule.onNodeWithTag("offerA_quantity").performTextInput("5")
+        composeRule.selectUnit("${TEST_TAG_OFFER_A}_unit", R.string.unit_name_metre)
+        composeRule.onNodeWithTag("offerB_price").performTextInput("22")
+        composeRule.onNodeWithTag("offerB_quantity").performTextInput("250")
+        composeRule.selectUnit("${TEST_TAG_OFFER_B}_unit", R.string.unit_name_centimetre)
+
+        val ctx = composeRule.activity
+        val savings = ctx.getString(
+            R.string.result_savings_per_m,
+            "1",
+            ctx.getString(R.string.offer_a_title),
+        )
+        composeRule.onNodeWithTag("offerA_quantity")
+            .assert(hasContentDescriptionContaining(ctx.getString(R.string.unit_name_metre)))
+        composeRule.onNodeWithTag("offerB_quantity")
+            .assert(hasContentDescriptionContaining(ctx.getString(R.string.unit_name_centimetre)))
+        composeRule.onNodeWithTag("result").assert(hasContentDescriptionContaining(savings))
+    }
 }

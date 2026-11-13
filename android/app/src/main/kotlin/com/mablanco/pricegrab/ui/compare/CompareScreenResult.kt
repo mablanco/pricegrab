@@ -189,6 +189,7 @@ private fun formatSavingsLine(
     @StringRes val templateRes = when (dimension) {
         Dimension.Mass -> R.string.result_savings_per_kg
         Dimension.Volume -> R.string.result_savings_per_L
+        Dimension.Length -> R.string.result_savings_per_m
         Dimension.Count -> R.string.result_savings_per_piece
     }
     return stringResource(templateRes, perUnitDelta, versusOfferTitle)

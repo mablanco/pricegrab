@@ -31,9 +31,34 @@ class QuantityUnitTest {
     }
 
     @Test
+    fun centimetreMapsToLengthWithBaseMultiplierOne() {
+        assertEquals(Dimension.Length, QuantityUnit.Centimetre.dimension)
+        assertEquals(0, BigDecimal.ONE.compareTo(QuantityUnit.Centimetre.toBaseMultiplier))
+    }
+
+    @Test
+    fun metreMapsToLengthWithBaseMultiplierOneHundred() {
+        assertEquals(Dimension.Length, QuantityUnit.Metre.dimension)
+        assertEquals(0, BigDecimal("100").compareTo(QuantityUnit.Metre.toBaseMultiplier))
+    }
+
+    @Test
+    fun lengthIsDisplayedPerMetre() {
+        assertEquals(0, BigDecimal("100").compareTo(Dimension.Length.displayUnitScale))
+    }
+
+    @Test
     fun pieceMapsToCountWithBaseMultiplierOne() {
         assertEquals(Dimension.Count, QuantityUnit.Piece.dimension)
         assertEquals(0, BigDecimal.ONE.compareTo(QuantityUnit.Piece.toBaseMultiplier))
+    }
+
+    @Test
+    fun selectorOrderGroupsPhysicalMeasuresBeforePieces() {
+        assertEquals(
+            listOf("Gram", "Kilogram", "Millilitre", "Litre", "Centimetre", "Metre", "Piece"),
+            QuantityUnit.entries.map { it.name },
+        )
     }
 
     @Test

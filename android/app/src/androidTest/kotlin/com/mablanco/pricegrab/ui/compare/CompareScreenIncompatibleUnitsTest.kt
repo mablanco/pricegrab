@@ -55,4 +55,25 @@ class CompareScreenIncompatibleUnitsTest {
         composeRule.onNodeWithText(error).assertDoesNotExist()
         composeRule.onNodeWithText(winner).assertIsDisplayed()
     }
+
+    @Test
+    fun metreVsKilogramShowsErrorUntilBothUseLength() {
+        composeRule.onNodeWithTag("offerA_price").performTextInput("49")
+        composeRule.onNodeWithTag("offerA_quantity").performTextInput("5")
+        composeRule.selectUnit("${TEST_TAG_OFFER_A}_unit", R.string.unit_name_metre)
+        composeRule.onNodeWithTag("offerB_price").performTextInput("22")
+        composeRule.onNodeWithTag("offerB_quantity").performTextInput("250")
+        composeRule.selectUnit("${TEST_TAG_OFFER_B}_unit", R.string.unit_name_kilogram)
+
+        val ctx = composeRule.activity
+        val error = ctx.getString(R.string.error_incompatible_units)
+        val winner = ctx.winnerHeadline(R.string.offer_b_title)
+        composeRule.onNodeWithText(error).assertIsDisplayed()
+        composeRule.onNodeWithText(winner).assertDoesNotExist()
+
+        composeRule.selectUnit("${TEST_TAG_OFFER_B}_unit", R.string.unit_name_centimetre)
+
+        composeRule.onNodeWithText(error).assertDoesNotExist()
+        composeRule.onNodeWithText(winner).assertIsDisplayed()
+    }
 }

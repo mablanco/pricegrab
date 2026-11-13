@@ -156,6 +156,53 @@ class PriceComparatorTest {
         )
     }
 
+    // ---- Feature 009: length units -------------------------------------------
+
+    @Test
+    fun `L1 - issue 56, 5 m vs 250 cm, B wins by one hundredth per cm`() {
+        // A = 0.098/cm (9.80/m), B = 0.088/cm (8.80/m)
+        val outcome = PriceComparator.compare(
+            a = offer("49", "5", QuantityUnit.Metre),
+            b = offer("22", "250", QuantityUnit.Centimetre),
+        )
+        assertTrue(outcome is ComparisonOutcome.Winner)
+        val w = outcome as ComparisonOutcome.Winner
+        assertEquals(1, w.slotIndex)
+        assertEquals(0, w.secondSlotIndex)
+        assertEquals(0, BigDecimal("0.01").compareTo(w.perUnitDelta))
+        assertApprox("10.2040816", w.percentDelta, tolerance = "0.00001")
+    }
+
+    @Test
+    fun `L2 - 5 m vs 500 cm at the same price is a tie`() {
+        val outcome = PriceComparator.compare(
+            a = offer("49", "5", QuantityUnit.Metre),
+            b = offer("49", "500", QuantityUnit.Centimetre),
+        )
+        assertEquals(ComparisonOutcome.Tie, outcome)
+    }
+
+    @Test
+    fun `L3 - three length offers, cheapest per cm wins vs second cheapest`() {
+        // A = 0.10/cm, B = 0.09/cm, C = 0.12/cm → B wins vs A (0.01 / 10%)
+        val outcome = PriceComparator.compareMany(
+            listOf(
+                0 to offer("20", "200", QuantityUnit.Centimetre),
+                1 to offer("27", "300", QuantityUnit.Centimetre),
+                2 to offer("12", "1", QuantityUnit.Metre),
+            ),
+        )
+        assertWinner(outcome, index = 1, secondIndex = 0, expectedDelta = "0.01", expectedPercent = "10")
+    }
+
+    @Test(expected = IllegalArgumentException::class)
+    fun `L4 - comparing length and mass throws`() {
+        PriceComparator.compare(
+            a = offer("49", "5", QuantityUnit.Metre),
+            b = offer("4.00", "1", QuantityUnit.Kilogram),
+        )
+    }
+
     @Test
     fun `swapping A and B flips the winner and preserves magnitudes`() {
         val a = offer("2.50", "500", QuantityUnit.Gram)

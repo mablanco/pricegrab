@@ -11,6 +11,8 @@ enum class QuantityUnit {
     Kilogram,
     Millilitre,
     Litre,
+    Centimetre,
+    Metre,
     Piece,
     ;
 
@@ -18,13 +20,15 @@ enum class QuantityUnit {
         get() = when (this) {
             Gram, Kilogram -> Dimension.Mass
             Millilitre, Litre -> Dimension.Volume
+            Centimetre, Metre -> Dimension.Length
             Piece -> Dimension.Count
         }
 
     /** Multiply the shopper-entered quantity to express it in base units. */
     val toBaseMultiplier: BigDecimal
         get() = when (this) {
-            Gram, Millilitre, Piece -> BigDecimal.ONE
+            Gram, Millilitre, Centimetre, Piece -> BigDecimal.ONE
+            Metre -> BigDecimal("100")
             Kilogram, Litre -> BigDecimal("1000")
         }
 

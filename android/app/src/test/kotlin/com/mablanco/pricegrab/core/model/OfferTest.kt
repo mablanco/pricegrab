@@ -31,6 +31,24 @@ class OfferTest {
     }
 
     @Test
+    fun `metre and centimetre normalize to the same base quantity`() {
+        val inCentimetres = Offer(
+            price = BigDecimal("22"),
+            quantity = BigDecimal("250"),
+            quantityUnit = QuantityUnit.Centimetre,
+        )
+        val inMetres = Offer(
+            price = BigDecimal("22"),
+            quantity = BigDecimal("2.5"),
+            quantityUnit = QuantityUnit.Metre,
+        )
+        assertEquals(0, BigDecimal("250").compareTo(inMetres.quantityInBaseUnits))
+        assertEquals(0, inCentimetres.quantityInBaseUnits.compareTo(inMetres.quantityInBaseUnits))
+        assertEquals(0, BigDecimal("0.088").compareTo(inMetres.unitPrice))
+        assertEquals(0, inCentimetres.unitPrice.compareTo(inMetres.unitPrice))
+    }
+
+    @Test
     fun `fractional quantity is supported`() {
         val offer = Offer(price = BigDecimal("1.00"), quantity = BigDecimal("0.5"))
         assertEquals(0, BigDecimal("2.00").compareTo(offer.unitPrice))
