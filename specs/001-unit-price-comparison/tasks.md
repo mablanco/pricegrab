@@ -520,9 +520,18 @@ Kotlin 2.4, compileSdk 37, Compose BOM 2026.09). versionCode 14 /
 Spec + plan + research + data-model + contracts + quickstart + tasks for
 length units (cm, m; results per m), requested in
 [#56](https://github.com/mablanco/pricegrab/issues/56). No Android source.
-Cadence: PR AI → PR AJ → PR AK. See
+Cadence: PR AI → PR AJ → PR AM (release cut shared with feature 010). See
 [`specs/009-length-units/`](../../specs/009-length-units/). Release target
 **0.1.14**, after `v0.1.13` is tagged.
+
+### PR AK — `010-currency-symbol` *(feature 010 — planning only)*
+
+Spec + plan + research + data-model + contracts + quickstart + tasks for a
+currency symbol on prices and savings (automatic from the device region,
+custom symbol in Settings), requested in
+[#57](https://github.com/mablanco/pricegrab/issues/57). No Android source.
+Cadence: PR AK → PR AL → PR AM (release cut shared with feature 009, target
+**0.1.14**). See [`specs/010-currency-symbol/`](../../specs/010-currency-symbol/).
 
 ### Notes
 

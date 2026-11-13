@@ -36,7 +36,7 @@ fail (or not compile) before the enums and strings are added.
 - [x] T001 [P] Append PR **AI** cadence entry for feature 009 to
       `specs/001-unit-price-comparison/tasks.md` — done in planning commit.
 - [x] T002 [P] Point `docs/project-status.md` Active Spec Kit feature at
-      `specs/009-length-units` and add the 009 row (AI / AJ / AK → v0.1.14)
+      `specs/009-length-units` and add the 009 row (AI / AJ / AM → v0.1.14)
       to the cadence table — done in planning commit.
 - [x] T003 [P] Point `.specify/feature.json` and the SPECKIT block in
       `.cursor/rules/specify-rules.mdc` at `specs/009-length-units` — done
@@ -204,12 +204,12 @@ incompatible message and no winner.
 - [ ] T027 Manual [quickstart.md](./quickstart.md) on Marco's device
       (en + es, TalkBack, 200%, rotation, reset / undo, regression on
       kg / L / pcs).
-- [ ] T028 Release prep (separate PR **AK**, after `v0.1.13` is tagged):
+- [ ] T028 Release prep (separate PR **AM**, after `v0.1.13` is tagged):
       versionCode 15 / **0.1.14** in `android/app/build.gradle.kts`;
       `fastlane/metadata/android/{en-US,es-ES}/changelogs/15.txt`;
       `docs/fdroid.md` history + twin metadata; `docs/project-status.md`
       (shipped row 009, versionCode map, cadence row); ledger entries
-      AJ / AK in `specs/001-unit-price-comparison/tasks.md`.
+      AJ / AM in `specs/001-unit-price-comparison/tasks.md`.
 - [ ] T029 After the `v0.1.14` tag: comment on issue #56 that length units
       shipped, and close it.
 
@@ -242,7 +242,7 @@ T013 values/strings.xml    T014 values-es/strings.xml
    in principle, but US2's message update must ship with it (spec: "must
    land together with US1").
 2. **Same PR (AJ)**: Phases 4 + 5 + T025–T027. Small enough for one PR.
-3. **Release prep (AK)**: T028 after `v0.1.13` is tagged and F-Droid has
+3. **Release prep (AM)**: T028 after `v0.1.13` is tagged and F-Droid has
    processed it; then tag `v0.1.14` and T029.
 
 ## Notes
