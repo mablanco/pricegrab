@@ -25,6 +25,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLocale
@@ -207,9 +210,16 @@ private fun CurrencyGroup(
             onClick = { onModeSelected(CurrencyMode.Custom) },
         )
     }
+    // Once the shopper types, the field owns its text: echoing the
+    // asynchronously persisted value back would reset the cursor mid-typing.
+    var editedSymbol by rememberSaveable { mutableStateOf<String?>(null) }
     OutlinedTextField(
-        value = currency.customSymbol,
-        onValueChange = { onCustomSymbolChange(capCustomSymbol(it)) },
+        value = editedSymbol ?: currency.customSymbol,
+        onValueChange = { input ->
+            val capped = capCustomSymbol(input)
+            editedSymbol = capped
+            onCustomSymbolChange(capped)
+        },
         enabled = customSelected,
         singleLine = true,
         label = { Text(stringResource(R.string.settings_currency_symbol_label)) },

@@ -4,6 +4,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.assertIsSelected
+import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
@@ -77,6 +78,22 @@ class SettingsCurrencyTest {
 
         composeRule.onNodeWithText("ABCD").assertIsDisplayed()
         composeRule.onNodeWithText("ABCDE").assertDoesNotExist()
+    }
+
+    @Test
+    fun typingOneCharacterAtATimeKeepsTheOrder() {
+        openSettings()
+        composeRule.onNodeWithTag(TEST_TAG_CURRENCY_CUSTOM).performScrollTo().performClick()
+        listOf("C", "H", "F").forEach { char ->
+            composeRule.onNodeWithTag(TEST_TAG_CURRENCY_SYMBOL_FIELD).performTextInput(char)
+        }
+        composeRule.waitForIdle()
+
+        composeRule.onNodeWithTag(TEST_TAG_CURRENCY_SYMBOL_FIELD).assertTextContains("CHF")
+        composeRule.onNodeWithTag(TEST_TAG_SETTINGS_BACK).performClick()
+        composeRule.waitForIdle()
+        composeRule.onNodeWithTag("${TEST_TAG_OFFER_A}_price_label", useUnmergedTree = true)
+            .assertTextEquals(context.priceLabel("CHF"))
     }
 
     @Test
