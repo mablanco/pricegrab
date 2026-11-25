@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">PriceGrab</string>
+
+    <string name="compare_heading">Confronta le offerte</string>
+    <string name="offer_a_title">Offerta A</string>
+    <string name="offer_b_title">Offerta B</string>
+    <string name="offer_c_title">Offerta C</string>
+    <string name="price_label">Prezzo</string>
+    <string name="field_label_with_currency">%1$s (%2$s)</string>
+    <string name="quantity_label">Quantità</string>
+
+    <string name="cd_price_field">Prezzo di %1$s</string>
+    <string name="cd_quantity_field">Quantità di %1$s</string>
+    <string name="cd_quantity_unit">Unità di misura di %1$s</string>
+    <string name="cd_add_offer">Aggiungi un\'altra offerta</string>
+    <string name="cd_remove_offer">Rimuovi l\'ultima offerta</string>
+    <string name="add_offer">Aggiungi offerta</string>
+    <string name="remove_offer">Rimuovi offerta</string>
+
+    <string name="error_not_a_number">Inserisci un numero valido</string>
+    <string name="error_negative_price">Il prezzo deve essere pari o superiore a zero</string>
+    <string name="error_non_positive_quantity">La quantità deve essere maggiore di zero</string>
+
+    <string name="result_placeholder">Inserisci entrambe le offerte per scoprire qual è la più conveniente</string>
+
+    <string name="result_winner">%1$s è più conveniente</string>
+    <string name="result_tied">Stesso prezzo per unità</string>
+    <string name="result_savings">Risparmi %1$s per unità rispetto a %2$s</string>
+    <string name="result_savings_per_kg">Risparmi %1$s per kg rispetto a %2$s</string>
+    <string name="result_savings_per_L">Risparmi %1$s per L rispetto a %2$s</string>
+    <string name="result_savings_per_m">Risparmi %1$s per m rispetto a %2$s</string>
+    <string name="result_savings_per_piece">Risparmi %1$s per pezzo rispetto a %2$s</string>
+    <string name="result_savings_percent">%1$s%% in meno</string>
+
+    <string name="error_incompatible_units">Le offerte devono usare lo stesso tipo di misura (peso, volume, lunghezza o unità).</string>
+
+    <string name="unit_code_g">g</string>
+    <string name="unit_code_kg">kg</string>
+    <string name="unit_code_ml">ml</string>
+    <string name="unit_code_L">L</string>
+    <string name="unit_code_cm">cm</string>
+    <string name="unit_code_m">m</string>
+    <string name="unit_code_pcs">pz</string>
+    <string name="unit_name_gram">grammi</string>
+    <string name="unit_name_kilogram">chilogrammi</string>
+    <string name="unit_name_millilitre">millilitri</string>
+    <string name="unit_name_litre">litri</string>
+    <string name="unit_name_centimetre">centimetri</string>
+    <string name="unit_name_metre">metri</string>
+    <string name="unit_name_piece">pezzi</string>
+
+    <string name="reset_action">Azzera</string>
+    <string name="reset_action_description">Cancella tutti i campi e avvia un nuovo confronto</string>
+    <string name="comparison_cleared">Confronto cancellato</string>
+    <string name="undo_action">Annulla</string>
+    <string name="reset_announcement">Confronto azzerato</string>
+
+    <string name="settings_title">Impostazioni</string>
+    <string name="settings_open_description">Apri le impostazioni</string>
+    <string name="settings_back_description">Torna al confronto</string>
+    <string name="settings_theme_section">Aspetto</string>
+    <string name="settings_theme_system">Sistema</string>
+    <string name="settings_theme_light">Chiaro</string>
+    <string name="settings_theme_dark">Scuro</string>
+    <string name="settings_theme_selected">Selezionato</string>
+    <string name="settings_theme_unselected">Non selezionato</string>
+    <string name="settings_material_you_title">Material You</string>
+    <string name="settings_material_you_description">Usa i colori dello sfondo</string>
+    <string name="settings_material_you_unavailable">Non disponibile su questo dispositivo</string>
+    <string name="settings_material_you_on">Attivato</string>
+    <string name="settings_material_you_off">Disattivato</string>
+    <string name="settings_currency_section">Valuta</string>
+    <string name="settings_currency_automatic">Automatica (%1$s)</string>
+    <string name="settings_currency_automatic_none">Automatica (nessuna)</string>
+    <string name="settings_currency_custom">Personalizzata</string>
+    <string name="settings_currency_symbol_label">Simbolo</string>
+    <string name="settings_currency_symbol_hint">Lascia vuoto per nascondere il simbolo</string>
+</resources>
